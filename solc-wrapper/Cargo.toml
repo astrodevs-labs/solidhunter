@@ -1,0 +1,11 @@
+[package]
+name = "solc-wrapper"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+svm = { package = "svm-rs", git = "https://github.com/roynalnaruto/svm-rs", default-features = false, optional = true }
+home = "0.5.4"
+semver = { version = "1.0.14", features = ["serde"] }
