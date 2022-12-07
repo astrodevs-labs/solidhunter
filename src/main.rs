@@ -1,11 +1,11 @@
 mod rules;
 
 use clap::Parser;
+use rules::create_rules_file;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    // Project path
     #[arg(short = 'p', long = "path", default_value = ".", help = "Specify project path")]
     project_path: Vec<String>,
 
@@ -20,15 +20,6 @@ struct Args {
 
     #[arg(short = 'i', long = "init", default_value = "false", help = "Initialize rules file")]
     init: bool,
-}
-
-fn init_rules_file(path: &str) {
-    let mut rules = rules::create_rules();
-
-    rules.rules.insert("rule-one".to_string(), "value-one".to_string());
-
-    let serialized = serde_json::to_string_pretty(&rules).unwrap();
-    std::fs::write(path, serialized).unwrap();
 }
 
 fn main() {
@@ -49,7 +40,7 @@ fn main() {
 
     if args.init {
         println!("Initializing rules file...");
-        init_rules_file(".solidhunter.json");
+        create_rules_file(".solidhunter.json");
         println!("Done!");
         return;
     }

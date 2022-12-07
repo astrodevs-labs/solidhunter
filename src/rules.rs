@@ -23,10 +23,20 @@ pub fn create_rules() -> Rules {
     }
 }
 
+// Untested
 fn merge_rules(rules: &mut HashMap<String, String>, new_rules: &HashMap<String, String>) {
     for (key, value) in new_rules {
         rules.insert(key.to_string(), value.to_string());
     }
+}
+
+pub fn create_rules_file(path: &str) {
+    let mut rules = create_rules();
+
+    rules.rules.insert("rule-one".to_string(), "value-one".to_string());
+
+    let serialized = serde_json::to_string_pretty(&rules).unwrap();
+    std::fs::write(path, serialized).unwrap();
 }
 
 pub fn parse_rules(path: String) -> RulesResult {
