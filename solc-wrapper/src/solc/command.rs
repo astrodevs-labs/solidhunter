@@ -1,10 +1,11 @@
 use std::{process::Command, io};
 use std::io::Write;
 use std::process::{Output, Stdio};
+use std::{path::PathBuf};
 
 pub struct SolcCommand {
     args: Vec<String>,
-    bin_path : String
+    bin_path : PathBuf
 }
 
 impl Default for SolcCommand {
@@ -15,10 +16,10 @@ impl Default for SolcCommand {
 
 impl SolcCommand {
 
-    pub fn new(bin_path: &str) -> Self {
+    pub fn new(path: impl Into<PathBuf>) -> Self {
         SolcCommand {
             args: Vec::new(),
-            bin_path: bin_path.to_string()
+            bin_path: path.into()
         }
     }
 
@@ -39,6 +40,7 @@ impl SolcCommand {
     }
 
     pub fn execute(&self) -> Result<Output, io::Error> {
+        println!("{:?}", self.bin_path);
         Command::new(&self.bin_path)
             .args(&self.args)
             .stdout(Stdio::piped())

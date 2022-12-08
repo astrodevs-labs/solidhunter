@@ -17,34 +17,50 @@ mod error;
 pub use error::SolcError;
 
 pub struct Solc {
-    pub solc: PathBuf,
-    pub args: Vec<String>
 }
 
 impl Default for Solc {
     fn default() -> Self {
         svm_lib::setup_home();
 
-        Solc { solc: PathBuf::from("solc"), args: Vec::new() }
+        Solc { }
     }
 }
 
 impl Solc {
-    pub fn new(path: impl Into<PathBuf>) -> Self {
-        Solc { solc: path.into(), args: Vec::new() }
+    pub fn new() -> Self {
+        Solc { }
     }
 
-    pub fn install_version(&self, version: &Version) -> Result<PathBuf, SolcError> {
+    pub fn find_matching_version(source: &str) -> Result<Version, SolcError> {
+        let version_req = Self::source_version_req(source)?;
+        // TODO fetch all versions include remotes
+        let versions = Self::list_installed_versions()?;
+        let version = versions.iter().find(|v| version_req.matches(v));
+        version.cloned().ok_or(SolcError::ComputationFailed)
+    }
+
+    pub fn list_installed_versions() -> Result<Vec<Version>, SolcError> {
+        svm_lib::installed_versions().map_err(|e| SolcError::from(e))
+    }
+
+    /*
+    pub fn list_remote_versions() -> Result<Vec<Version>, SolcError> {
+        svm_lib::all_versions().map_err(|e| SolcError::from(e))
+    }
+    */
+
+    pub fn install_version(version: &Version) -> Result<PathBuf, SolcError> {
         svm_lib::blocking_install(version).map_err(|e| SolcError::from(e))
     }
 
-    pub fn find_version_and_install(&self, version: &Version) -> Result<PathBuf, SolcError> {
+    pub fn find_version_and_install(version: &Version) -> Result<PathBuf, SolcError> {
         // TODO optimize the code to only have to run it once and outside this function possibly
         let versions = svm_lib::installed_versions()?;
         if versions.is_empty() || !versions.contains(&version) {
             svm_lib::blocking_install(version).map_err(|e| SolcError::from(e))
         } else {
-            Ok(svm_lib::version_path(&version.to_string()))
+            Ok(svm_lib::version_path(&version.to_string()).join("solc-".to_owned() + version.to_string().as_str()))
         }
     }
 
@@ -75,8 +91,13 @@ impl Solc {
         &output[idx..]
     }
 
-    pub fn execute_on_file(path : &str) -> Result<String, CommandError> {
-        let output = SolcCommand::default()
+    pub fn execute_on_file(path: &str) -> Result<String, CommandError> {
+        let content = std::fs::read_to_string(path).map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+        let version = Self::find_matching_version( content.as_str()).map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+
+        let version_path = Self::find_version_and_install(&version).map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+
+        let output = SolcCommand::new(version_path)
             .args(["--ast-compact-json", "--stop-after", "parsing", path])
             .execute()
             .map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
@@ -85,8 +106,11 @@ impl Solc {
         Ok(String::from(Self::skip_output_header(&res)))
     }
 
-    pub fn execute_on_content(content : &str) -> Result<String, CommandError> {
-        let output = SolcCommand::default()
+    pub fn execute_on_content(content: &str) -> Result<String, CommandError> {
+        let version = Self::find_matching_version( content).map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+        let version_path = Self::find_version_and_install(&version).map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+
+        let output = SolcCommand::new(version_path)
             .args(["--ast-compact-json", "--stop-after", "parsing", "-"])
             .execute_with_input(content)
             .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })?;
@@ -133,17 +157,4 @@ mod tests {
         }"#;
         assert_eq!(Solc::skip_output_header(output), expected);
     }
-
-    /*
-    #[test]
-    fn test_execute_on_file() {
-        let path = "wow.sol";
-        let ast = Solc::execute_on_file(path).unwrap();
-        println!("{}", ast);
-    }
-
-    #[test]
-    fn test_execute_on_content() {
-        let content = "pragma solidity ^0.5.0;
-     */
 }
