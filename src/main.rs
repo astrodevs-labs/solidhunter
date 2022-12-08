@@ -1,3 +1,6 @@
+mod linter;
+mod lint_result;
+
 use solc_wrapper::Solc;
 
 fn main() -> Result<(), anyhow::Error> {
