@@ -1,11 +1,36 @@
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum RuleSeverity {
+    Error,
+    Warn,
+    Info,
+    Hint
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Diagnostic {
+    pub severity: RuleSeverity,
+    pub message: String,
+    pub id: String,
+    pub location: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RuleEntry
+{
+    pub id: String,
+    pub severity: RuleSeverity,
+    pub data: Vec<String>,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Rules {
+    pub name: String,
     pub includes: Vec<String>,
     pub plugins: Vec<String>,
-    pub rules: HashMap<String, Vec<String>>
+    pub rules: Vec<RuleEntry>
 }
 
 #[derive(Debug)]
@@ -17,48 +42,38 @@ type RulesResult = Result<Rules, RulesError>;
 
 pub fn create_rules() -> Rules {
     Rules {
+        name: String::new(),
         includes: Vec::new(),
         plugins: Vec::new(),
-        rules: HashMap::new()
+        rules: Vec::new(),
     }
 }
 
-pub fn get_predefined_rules() -> HashMap<String, Rules> {
-    let mut rules_map = HashMap::new();
-
-    rules_map.insert("best-practises".to_string(), create_rules());
-    rules_map.insert("miscellaneous".to_string(), create_rules());
-    rules_map.insert("naming".to_string(), create_rules());
-    rules_map.insert("order".to_string(), create_rules());
-    rules_map.insert("security".to_string(), create_rules());
-
-    let best_practises = &mut rules_map.get_mut("best-practises").unwrap().rules;
-
-
-    best_practises.insert("code-complexity".to_string(), vec!["warn".to_string(), "7".to_string()]);
-    best_practises.insert("constructor-syntax".to_string(), vec!["warn".to_string()]);
-    best_practises.insert("function-max-lines".to_string(), vec!["warn".to_string(), "50".to_string()]);
-    best_practises.insert("max-line-length".to_string(), vec!["error".to_string(), "120".to_string()]);
-    best_practises.insert("max-states-count".to_string(), vec!["warn".to_string(), "15".to_string()]);
-    best_practises.insert("no-empty-blocks".to_string(), vec!["warn".to_string()]);
-    best_practises.insert("no-unused-vars".to_string(), vec!["warn".to_string()]);
-    best_practises.insert("payable-fallback".to_string(), vec!["^_".to_string()]);
-
-    rules_map
-}
-
 // Untested
-fn merge_rules(rules: &mut HashMap<String, Vec<String>>, new_rules: &HashMap<String, Vec<String>>) {
-    for (key, value) in new_rules {
-        rules.insert(key.to_string(), value.to_vec());
+fn merge_rules(rules: &mut Vec<RuleEntry>, new_rules: &Vec<RuleEntry>) {
+    let mut new_rules_map = HashMap::new();
+    for rule in new_rules {
+        new_rules_map.insert(rule.id.clone(), rule);
+    }
+
+    for rule in rules {
+        if let Some(new_rule) = new_rules_map.get(&rule.id) {
+            rule.severity = new_rule.severity.clone();
+            rule.data = new_rule.data.clone();
+        }
     }
 }
 
 pub fn create_rules_file(path: &str) {
     let mut rules = create_rules();
 
-    rules.rules.insert("rule-one".to_string(),
-                       vec!["value-one".to_string(), "value-two".to_string()]);
+    let dummy_rules = RuleEntry {
+        id: "dummy-rule".to_string(),
+        severity: RuleSeverity::Warn,
+        data: vec!["dummy-data".to_string()],
+    };
+
+    rules.rules.push(dummy_rules);
 
     let serialized = serde_json::to_string_pretty(&rules).unwrap();
     std::fs::write(path, serialized).unwrap();
@@ -66,9 +81,10 @@ pub fn create_rules_file(path: &str) {
 
 pub fn parse_rules(path: String) -> RulesResult {
     let mut rules = Rules {
+        name: String::new(),
         includes: Vec::new(),
         plugins: Vec::new(),
-        rules: HashMap::new()
+        rules: Vec::new(),
     };
 
     if !std::path::Path::new(&path).is_file() {
@@ -85,4 +101,29 @@ pub fn parse_rules(path: String) -> RulesResult {
     merge_rules(&mut rules.rules, &parsed.rules);
 
     Ok(rules)
+}
+
+
+// create rules
+#[macro_export]
+macro_rules! create_rule {
+    ($rule_name:ident, $rule_id:expr, $default_severity:expr, $custom_data:expr, $message:expr) => {
+        pub struct $rule_name {
+            id: String,
+            message: String,
+            severity: RuleSeverity,
+            data: Vec<String>,
+        }
+
+        impl $rule_name {
+            pub fn new(severity: RuleSeverity, data: Vec<String>) -> $rule_name {
+                $rule_name {
+                    id: $rule_id.to_string(),
+                    message: $message.to_string(),
+                    severity,
+                    data,
+                }
+            }
+        }
+    };
 }
