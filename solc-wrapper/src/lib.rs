@@ -9,7 +9,6 @@ use crate::ast::parse::parse_ast;
 use solc::error::CommandError;
 use crate::solc::error::CommandType;
 use semver::{Version, VersionReq};
-use serde_json::Error;
 
 use svm_lib;
 
@@ -101,6 +100,9 @@ impl Solc {
             .args(["--ast-compact-json", "--stop-after", "parsing", path])
             .execute()
             .map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+        if output.stderr.len() > 0 {
+            return Err(CommandError { command_type: CommandType::ParseFile, error: String::from_utf8(output.stderr).unwrap() });
+        }
         let res = String::from_utf8(output.stdout)
             .map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
         Ok(String::from(Self::skip_output_header(&res)))
@@ -114,15 +116,21 @@ impl Solc {
             .args(["--ast-compact-json", "--stop-after", "parsing", "-"])
             .execute_with_input(content)
             .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })?;
-        if !output.stderr.len() > 0 {
+        if output.stderr.len() > 0 {
             return Err(CommandError { command_type: CommandType::ParseStdin, error: String::from_utf8(output.stderr).unwrap() });
         }
         String::from_utf8(output.stdout)
             .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })
     }
 
-    pub fn parse(ast: String) -> Result<Ast, Error> {
-        parse_ast(ast.as_str())
+    pub fn extract_ast_file(filepath: String) -> Result<Ast, SolcError> {
+        let output = Self::execute_on_file(filepath.as_str())?;
+        parse_ast(output.as_str()).map_err(|e| SolcError::SerdeJsonError(e))
+    }
+
+    pub fn extract_ast_content(content: String) -> Result<Ast, SolcError> {
+        let output = Self::execute_on_content(&content)?;
+        parse_ast(output.as_str()).map_err(|e| SolcError::SerdeJsonError(e))
     }
 
 

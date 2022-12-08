@@ -1,8 +1,8 @@
 use solc_wrapper::Solc;
 
 fn main() -> Result<(), anyhow::Error> {
-    let path = "./wow.sol";
-    let ast = Solc::execute_on_file(path).unwrap();
-    println!("{}", ast);
+    let path = "wow.sol";
+    let ast = Solc::extract_ast_file(path.to_string())?;
+    println!("{}", "titi toto");
     Ok(())
 }
