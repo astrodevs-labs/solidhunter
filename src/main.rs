@@ -1,11 +1,9 @@
 use solc_wrapper::Solc;
 
-fn main() {
+fn main() -> Result<(), anyhow::Error> {
     let path = "wow.sol";
     let ast = Solc::execute_on_file(path).unwrap();
     let content = "pragma solidity ^0.4.24;";
     let ast2 = Solc::execute_on_content(content).unwrap();
-
-    //println!("{:?}", );
-    println!("Please welcome SolidHunter!");
+    OK()
 }

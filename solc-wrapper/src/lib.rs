@@ -1,71 +1,53 @@
 mod solc;
-mod ast;
+mod utils;
 
 use std::{path::PathBuf};
-use semver::{Version};
 use solc::command::SolcCommand;
 use solc::error::CommandError;
 use crate::solc::error::CommandType;
+use semver::{Version};
 
+use svm_lib;
+
+mod error;
+pub use error::SolcError;
 
 pub struct Solc {
+    pub solc: PathBuf,
+    pub args: Vec<String>
 }
 
 impl Default for Solc {
     fn default() -> Self {
-        Solc { }
+        svm_lib::setup_home();
+
+        Solc { solc: PathBuf::from("solc"), args: Vec::new() }
     }
 }
 
 impl Solc {
-    pub fn new() -> Self {
-        Solc { }
+    pub fn new(path: impl Into<PathBuf>) -> Self {
+        Solc { solc: path.into(), args: Vec::new() }
     }
 
-    pub fn svm_home() -> Option<PathBuf> {
-        home::home_dir().map(|dir| dir.join(".svm"))
+    pub fn install_version(&self, version: &Version) -> Result<PathBuf, SolcError> {
+        svm_lib::blocking_install(version).map_err(|e| SolcError::from(e))
     }
 
-    pub fn svm_global_version() -> Option<Version> {
-        let version =
-            std::fs::read_to_string(Self::svm_home().map(|p| p.join(".global_version"))?).ok()?;
-        Version::parse(&version).ok()
+    pub fn find_version_and_install(&self, version: &Version) -> Result<PathBuf, SolcError> {
+        // TODO optimize the code to only have to run it once and outside this function possibly
+        let versions = svm_lib::installed_versions()?;
+        if versions.is_empty() || !versions.contains(&version) {
+            svm_lib::blocking_install(version).map_err(|e| SolcError::from(e))
+        } else {
+            Ok(svm_lib::version_path(&version.to_string()))
+        }
     }
 
     /*
-    pub fn find_svm_installed_version(version: impl AsRef<str>) -> Result<Option<Self>> {
-        let version = version.as_ref();
-        let solc = Self::svm_home()
-            .ok_or_else(|| Error::solc("svm home dir not found"))?
-            .join(version)
-            .join(format!("solc-{version}"));
-
-        if !solc.is_file() {
-            return Ok(None)
-        }
-        Ok(Some(Solc::new(solc)))
-    }
-
-    pub fn find_or_install_svm_version(version: impl AsRef<str>) -> Result<Self> {
-        let version = version.as_ref();
-        if let Some(solc) = Solc::find_svm_installed_version(version)? {
-            Ok(solc)
-        } else {
-            Ok(Solc::blocking_install(&version.parse::<Version>()?)?)
-        }
-    }
-
-    pub fn find_matching_installation(
-        versions: &[Version],
-        required_version: &VersionReq,
-    ) -> Option<Version> {
-        // iterate in reverse to find the last match
-        versions.iter().rev().find(|version| required_version.matches(version)).cloned()
-    }
-
-    pub fn source_version_req(source: &Source) -> Result<VersionReq> {
+    pub fn source_version_req(source: &str) -> Result<VersionReq> {
         let version =
-            utils::find_version_pragma(&source.content).ok_or(SolcError::PragmaNotFound)?;
+            utils::find_version_pragma(source).ok_or(SolcError::PragmaNotFound)?;
         Self::version_req(version.as_str())
     }
 

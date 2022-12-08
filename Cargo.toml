@@ -8,3 +8,4 @@ authors = ["Astrodevs Labs"]
 
 [dependencies]
 solc-wrapper = { path = "./solc-wrapper" }
+anyhow = "1.0"
