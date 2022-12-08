@@ -9,10 +9,7 @@ pub struct SolcCommand {
 
 impl Default for SolcCommand {
     fn default() -> Self {
-        SolcCommand {
-            args: Vec::new(),
-            bin_path: "".to_string()
-        }
+        SolcCommand::new("solc")
     }
 }
 
