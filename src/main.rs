@@ -1,7 +1,7 @@
 mod rules;
 
 use clap::Parser;
-use rules::create_rules_file;
+use rules::rules_base::{create_rules_file, parse_rules};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -45,7 +45,7 @@ fn main() {
         return;
     }
 
-    let rules = rules::parse_rules(args.rules_file);
+    let rules = parse_rules(args.rules_file);
     if rules.is_err() {
         println!("Error: {:?}", rules.unwrap_err());
         return;
