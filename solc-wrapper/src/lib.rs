@@ -33,9 +33,13 @@ impl Solc {
 
     pub fn find_matching_version(source: &str) -> Result<Version, SolcError> {
         let version_req = Self::source_version_req(source)?;
-        // TODO fetch all versions include remotes
         let versions = Self::list_installed_versions()?;
         let version = versions.iter().find(|v| version_req.matches(v));
+        if version.is_none() {
+            let remote_versions = Self::list_remote_versions()?;
+            let version = remote_versions.iter().find(|v| version_req.matches(v));
+            return version.cloned().ok_or(SolcError::ComputationFailed);
+        }
         version.cloned().ok_or(SolcError::ComputationFailed)
     }
 
@@ -43,11 +47,9 @@ impl Solc {
         svm_lib::installed_versions().map_err(|e| SolcError::from(e))
     }
 
-    /*
     pub fn list_remote_versions() -> Result<Vec<Version>, SolcError> {
-        svm_lib::all_versions().map_err(|e| SolcError::from(e))
+        svm_lib::blocking_all_versions().map_err(|e| SolcError::from(e))
     }
-    */
 
     pub fn install_version(version: &Version) -> Result<PathBuf, SolcError> {
         svm_lib::blocking_install(version).map_err(|e| SolcError::from(e))
