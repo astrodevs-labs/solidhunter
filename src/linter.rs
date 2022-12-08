@@ -1,19 +1,19 @@
 use crate::lint_result::LintResult;
+use glob::glob;
 use solc_wrapper::Solc;
 
 pub struct SolidFile {
-    pub data : Ast,
-    pub path : String,
-    pub content : String,
+    pub data: Ast,
+    pub path: String,
+    pub content: String,
 }
 
 pub struct SolidLinter {
-    files : Vec<SolidFile>,
+    files: Vec<SolidFile>,
 }
 
 impl SolidLinter {
-    
-    fn file_exists(&self, path : &str) -> bool {
+    fn file_exists(&self, path: &str) -> bool {
         for file in &self.files {
             if file.path == path {
                 return true;
@@ -21,20 +21,20 @@ impl SolidLinter {
         }
         false
     }
-    
-    fn update_file_ast(&mut self, path : &str, ast : Ast) {
+
+    fn update_file_ast(&mut self, path: &str, ast: Ast) {
         for file in &mut self.files {
             if file.path == path {
                 file.data = ast;
             }
         }
     }
-    
-    fn add_file(&mut self, path : &str, ast : Ast, content : &str) {
+
+    fn add_file(&mut self, path: &str, ast: Ast, content: &str) {
         let file = SolidFile {
-            data : ast,
-            path : path.to_string(),
-            content : content.to_string(),
+            data: ast,
+            path: path.to_string(),
+            content: content.to_string(),
         };
         self.files.push(file);
     }
@@ -66,7 +66,12 @@ impl SolidLinter {
         LintResult::new()
     }
     
-    pub fn parse_folder(folder: String) -> LintResult{
-        LintResult::new()
+    pub fn parse_folder(&mut self, folder: String) -> Vec<LintResult> {
+        let mut result: Vec<LintResult> = Vec::new();
+
+        for entry in glob(&*(folder + "/**/*.sol"))? {
+            result.push(self.parse_file(entry.unwrap().into_os_string().into_string().unwrap()));
+        }
+        result
     }
 }
