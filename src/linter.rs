@@ -39,19 +39,34 @@ impl SolidLinter {
         self.files.push(file);
     }
 
-    fn parse_file(filepath: String) -> LintResult{
+    pub fn parse_file(&mut self, filepath: String) -> LintResult{
         
         let ast = Solc::execute_on_file(filepath.to_str()).unwrap();
         let res = Solc::parse(ast).unwrap();
-        
+
+        if self.file_exists(filepath.to_str()) {
+            self.update_file_ast(filepath.to_str(), res);
+        } else {
+            self.add_file(filepath.to_str(), res, "");
+        }
+        // TODO: analyze the ast to generate diagnostics
         LintResult::new()
     }
     
-    fn parse_content(filepath: String, content : String) -> LintResult{
+    pub fn parse_content(&mut self, filepath: String, content : String) -> LintResult{
+        let ast = Solc::execute_on_content(content.as_str()).unwrap();
+        let res = Solc::parse(ast).unwrap();
+
+        if self.file_exists(filepath.to_str()) {
+            self.update_file_ast(filepath.to_str(), res);
+        } else {
+            self.add_file(filepath.to_str(), res, content.as_str());
+        }
+        // TODO: analyze the ast to generate diagnostics
         LintResult::new()
     }
     
-    fn parse_folder(folder: String) -> LintResult{
+    pub fn parse_folder(folder: String) -> LintResult{
         LintResult::new()
     }
 }
