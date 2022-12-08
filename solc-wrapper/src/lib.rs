@@ -89,7 +89,6 @@ impl Solc {
         if !output.stderr.len() > 0 {
             return Err(CommandError { command_type: CommandType::ParseStdin, error: String::from_utf8(output.stderr).unwrap() });
         }
-        println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
         String::from_utf8(output.stdout)
             .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })
     }
