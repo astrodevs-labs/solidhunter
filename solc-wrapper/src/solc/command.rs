@@ -2,19 +2,28 @@ use std::{process::Command, io};
 use std::io::Write;
 use std::process::{Output, Stdio};
 
-const SOLC_EXE: &str = "solc";
-
 pub struct SolcCommand {
-    args: Vec<String>
+    args: Vec<String>,
+    bin_path : String
 }
 
 impl Default for SolcCommand {
     fn default() -> Self {
-        SolcCommand { args: Vec::new() }
+        SolcCommand {
+            args: Vec::new(),
+            bin_path: "".to_string()
+        }
     }
 }
 
 impl SolcCommand {
+
+    pub fn new(bin_path: &str) -> Self {
+        SolcCommand {
+            args: Vec::new(),
+            bin_path: bin_path.to_string()
+        }
+    }
 
     pub fn arg(mut self, arg: &str) -> Self {
         self.args.push(arg.into());
@@ -22,7 +31,7 @@ impl SolcCommand {
     }
 
     pub fn execute(&self) -> Result<Output, io::Error> {
-        Command::new(SOLC_EXE)
+        Command::new(&self.bin_path)
             .args(&self.args)
             .stdout(Stdio::piped())
             .output()
@@ -30,7 +39,7 @@ impl SolcCommand {
     }
 
     pub fn execute_with_input(&self, input: &str) -> Result<Output, io::Error> {
-        let mut cmd = Command::new(SOLC_EXE)
+        let mut cmd = Command::new(&self.bin_path)
             .args(&self.args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
