@@ -25,8 +25,19 @@ impl SolcCommand {
         }
     }
 
-    pub fn arg(mut self, arg: &str) -> Self {
+    pub fn arg<T: Into<String>>(mut self, arg: T) -> Self {
         self.args.push(arg.into());
+        self
+    }
+
+    pub fn args<I, S>(mut self, args: I) -> Self
+    where
+        I: IntoIterator<Item = S>,
+        S: Into<String>,
+    {
+        for arg in args {
+            self = self.arg(arg);
+        }
         self
     }
 

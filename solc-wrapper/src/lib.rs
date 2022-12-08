@@ -75,10 +75,7 @@ impl Solc {
 
     pub fn execute_on_file(path : &str) -> Result<String, CommandError> {
         let output = SolcCommand::default()
-            .arg("--ast-compact-json")
-            .arg("--stop-after")
-            .arg("parsing")
-            .arg(path)
+            .args(["--ast-compact-json", "--stop-after", "parsing", path])
             .execute()
             .map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
         let res = String::from_utf8(output.stdout)
@@ -88,10 +85,7 @@ impl Solc {
 
     pub fn execute_on_content(content : &str) -> Result<String, CommandError> {
         let output = SolcCommand::default()
-            .arg("--ast-compact-json")
-            .arg("--stop-after")
-            .arg("parsing")
-            .arg("-")
+            .args(["--ast-compact-json", "--stop-after", "parsing", "-"])
             .execute_with_input(content)
             .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })?;
         if !output.stderr.len() > 0 {
