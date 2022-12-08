@@ -1,19 +1,25 @@
-use std::{process::Command, path::PathBuf, error::Error};
-use semver::{Version, VersionReq};
+mod solc;
+mod ast;
+
+use std::{path::PathBuf};
+use semver::{Version};
+use solc::command::SolcCommand;
+use solc::error::CommandError;
+use crate::solc::error::CommandType;
+
 
 pub struct Solc {
-    args: Vec<String>
 }
 
 impl Default for Solc {
     fn default() -> Self {
-        Solc { args: Vec::new() }
+        Solc { }
     }
 }
 
 impl Solc {
     pub fn new() -> Self {
-        Solc { args: Vec::new() }
+        Solc { }
     }
 
     pub fn svm_home() -> Option<PathBuf> {
@@ -80,4 +86,83 @@ impl Solc {
     }
     */
 
+    fn skip_output_header(output: &str) -> &str {
+        let idx = output.find("{").expect("No { found");
+        &output[idx..]
+    }
+
+    pub fn execute_on_file(path : &str) -> Result<String, CommandError> {
+        let output = SolcCommand::default()
+            .arg("--ast-compact-json")
+            .arg("--stop-after")
+            .arg("parsing")
+            .arg(path)
+            .execute()
+            .map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+        let res = String::from_utf8(output.stdout)
+            .map_err(|e| CommandError { command_type: CommandType::ParseFile, error: e.to_string() })?;
+        Ok(String::from(Self::skip_output_header(&res)))
+    }
+
+    pub fn execute_on_content(content : &str) -> Result<String, CommandError> {
+        let output = SolcCommand::default()
+            .arg("--ast-compact-json")
+            .arg("--stop-after")
+            .arg("parsing")
+            .arg("-")
+            .execute_with_input(content)
+            .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })?;
+        if !output.stderr.len() > 0 {
+            return Err(CommandError { command_type: CommandType::ParseStdin, error: String::from_utf8(output.stderr).unwrap() });
+        }
+        println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+        String::from_utf8(output.stdout)
+            .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })
+    }
+
+
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_skip_output_header_already_formatted() {
+        let output = r#"{
+            "contracts": {},
+            "sources": {},
+            "errors": []
+        }"#;
+        assert_eq!(Solc::skip_output_header(output), output);
+    }
+
+    #[test]
+    fn test_skip_output_header() {
+        let output = r#"ok ======= test ====== \n awesome {
+            "contracts": {},
+            "sources": {},
+            "errors": []
+        }"#;
+        let expected = r#"{
+            "contracts": {},
+            "sources": {},
+            "errors": []
+        }"#;
+        assert_eq!(Solc::skip_output_header(output), expected);
+    }
+
+    /*
+    #[test]
+    fn test_execute_on_file() {
+        let path = "wow.sol";
+        let ast = Solc::execute_on_file(path).unwrap();
+        println!("{}", ast);
+    }
+
+    #[test]
+    fn test_execute_on_content() {
+        let content = "pragma solidity ^0.5.0;
+     */
 }
