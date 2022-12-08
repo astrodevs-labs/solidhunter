@@ -5,7 +5,7 @@ use std::{path::PathBuf};
 use solc::command::SolcCommand;
 use solc::error::CommandError;
 use crate::solc::error::CommandType;
-use semver::{Version};
+use semver::{Version, VersionReq};
 
 use svm_lib;
 
@@ -44,29 +44,27 @@ impl Solc {
         }
     }
 
-    /*
-    pub fn source_version_req(source: &str) -> Result<VersionReq> {
+    pub fn source_version_req(source: &str) -> Result<VersionReq, SolcError> {
         let version =
-            utils::find_version_pragma(source).ok_or(SolcError::PragmaNotFound)?;
+            utils::find_version_pragma(source).ok_or(SolcError::ComputationFailed)?;
         Self::version_req(version.as_str())
     }
 
     /// Returns the corresponding SemVer version requirement for the solidity version
-    pub fn version_req(version: &str) -> Result<VersionReq> {
+    pub fn version_req(version: &str) -> Result<VersionReq, SolcError> {
         let version = version.replace(' ', ",");
 
         // Somehow, Solidity semver without an operator is considered to be "exact",
         // but lack of operator automatically marks the operator as Caret, so we need
         // to manually patch it? :shrug:
         let exact = !matches!(&version[0..1], "*" | "^" | "=" | ">" | "<" | "~");
-        let mut version = VersionReq::parse(&version)?;
+        let mut version = VersionReq::parse(&version).map_err(|e| SolcError::ComputationFailed)?;
         if exact {
             version.comparators[0].op = semver::Op::Exact;
         }
 
         Ok(version)
     }
-    */
 
     fn skip_output_header(output: &str) -> &str {
         let idx = output.find("{").expect("No { found");
