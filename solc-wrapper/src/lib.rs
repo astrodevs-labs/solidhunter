@@ -1,11 +1,15 @@
 mod solc;
+mod ast;
 mod utils;
 
 use std::{path::PathBuf};
 use solc::command::SolcCommand;
+use crate::ast::ast::Ast;
+use crate::ast::parse::parse_ast;
 use solc::error::CommandError;
 use crate::solc::error::CommandType;
 use semver::{Version, VersionReq};
+use serde_json::Error;
 
 use svm_lib;
 
@@ -91,6 +95,10 @@ impl Solc {
         }
         String::from_utf8(output.stdout)
             .map_err(|e| CommandError { command_type: CommandType::ParseStdin, error: e.to_string() })
+    }
+
+    pub fn parse(ast: String) -> Result<Ast, Error> {
+        parse_ast(ast.as_str())
     }
 
 
