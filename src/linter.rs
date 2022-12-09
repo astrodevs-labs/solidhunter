@@ -1,6 +1,12 @@
-use crate::lint_result::LintResult;
+use crate::types::*;
+
 use glob::glob;
+
 use solc_wrapper::Solc;
+use solc_wrapper::Ast;
+use solc_wrapper::Node;
+
+use crate::{declare_rule, lint_result};
 
 pub struct SolidFile {
     pub data: Ast,
@@ -13,6 +19,7 @@ pub struct SolidLinter {
 }
 
 impl SolidLinter {
+    
     fn file_exists(&self, path: &str) -> bool {
         for file in &self.files {
             if file.path == path {
@@ -25,7 +32,7 @@ impl SolidLinter {
     fn update_file_ast(&mut self, path: &str, ast: Ast) {
         for file in &mut self.files {
             if file.path == path {
-                file.data = ast;
+                file.data = ast.clone();
             }
         }
     }
