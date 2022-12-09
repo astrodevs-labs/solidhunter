@@ -19,18 +19,21 @@ impl Default for SolcVersion {
 
 impl SolcVersion {
     pub fn new() -> Self {
-        SolcVersion { }
+        SolcVersion {}
     }
 
     pub fn find_matching_version(source: &str) -> Result<Version, SolcVersionError> {
         let version_req = Self::source_version_req(source)?;
-        let versions = Self::list_installed_versions()?;
-        let version = versions.iter().find(|v| version_req.matches(v));
-        if version.is_none() {
-            let remote_versions = Self::list_remote_versions()?;
-            let version = remote_versions.iter().find(|v| version_req.matches(v));
-            return version.cloned().ok_or(SolcVersionError::Other);
+
+        if svm_lib::global_version_path().is_file() {
+            let versions = Self::list_installed_versions()?;
+            let version = versions.iter().find(|v| version_req.matches(v));
+            if !version.is_none() {
+                return version.cloned().ok_or(SolcVersionError::Other);
+            }
         }
+        let remote_versions = Self::list_remote_versions()?;
+        let version = remote_versions.iter().find(|v| version_req.matches(v));
         version.cloned().ok_or(SolcVersionError::Other)
     }
 
@@ -48,12 +51,13 @@ impl SolcVersion {
 
     pub fn find_version_and_install(version: &Version) -> Result<PathBuf, SolcVersionError> {
         // TODO optimize the code to only have to run it once and outside this function possibly
-        let versions = svm_lib::installed_versions()?;
-        if versions.is_empty() || !versions.contains(&version) {
-            Self::install_version(version)
-        } else {
-            Ok(svm_lib::version_path(&version.to_string()).join("solc-".to_owned() + version.to_string().as_str()))
+        if svm_lib::global_version_path().is_file() {
+            let versions = svm_lib::installed_versions()?;
+            if !versions.is_empty() && versions.contains(&version) {
+                return Ok(svm_lib::version_path(&version.to_string()).join("solc-".to_owned() + version.to_string().as_str()));
+            }
         }
+        Self::install_version(version)
     }
 
     pub fn source_version_req(source: &str) -> Result<VersionReq, SolcVersionError> {
