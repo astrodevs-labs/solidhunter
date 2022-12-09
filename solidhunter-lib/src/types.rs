@@ -12,19 +12,16 @@ pub struct LintDiag {
 
     /// The diagnostic's severity. Can be omitted. If omitted it is up to the
     /// client to interpret diagnostics as error, warning, info or hint.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub severity: Option<Severity>,
 
 
 
     /// The diagnostic's code. Can be omitted.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub code: Option<NumberOrString>,
 
 
     /// A human-readable string describing the source of this
     /// diagnostic, e.g. 'typescript' or 'super lint'.
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
 
     /// The diagnostic's message.

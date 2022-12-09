@@ -2,11 +2,8 @@ use crate::types::*;
 
 use glob::glob;
 
-use solc_wrapper::Solc;
-use solc_wrapper::Ast;
-use solc_wrapper::Node;
+struct Ast;
 
-use crate::{declare_rule, lint_result};
 
 pub struct SolidFile {
     pub data: Ast,
