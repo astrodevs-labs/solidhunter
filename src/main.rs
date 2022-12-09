@@ -1,7 +1,5 @@
 mod linter;
 mod types;
-mod rules;
-mod builtin_rules;
 
 use solc_wrapper::Solc;
 
