@@ -285,6 +285,7 @@ pub enum NodeType {
     YulIf,
     YulSwitch,
     YulVariableDeclaration,
+    YulCase,
 
     // Yul expressions
     YulFunctionCall,
@@ -359,6 +360,10 @@ pub struct StructuredDocumentation {
     text: String,
     #[serde(rename = "nodeType")]
     node_type: NodeType
+}
+
+pub struct StructureFunction {
+    function: IdentifierPath
 }
 
 pub enum SourceUnitChildNodes {
@@ -890,230 +895,318 @@ suffix?: "slot" | "offset";
 flags?: "memory-safe"[];
 nodeType: "InlineAssembly";
 }
-export interface YulBlock {
-src: SourceLocation;
-statements: YulStatement[];
-nodeType: "YulBlock";
+
+//export interface PlaceholderStatement {
+//id: number;
+//src: SourceLocation;
+//documentation?: string;
+//nodeType: "PlaceholderStatement";
+//}
+
+pub struct PlaceholderStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::PlaceholderStatement
 }
-export interface YulAssignment {
-src: SourceLocation;
-value: YulExpression;
-variableNames: YulIdentifier[];
-nodeType: "YulAssignment";
+
+//export interface Return {
+//id: number;
+//src: SourceLocation;
+//documentation?: string;
+//expression?: Expression | null;
+//functionReturnParameters: number;
+//nodeType: "Return";
+//}
+
+pub struct Return {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    expression: Option<Expression>,                 //TODO: Faire expression + multiples types
+    #[serde(rename = "functionReturnParameters")]
+    function_return_parameters: usize,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::Return
 }
-export interface YulFunctionCall {
-src: SourceLocation;
-arguments: YulExpression[];
-functionName: YulIdentifier;
-nodeType: "YulFunctionCall";
+
+//export interface RevertStatement {
+//id: number;
+//src: SourceLocation;
+//documentation?: string;
+//errorCall: FunctionCall;
+//nodeType: "RevertStatement";
+//}
+
+pub struct RevertStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "errorCall")]
+    error_call: NodeType::FunctionCall,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::RevertStatement
 }
-export interface YulIdentifier {
-src: SourceLocation;
-name: string;
-nodeType: "YulIdentifier";
+
+//export interface TryStatement {
+//id: number;
+//src: SourceLocation;
+//documentation?: string;
+//clauses: TryCatchClause[];
+//externalCall: FunctionCall;
+//nodeType: "TryStatement";
+//}
+
+pub struct TryStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    clauses: Vec<TryCatchClause>,
+    #[serde(rename = "externalCall")]
+    external_call: NodeType::FunctionCall,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::TryStatement
 }
-export interface YulLiteralValue {
-src: SourceLocation;
-value: string;
-kind: "number" | "string" | "bool";
-type: string;
-nodeType: "YulLiteral";
+
+//export interface TryCatchClause {
+//id: number;
+//src: SourceLocation;
+//block: Block;
+//errorName: string;
+//parameters?: ParameterList | null;
+//nodeType: "TryCatchClause";
+//}
+
+pub struct TryCatchClause {
+    id: usize,
+    src: SourceLocation,
+    block: NodeType::Block,
+    #[serde(rename = "errorName")]
+    error_name: String,
+    parameters: Option<NodeType::ParameterList>,         //TODO: Multiple types
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::TryCatchClause
 }
-export interface YulLiteralHexValue {
-src: SourceLocation;
-hexValue: string;
-kind: "number" | "string" | "bool";
-type: string;
-value?: string;
-nodeType: "YulLiteral";
+
+//export interface UncheckedBlock {
+//id: number;
+//src: SourceLocation;
+//documentation?: string;
+//statements: Statement[];
+//nodeType: "UncheckedBlock";
+//}
+
+pub struct UncheckedBlock {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    statements: Vec<Statement>,                 //TODO: Faire Statement
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::UncheckedBlock
 }
-export interface YulBreak {
-src: SourceLocation;
-nodeType: "YulBreak";
+
+//export interface WhileStatement {
+//id: number;
+//src: SourceLocation;
+//documentation?: string;
+//body: Block | Statement;
+//condition: Expression;
+//nodeType: "WhileStatement";
+//}
+
+pub struct WhileStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    body: NodeType::Block,                          //TODO: Multiple types
+    condition: Expresion,                           //TODO: Faire expression
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::WhileStatement
 }
-export interface YulContinue {
-src: SourceLocation;
-nodeType: "YulContinue";
+
+//export interface ModifierInvocation {
+//id: number;
+//src: SourceLocation;
+//arguments?: Expression[] | null;
+//kind?: "modifierInvocation" | "baseConstructorSpecifier";
+//modifierName: Identifier | IdentifierPath;
+//nodeType: "ModifierInvocation";
+//}
+
+pub struct ModifierInvocation {
+    id: usize,
+    src: SourceLocation,
+    arguments: Option<Expresion>,                   //TODO: Faire expression + multiple types
+    kind: Option<NodeType::ModifierInvocation>,     //TODO: Multiple types
+    #[serde(rename = "modifierName")]
+    modifier_name: Identifier,                       //TODO: Multiple types
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::ModifierInvocation
 }
-export interface YulExpressionStatement {
-src: SourceLocation;
-expression: YulExpression;
-nodeType: "YulExpressionStatement";
+
+//export interface ModifierDefinition {
+//id: number;
+//src: SourceLocation;
+//name: string;
+//nameLocation?: string;
+//baseModifiers?: number[] | null;
+//body: Block;
+//documentation?: StructuredDocumentation | null;
+//overrides?: OverrideSpecifier | null;
+//parameters: ParameterList;
+//virtual: boolean;
+//visibility: Visibility;
+//nodeType: "ModifierDefinition";
+//}
+
+pub struct ModifierDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    #[serde(rename = "baseModifiers")]
+    base_modifiers: Option<Vec<usize>>,                 //TODO: Multiple types
+    body: NodeType::Block,
+    documentation: Option<StructuredDocumentation>,     //TODO: Multiple types
+    overrides: Option<OverrideSpecifier>,               //TODO: Multiple types
+    parameters: NodeType::ParameterList,
+    #[serde(rename = "isVirtual")]
+    is_virtual: bool,                                    //TODO: J'ai rename en isVirtual car virtual ne marchait pas
+    visibility: Visibility,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::ModifierDefinition
 }
-export interface YulLeave {
-src: SourceLocation;
-nodeType: "YulLeave";
+
+//export interface StructDefinition {
+//id: number;
+//src: SourceLocation;
+//name: string;
+//nameLocation?: string;
+//canonicalName: string;
+//members: VariableDeclaration[];
+//scope: number;
+//visibility: Visibility;
+//nodeType: "StructDefinition";
+//}
+
+pub struct StructDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    #[serde(rename = "canonicalName")]
+    canonical_name: String,
+    members: Vec<VariableDeclaration>,
+    scope: usize,
+    visibility: Visibility,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::StructDefinition
 }
-export interface YulForLoop {
-src: SourceLocation;
-body: YulBlock;
-condition: YulExpression;
-post: YulBlock;
-pre: YulBlock;
-nodeType: "YulForLoop";
+
+//export interface UserDefinedValueTypeDefinition {
+//id: number;
+//src: SourceLocation;
+//name: string;
+//nameLocation?: string;
+//canonicalName?: string;
+//underlyingType: TypeName;
+//nodeType: "UserDefinedValueTypeDefinition";
+//}
+
+pub struct UserDefinedValueTypeDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    #[serde(rename = "canonicalName")]
+    canonical_name: Option<String>,
+    #[serde(rename = "underlyingType")]
+    underlying_type: TypeName,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::UserDefinedValueTypeDefinition
 }
-export interface YulFunctionDefinition {
-src: SourceLocation;
-body: YulBlock;
-name: string;
-parameters: YulTypedName[];
-returnVariables: YulTypedName[];
-nodeType: "YulFunctionDefinition";
+
+
+//export interface UsingForDirective {
+//id: number;
+//src: SourceLocation;
+//functionList?: {
+//function: IdentifierPath;
+//}[];
+//global?: boolean;
+//libraryName?: UserDefinedTypeName | IdentifierPath;
+//typeName?: TypeName | null;
+//nodeType: "UsingForDirective";
+//}
+
+pub struct UsingForDirective {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "functionList")]
+    function_list: Option<Vec<StructureFunction>>,
+    function: IdentifierPath,
+    global: Option<bool>,
+    //#[serde(rename = "libraryName")]
+    // library_name: Option<UserDefinedTypeName>  //TODO: Multiple types
+    //#[serde(rename = "typeName")]
+    // type_name: Option<TypeName>  //TODO: Multiple types
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::UsingForDirective
 }
-export interface YulTypedName {
-src: SourceLocation;
-name: string;
-type: string;
-nodeType: "YulTypedName";
+
+
+//export interface ImportDirective {
+//id: number;
+//src: SourceLocation;
+//absolutePath: string;
+//file: string;
+//nameLocation?: string;
+//scope: number;
+//sourceUnit: number;
+//symbolAliases: {
+//foreign: Identifier;
+//local?: string | null;
+//nameLocation?: string;
+//}[];
+//unitAlias: string;
+//nodeType: "ImportDirective";
+//}
+//
+
+pub struct ImportDirective {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "absolutePath")]
+    absolute_path: String,
+    file: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    scope: usize,
+    #[serde(rename = "sourceUnit")]
+    source_unit: usize,
+    #[serde(rename = "symbolAliases")]
+    symbol_aliases: SymbolAliases,
+    #[serde(rename = "unitAlias")]
+    unit_alias: String,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::ImportDirective,
 }
-export interface YulIf {
-src: SourceLocation;
-body: YulBlock;
-condition: YulExpression;
-nodeType: "YulIf";
-}
-export interface YulSwitch {
-src: SourceLocation;
-cases: YulCase[];
-expression: YulExpression;
-nodeType: "YulSwitch";
-}
-export interface YulCase {
-src: SourceLocation;
-body: YulBlock;
-value: "default" | YulLiteral;
-nodeType: "YulCase";
-}
-export interface YulVariableDeclaration {
-src: SourceLocation;
-value?: YulExpression | null;
-variables: YulTypedName[];
-nodeType: "YulVariableDeclaration";
-}
-export interface PlaceholderStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-nodeType: "PlaceholderStatement";
-}
-export interface Return {
-id: number;
-src: SourceLocation;
-documentation?: string;
-expression?: Expression | null;
-functionReturnParameters: number;
-nodeType: "Return";
-}
-export interface RevertStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-errorCall: FunctionCall;
-nodeType: "RevertStatement";
-}
-export interface TryStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-clauses: TryCatchClause[];
-externalCall: FunctionCall;
-nodeType: "TryStatement";
-}
-export interface TryCatchClause {
-id: number;
-src: SourceLocation;
-block: Block;
-errorName: string;
-parameters?: ParameterList | null;
-nodeType: "TryCatchClause";
-}
-export interface UncheckedBlock {
-id: number;
-src: SourceLocation;
-documentation?: string;
-statements: Statement[];
-nodeType: "UncheckedBlock";
-}
-export interface WhileStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-body: Block | Statement;
-condition: Expression;
-nodeType: "WhileStatement";
-}
-export interface ModifierInvocation {
-id: number;
-src: SourceLocation;
-arguments?: Expression[] | null;
-kind?: "modifierInvocation" | "baseConstructorSpecifier";
-modifierName: Identifier | IdentifierPath;
-nodeType: "ModifierInvocation";
-}
-export interface ModifierDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-baseModifiers?: number[] | null;
-body: Block;
-documentation?: StructuredDocumentation | null;
-overrides?: OverrideSpecifier | null;
-parameters: ParameterList;
-virtual: boolean;
-visibility: Visibility;
-nodeType: "ModifierDefinition";
-}
-export interface StructDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-canonicalName: string;
-members: VariableDeclaration[];
-scope: number;
-visibility: Visibility;
-nodeType: "StructDefinition";
-}
-export interface UserDefinedValueTypeDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-canonicalName?: string;
-underlyingType: TypeName;
-nodeType: "UserDefinedValueTypeDefinition";
-}
-export interface UsingForDirective {
-id: number;
-src: SourceLocation;
-functionList?: {
-function: IdentifierPath;
-}[];
-global?: boolean;
-libraryName?: UserDefinedTypeName | IdentifierPath;
-typeName?: TypeName | null;
-nodeType: "UsingForDirective";
-}
-export interface ImportDirective {
-id: number;
-src: SourceLocation;
-absolutePath: string;
-file: string;
-nameLocation?: string;
-scope: number;
-sourceUnit: number;
-symbolAliases: {
-foreign: Identifier;
-local?: string | null;
-nameLocation?: string;
-}[];
-unitAlias: string;
-nodeType: "ImportDirective";
-}
-export interface PragmaDirective {
-id: number;
-src: SourceLocation;
-literals: string[];
-nodeType: "PragmaDirective";
+
+//export interface PragmaDirective {
+//id: number;
+//src: SourceLocation;
+//literals: string[];
+//nodeType: "PragmaDirective";
+//}
+
+pub struct PragmaDirective {
+    id: usize,
+    src: SourceLocation,
+    literals: Vec<String>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType::PragmaDirective,
 }
