@@ -1,11 +1,11 @@
 pub struct LintResult {
-    pub errors : Vec<ResultElem>,
-    pub warnings : Vec<ResultElem>,
-    pub infos : Vec<ResultElem>,
-    pub hints : Vec<ResultElem>,
+    pub errors : Vec<LintDiag>,
+    pub warnings : Vec<LintDiag>,
+    pub infos : Vec<LintDiag>,
+    pub hints : Vec<LintDiag>,
 }
 
-pub struct ResultElem {
+pub struct LintDiag {
 
     /// The range at which the message applies.
     pub range: Range,
