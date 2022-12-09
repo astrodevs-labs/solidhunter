@@ -239,6 +239,52 @@ pub enum FunctionDefinitionKind {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TypeName {
+    ArrayTypeName(Box<ArrayTypeName>),
+    ElementaryTypeName(Box<ElementaryTypeName>),
+    FunctionTypeName(Box<FunctionTypeName>),
+    Mapping(Box<Mapping>),
+    UserDefinedTypeName(Box<UserDefinedTypeName>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Expression {
+    Assignment(Box<Assignment>),
+    BinaryOperation(Box<BinaryOperation>),
+    Conditional(Box<Conditional>),
+    ElementaryTypeNameExpression(Box<ElementaryTypeNameExpression>),
+    FunctionCall(Box<FunctionCall>),
+    FunctionCallOptions(Box<FunctionCallOptions>),
+    Identifier(Box<Identifier>),
+    IndexAccess(Box<IndexAccess>),
+    IndexRangeAccess(Box<IndexRangeAccess>),
+    Literal(Box<Literal>),
+    MemberAccess(Box<MemberAccess>),
+    NewExpression(Box<NewExpression>),
+    TupleExpression(Box<TupleExpression>),
+    UnaryOperation(Box<UnaryOperation>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Statement {
+    Block(Box<Block>),
+    Break(Box<Break>),
+    Continue(Box<Continue>),
+    DoWhileStatement(Box<DoWhileStatement>),
+    EmitStatement(Box<EmitStatement>),
+    ExpressionStatement(Box<ExpressionStatement>),
+    ForStatement(Box<ForStatement>),
+    IfStatement(Box<IfStatement>),
+    PlaceholderStatement(Box<PlaceholderStatement>),
+    Return(Box<Return>),
+    RevertStatement(Box<RevertStatement>),
+    TryStatement(Box<TryStatement>),
+    UncheckedBlock(Box<UncheckedBlock>),
+    VariableDeclarationStatement(Box<VariableDeclarationStatement>),
+    WhileStatement(Box<WhileStatement>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NodeType {
     // Expressions
     Assignment,
@@ -365,22 +411,24 @@ pub struct StructuredDocumentation {
     src: SourceLocation,
     text: String,
     #[serde(rename = "nodeType")]
-    node_type: NodeType
+    node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructureFunction {
     function: IdentifierPath
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum SourceUnitChildNodes {
-    ContractDefinition,
-    StructDefinition,
-    EnumDefinition,
-    ErrorDefinition,
-    UsingForDirective,
-    PragmaDirective,
-    ImportDirective,
+    ContractDefinition(Box<ContractDefinition>),
+    StructDefinition(Box<StructDefinition>),
+    EnumDefinition(Box<EnumDefinition>),
+    ErrorDefinition(Box<ErrorDefinition>),
+    UsingForDirective(Box<UsingForDirective>),
+    PragmaDirective(Box<PragmaDirective>),
+    ImportDirective(Box<ImportDirective>),
     Other(String)
 }
 
@@ -391,7 +439,7 @@ pub struct SourceUnit {
     #[serde(rename = "absolutePath")]
     absolute_path: String,
     #[serde(rename = "exportedSymbols")]
-    exported_symbols: HashMap<String, Vec<String>>,
+    exported_symbols: Option<HashMap<String, Vec<String>>>,
     #[serde(rename = "license", skip_serializing_if = "Option::is_none")]
     license: Option<String>,
     #[serde(rename = "nodes")]
@@ -401,16 +449,28 @@ pub struct SourceUnit {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum ContractDefinitionChildNodes {
-    EnumDefinition,
-    ErrorDefinition,
-    EventDefinition,
-    FunctionDefinition,
-    ModifierDefinition,
-    StructDefinition,
-    UserDefinedValueTypeDefinition,
-    UsingForDirective,
-    VariableDeclaration
+    FunctionDefinition(Box<FunctionDefinition>),
+    ModifierDefinition(Box<ModifierDefinition>),
+    StructDefinition(Box<StructDefinition>),
+    UserDefinedValueTypeDefinition(Box<UserDefinedValueTypeDefinition>),
+    UsingForDirective(Box<UsingForDirective>),
+    VariableDeclaration(Box<VariableDeclaration>),
+    EnumDefinition(Box<EnumDefinition>),
+    ErrorDefinition(Box<ErrorDefinition>),
+    EventDefinition(Box<EventDefinition>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ContractKind {
+    #[serde(rename = "contract")]
+    Contract,
+    #[serde(rename = "interface")]
+    Interface,
+    #[serde(rename = "library")]
+    Library,
+    Other(String)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -433,13 +493,13 @@ pub struct ContractDefinition {
     #[serde(rename = "documentation", skip_serializing_if = "Option::is_none")]
     documentation: Option<StructuredDocumentation>,
     #[serde(rename = "fullyImplemented")]
-    is_fully_implemented: bool,
+    is_fully_implemented: Option<bool>,
     #[serde(rename = "linearizedBaseContracts")]
-    linearized_base_contracts: Vec<usize>,
+    linearized_base_contracts: Option<Vec<usize>>,
     #[serde(rename = "nodes")]
     nodes: Vec<ContractDefinitionChildNodes>,
     #[serde(rename = "scope")]
-    scope: usize,
+    scope: Option<usize>,
     #[serde(rename = "usedErrors")]
     used_errors: Vec<usize>,
     #[serde(rename = "nodeType")]
@@ -447,6 +507,7 @@ pub struct ContractDefinition {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum BaseName {
     UserDefinedTypeName(UserDefinedTypeName),
     IdentifierPath(IdentifierPath),
@@ -464,7 +525,8 @@ pub struct InheritanceSpecifier {
     node_type: NodeType,
 }
 
-pub struct Assigment {
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Assignment {
     id: usize,
     src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
@@ -788,9 +850,9 @@ pub struct FunctionTypeName {
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "parameterTypes")]
-    parameter_types: ParametersList,
+    parameter_types: ParameterList,
     #[serde(rename = "returnParameterTypes")]
-    return_parameter_types: ParametersList,
+    return_parameter_types: ParameterList,
     #[serde(rename = "stateMutability")]
     state_mutability: StateMutability,
     visibility: Visibility,
@@ -823,8 +885,8 @@ pub struct VariableDeclaration {
     function_selector: Option<String>,
     indexed: Option<bool>,
     mutability: Mutability,
-    overrides: Option<OverridesSpecifier>,
-    scope: usize,
+    overrides: Option<OverrideSpecifier>,
+    scope: Option<usize>,
     #[serde(rename = "stateVariable")]
     state_variable: bool,
     #[serde(rename = "storageLocation")]
@@ -840,6 +902,8 @@ pub struct VariableDeclaration {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum OverridesEnum {
     UserDefinedTypeName(Vec<UserDefinedTypeName>),
     Identifier(Vec<IdentifierPath>),
@@ -990,7 +1054,7 @@ pub struct FunctionDefinition {
     #[serde(rename = "functionSelector")]
     function_selector: Option<String>,
     implemented: bool,
-    kind: FunctionKind,
+    kind: FunctionDefinitionKind,
     modifiers: Vec<ModifierInvocation>,
     overrides: Option<OverrideSpecifier>,
     parameters: ParameterList,
@@ -1036,9 +1100,11 @@ pub struct Continue {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum Body {
-    Block(Block),
-    Statement(Statement),
+    Block(Box<Block>),
+    Statement(Box<Statement>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1076,6 +1142,7 @@ pub struct ExpressionStatement {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum InitializationExpression {
     ExpressionStatement(ExpressionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement)
@@ -1110,6 +1177,8 @@ pub struct VariableDeclarationStatement {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum IfStatementBody {
     Block(Block),
     Statement(Statement),
@@ -1130,30 +1199,16 @@ pub struct IfStatement {
     node_type: NodeType,
 }
 
-//export interface PlaceholderStatement {
-//id: number;
-//src: SourceLocation;
-//documentation?: string;
-//nodeType: "PlaceholderStatement";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PlaceholderStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::PlaceholderStatement
+    node_type: NodeType,
 }
 
-//export interface Return {
-//id: number;
-//src: SourceLocation;
-//documentation?: string;
-//expression?: Expression | null;
-//functionReturnParameters: number;
-//nodeType: "Return";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Return {
     id: usize,
     src: SourceLocation,
@@ -1162,138 +1217,78 @@ pub struct Return {
     #[serde(rename = "functionReturnParameters")]
     function_return_parameters: usize,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::Return
+    node_type: NodeType,
 }
 
-//export interface RevertStatement {
-//id: number;
-//src: SourceLocation;
-//documentation?: string;
-//errorCall: FunctionCall;
-//nodeType: "RevertStatement";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RevertStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     #[serde(rename = "errorCall")]
-    error_call: NodeType::FunctionCall,
+    error_call: NodeType,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::RevertStatement
+    node_type: NodeType,
 }
 
-//export interface TryStatement {
-//id: number;
-//src: SourceLocation;
-//documentation?: string;
-//clauses: TryCatchClause[];
-//externalCall: FunctionCall;
-//nodeType: "TryStatement";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TryStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     clauses: Vec<TryCatchClause>,
     #[serde(rename = "externalCall")]
-    external_call: NodeType::FunctionCall,
+    external_call: NodeType,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::TryStatement
+    node_type: NodeType,
 }
 
-//export interface TryCatchClause {
-//id: number;
-//src: SourceLocation;
-//block: Block;
-//errorName: string;
-//parameters?: ParameterList | null;
-//nodeType: "TryCatchClause";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TryCatchClause {
     id: usize,
     src: SourceLocation,
-    block: NodeType::Block,
+    block: NodeType,
     #[serde(rename = "errorName")]
     error_name: String,
-    parameters: Option<NodeType::ParameterList>,         //TODO: Multiple types
+    parameters: Option<NodeType>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::TryCatchClause
+    node_type: NodeType,
 }
 
-//export interface UncheckedBlock {
-//id: number;
-//src: SourceLocation;
-//documentation?: string;
-//statements: Statement[];
-//nodeType: "UncheckedBlock";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UncheckedBlock {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     statements: Vec<Statement>,                 //TODO: Faire Statement
     #[serde(rename = "nodeType")]
-    node_type: NodeType::UncheckedBlock
+    node_type: NodeType,
 }
 
-//export interface WhileStatement {
-//id: number;
-//src: SourceLocation;
-//documentation?: string;
-//body: Block | Statement;
-//condition: Expression;
-//nodeType: "WhileStatement";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WhileStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
-    body: NodeType::Block,                          //TODO: Multiple types
-    condition: Expresion,                           //TODO: Faire expression
+    body: NodeType,
+    condition: Expression,                           //TODO: Faire expression
     #[serde(rename = "nodeType")]
-    node_type: NodeType::WhileStatement
+    node_type: NodeType,
 }
 
-//export interface ModifierInvocation {
-//id: number;
-//src: SourceLocation;
-//arguments?: Expression[] | null;
-//kind?: "modifierInvocation" | "baseConstructorSpecifier";
-//modifierName: Identifier | IdentifierPath;
-//nodeType: "ModifierInvocation";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierInvocation {
     id: usize,
     src: SourceLocation,
-    arguments: Option<Expresion>,                   //TODO: Faire expression + multiple types
-    kind: Option<NodeType::ModifierInvocation>,     //TODO: Multiple types
+    arguments: Option<Expression>,                   //TODO: Faire expression + multiple types
+    kind: Option<NodeType>,
     #[serde(rename = "modifierName")]
     modifier_name: Identifier,                       //TODO: Multiple types
     #[serde(rename = "nodeType")]
-    node_type: NodeType::ModifierInvocation
+    node_type: NodeType,
 }
 
-//export interface ModifierDefinition {
-//id: number;
-//src: SourceLocation;
-//name: string;
-//nameLocation?: string;
-//baseModifiers?: number[] | null;
-//body: Block;
-//documentation?: StructuredDocumentation | null;
-//overrides?: OverrideSpecifier | null;
-//parameters: ParameterList;
-//virtual: boolean;
-//visibility: Visibility;
-//nodeType: "ModifierDefinition";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierDefinition {
     id: usize,
     src: SourceLocation,
@@ -1302,29 +1297,18 @@ pub struct ModifierDefinition {
     name_location: Option<String>,
     #[serde(rename = "baseModifiers")]
     base_modifiers: Option<Vec<usize>>,                 //TODO: Multiple types
-    body: NodeType::Block,
+    body: NodeType,
     documentation: Option<StructuredDocumentation>,     //TODO: Multiple types
     overrides: Option<OverrideSpecifier>,               //TODO: Multiple types
-    parameters: NodeType::ParameterList,
+    parameters: NodeType,
     #[serde(rename = "isVirtual")]
     is_virtual: bool,                                    //TODO: J'ai rename en isVirtual car virtual ne marchait pas
     visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::ModifierDefinition
+    node_type: NodeType,
 }
 
-//export interface StructDefinition {
-//id: number;
-//src: SourceLocation;
-//name: string;
-//nameLocation?: string;
-//canonicalName: string;
-//members: VariableDeclaration[];
-//scope: number;
-//visibility: Visibility;
-//nodeType: "StructDefinition";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructDefinition {
     id: usize,
     src: SourceLocation,
@@ -1337,19 +1321,10 @@ pub struct StructDefinition {
     scope: usize,
     visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::StructDefinition
+    node_type: NodeType,
 }
 
-//export interface UserDefinedValueTypeDefinition {
-//id: number;
-//src: SourceLocation;
-//name: string;
-//nameLocation?: string;
-//canonicalName?: string;
-//underlyingType: TypeName;
-//nodeType: "UserDefinedValueTypeDefinition";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UserDefinedValueTypeDefinition {
     id: usize,
     src: SourceLocation,
@@ -1361,22 +1336,10 @@ pub struct UserDefinedValueTypeDefinition {
     #[serde(rename = "underlyingType")]
     underlying_type: TypeName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::UserDefinedValueTypeDefinition
+    node_type: NodeType,
 }
 
-
-//export interface UsingForDirective {
-//id: number;
-//src: SourceLocation;
-//functionList?: {
-//function: IdentifierPath;
-//}[];
-//global?: boolean;
-//libraryName?: UserDefinedTypeName | IdentifierPath;
-//typeName?: TypeName | null;
-//nodeType: "UsingForDirective";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UsingForDirective {
     id: usize,
     src: SourceLocation,
@@ -1389,28 +1352,17 @@ pub struct UsingForDirective {
     //#[serde(rename = "typeName")]
     // type_name: Option<TypeName>  //TODO: Multiple types
     #[serde(rename = "nodeType")]
-    node_type: NodeType::UsingForDirective
+    node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SymbolAliases {
+    foreign: Identifier,
+    local: Option<String>,
+    name_location: Option<String>,
+}
 
-//export interface ImportDirective {
-//id: number;
-//src: SourceLocation;
-//absolutePath: string;
-//file: string;
-//nameLocation?: string;
-//scope: number;
-//sourceUnit: number;
-//symbolAliases: {
-//foreign: Identifier;
-//local?: string | null;
-//nameLocation?: string;
-//}[];
-//unitAlias: string;
-//nodeType: "ImportDirective";
-//}
-//
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImportDirective {
     id: usize,
     src: SourceLocation,
@@ -1427,21 +1379,48 @@ pub struct ImportDirective {
     #[serde(rename = "unitAlias")]
     unit_alias: String,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::ImportDirective,
+    node_type: NodeType,
 }
 
-//export interface PragmaDirective {
-//id: number;
-//src: SourceLocation;
-//literals: string[];
-//nodeType: "PragmaDirective";
-//}
-
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PragmaDirective {
     id: usize,
     src: SourceLocation,
     literals: Vec<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::PragmaDirective,
+    node_type: NodeType,
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_correct_EnumValue_parsing() -> Result<(), String> {
+        let ast = r#"{
+            "id":2,
+            "name": "item1",
+            "nameLocation": "72:5:0",
+            "nodeType": "EnumValue",
+            "src": "72:5:0"}"#;
+        let res = serde_json::from_str::<EnumValue>(ast)?;
+        assert_!(res.name == "item1");
+        assert_!(res.name_location == Some("72:5:0".to_string()));
+        assert_!(res.node_type == NodeType::EnumValue);
+    }
+
+    #[test]
+    fn test_skip_output_header() {
+        let output = r#"ok ======= test ====== \n awesome {
+            "contracts": {},
+            "sources": {},
+            "errors": []
+        }"#;
+        let expected = r#"{
+            "contracts": {},
+            "sources": {},
+            "errors": []
+        }"#;
+        assert_eq!(Solc::skip_output_header(output), expected);
+    }
+}
