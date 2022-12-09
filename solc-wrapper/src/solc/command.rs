@@ -1,7 +1,9 @@
-use std::{process::Command, io};
+use std::{process::Command};
 use std::io::Write;
 use std::process::{Output, Stdio};
 use std::{path::PathBuf};
+
+use super::error::{CommandError, CommandType};
 
 pub struct SolcCommand {
     args: Vec<String>,
@@ -39,26 +41,26 @@ impl SolcCommand {
         self
     }
 
-    pub fn execute(&self) -> Result<Output, io::Error> {
-        println!("{:?}", self.bin_path);
+    pub fn execute(&self) -> Result<Output, CommandError> {
         Command::new(&self.bin_path)
             .args(&self.args)
             .stdout(Stdio::piped())
             .output()
-
+            .map_err(|e| CommandError { error: e.to_string(), command_type: CommandType::ParseFile })
     }
 
-    pub fn execute_with_input(&self, input: &str) -> Result<Output, io::Error> {
+    pub fn execute_with_input(&self, input: &str) -> Result<Output, CommandError> {
         let mut cmd = Command::new(&self.bin_path)
             .args(&self.args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .spawn()?;
+            .spawn()
+            .map_err(|e| CommandError { error: e.to_string(), command_type: CommandType::ParseStdin })?;
 
         {
             let child_stdin = cmd.stdin.as_mut().unwrap();
-            child_stdin.write_all(input.as_bytes())?;
+            child_stdin.write_all(input.as_bytes()).map_err(|e| CommandError { error: e.to_string(), command_type: CommandType::ParseStdin })?;
         }
-        cmd.wait_with_output()
+        cmd.wait_with_output().map_err(|e| CommandError { error: e.to_string(), command_type: CommandType::ParseStdin })
     }
 }

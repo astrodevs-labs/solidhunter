@@ -1,11 +1,11 @@
-use svm_lib::SolcVmError;
-use thiserror;
-use crate::solc::error::CommandError;
+use thiserror::Error;
+use crate::{solc::error::CommandError, version::error::SolcVersionError, ast::error::AstError};
+use anyhow;
 
-#[derive(thiserror::Error, Debug)]
+#[derive(Error, Debug)]
 pub enum SolcError {
     #[error("Something went wrong with sevm")]
-    SevmFailed,
+    SevmFailed(#[from] SolcVersionError),
 
     #[error("Error from solc")]
     SolcFailed(#[from] CommandError),
@@ -13,12 +13,12 @@ pub enum SolcError {
     #[error("Can't do the compuation")]
     ComputationFailed,
 
-    #[error("Cannot parse the AST")]
-    SerdeJsonError(#[from] serde_json::Error)
-}
+    #[error("Error from ast pasing")]
+    AstFailed(#[from] AstError),
 
-impl std::convert::From<SolcVmError> for SolcError {
-    fn from(err: SolcVmError) -> Self {
-        SolcError::SevmFailed
-    }
+    #[error("Output is empty")]
+    OutputIsEmpty,
+
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }
