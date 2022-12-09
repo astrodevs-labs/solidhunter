@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use semver::Op;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -196,7 +197,7 @@ pub enum FunctionCallKind {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum LitteralKind {
+pub enum LiteralKind {
     #[serde(rename = "number")]
     Number,
 
@@ -237,6 +238,7 @@ pub enum FunctionDefinitionKind {
     FreeFunction
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NodeType {
     // Expressions
     Assignment,
@@ -324,6 +326,7 @@ pub enum NodeType {
     Other(String),
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EnumDefinition {
     id: usize,
     src: SourceLocation,
@@ -337,6 +340,7 @@ pub struct EnumDefinition {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EnumValue {
     id: usize,
     src: SourceLocation,
@@ -347,6 +351,7 @@ pub struct EnumValue {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TypeDescriptions {
     #[serde(rename = "typeIdentifier", skip_serializing_if = "Option::is_none")]
     type_identifier: Option<String>,
@@ -354,6 +359,7 @@ pub struct TypeDescriptions {
     type_string: Option<String>
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructuredDocumentation {
     id: usize,
     src: SourceLocation,
@@ -366,6 +372,7 @@ pub struct StructureFunction {
     function: IdentifierPath
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SourceUnitChildNodes {
     ContractDefinition,
     StructDefinition,
@@ -377,6 +384,7 @@ pub enum SourceUnitChildNodes {
     Other(String)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SourceUnit {
     id: usize,
     src: SourceLocation,
@@ -390,510 +398,736 @@ pub struct SourceUnit {
     nodes: Vec<SourceUnitChildNodes>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
-    #[serde(rename = "symbolAliases")]
-    symbol_aliases: Vec<SymbolAlias>,
-    #[serde(rename = "symbolDependencies")]
-    symbol_dependencies: Vec<SymbolDependency>,
-    #[serde(rename = "symbolMapping")]
-    symbol_mapping: HashMap<String, Vec<String>>,
-    #[serde(rename = "usedSymbols")]
-    used_symbols: HashMap<String, Vec<String>>
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ContractDefinitionChildNodes {
+    EnumDefinition,
+    ErrorDefinition,
+    EventDefinition,
+    FunctionDefinition,
+    ModifierDefinition,
+    StructDefinition,
+    UserDefinedValueTypeDefinition,
+    UsingForDirective,
+    VariableDeclaration
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ContractDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation", skip_serializing_if = "Option::is_none")]
+    name_location: Option<String>,
+    #[serde(rename = "abstract")]
+    is_abstract: bool,
+    #[serde(rename = "baseContracts")]
+    base_contracts: Vec<InheritanceSpecifier>,
+    #[serde(rename = "canonicalName", skip_serializing_if = "Option::is_none")]
+    canonical_name: Option<String>,
+    #[serde(rename = "contractDependencies")]
+    contract_dependencies: Vec<usize>,
+    #[serde(rename = "contractKind")]
+    contract_kind: ContractKind,
+    #[serde(rename = "documentation", skip_serializing_if = "Option::is_none")]
+    documentation: Option<StructuredDocumentation>,
+    #[serde(rename = "fullyImplemented")]
+    is_fully_implemented: bool,
+    #[serde(rename = "linearizedBaseContracts")]
+    linearized_base_contracts: Vec<usize>,
+    #[serde(rename = "nodes")]
+    nodes: Vec<ContractDefinitionChildNodes>,
+    #[serde(rename = "scope")]
+    scope: usize,
+    #[serde(rename = "usedErrors")]
+    used_errors: Vec<usize>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BaseName {
+    UserDefinedTypeName(UserDefinedTypeName),
+    IdentifierPath(IdentifierPath),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct InheritanceSpecifier {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "arguments")]
+    arguments: Option<Vec<Expression>>,
+    #[serde(rename = "baseName")]
+    base_name: BaseName,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+pub struct Assigment {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "leftHandSide")]
+    left_hand_side: Expression,
+    operator: AssignmentOperator,
+    #[serde(rename = "rightHandSide")]
+    right_hand_side: Expression,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct BinaryOperation {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "commonType")]
+    common_type: TypeDescriptions,
+    #[serde(rename = "leftExpression")]
+    left_expression: Expression,
+    operator: BinaryOperator,
+    #[serde(rename = "rightExpression")]
+    right_expression: Expression,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Conditional {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "condition")]
+    condition: Expression,
+    #[serde(rename = "falseExpression")]
+    false_expression: Expression,
+    #[serde(rename = "trueExpression")]
+    true_expression: Expression,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ElementaryTypeNameExpression {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "typeName")]
+    type_name: ElementaryTypeName,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ElementaryTypeName {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    name: String,
+    #[serde(rename = "stateMutability")]
+    state_mutability: Option<StateMutability>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FunctionCall {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "arguments")]
+    arguments: Vec<Expression>,
+    #[serde(rename = "expression")]
+    expression: Expression,
+    kind: FunctionCallKind,
+    names: Vec<String>,
+    #[serde(rename = "tryCall")]
+    try_call: bool,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FunctionCallOptions {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    expression: Expression,
+    names: Vec<String>,
+    options: Vec<Expression>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Identifier {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    name: String,
+    #[serde(rename = "overloadedDeclarations")]
+    overloaded_declarations: Vec<usize>,
+    #[serde(rename = "referencedDeclaration")]
+    referenced_declaration: Option<usize>,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IndexAccess {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "baseExpression")]
+    base_expression: Expression,
+    #[serde(rename = "indexExpression", skip_serializing_if = "Option::is_none")]
+    index_expression: Option<Expression>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IndexRangeAccess {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "baseExpression")]
+    base_expression: Expression,
+    #[serde(rename = "endExpression", skip_serializing_if = "Option::is_none")]
+    end_expression: Option<Expression>,
+    #[serde(rename = "startExpression", skip_serializing_if = "Option::is_none")]
+    start_expression: Option<Expression>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Literal {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "hexValue")]
+    hex_value: String,
+    kind: LiteralKind,
+    //#[serde(rename = "subdenomination", skip_serializing_if = "Option::is_none")]
+    //subdenomination: Option<Subdenomination>,
+    value: Option<String>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MemberAccess {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "expression")]
+    expression: Expression,
+    #[serde(rename = "memberName")]
+    member_name: String,
+    #[serde(rename = "referencedDeclaration")]
+    referenced_declaration: Option<usize>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NewExpression {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "typeName")]
+    type_name: TypeName,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ArrayTypeName {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "baseType")]
+    base_type: TypeName,
+    length: Option<Expression>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FunctionTypeName {
+    id : usize,
+    src: SourceLocation,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "parameterTypes")]
+    parameter_types: ParametersList,
+    #[serde(rename = "returnParameterTypes")]
+    return_parameter_types: ParametersList,
+    #[serde(rename = "stateMutability")]
+    state_mutability: StateMutability,
+    visibility: Visibility,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ParameterList {
+    id: usize,
+    src: SourceLocation,
+    parameters: Vec<VariableDeclaration>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct VariableDeclaration {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    #[serde(rename = "baseFunctions", skip_serializing_if = "Option::is_none")]
+    base_functions: Option<Vec<usize>>,
+    #[serde(rename = "constant")]
+    is_constant: bool,
+    documentation: Option<StructuredDocumentation>,
+    #[serde(rename = "functionSelector")]
+    function_selector: Option<String>,
+    indexed: Option<bool>,
+    mutability: Mutability,
+    overrides: Option<OverridesSpecifier>,
+    scope: usize,
+    #[serde(rename = "stateVariable")]
+    state_variable: bool,
+    #[serde(rename = "storageLocation")]
+    storage_location: StorageLocation,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "typeName", skip_serializing_if = "Option::is_none")]
+    type_name: Option<TypeName>,
+    #[serde(rename = "value", skip_serializing_if = "Option::is_none")]
+    value: Option<Expression>,
+    visibility: Visibility,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+pub enum OverridesEnum {
+    UserDefinedTypeName(Vec<UserDefinedTypeName>),
+    Identifier(Vec<IdentifierPath>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct OverrideSpecifier {
+    id: usize,
+    src: SourceLocation,
+    overrides: OverridesEnum,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct UserDefinedTypeName {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    //#[serde(rename = "contractScope")]
+    //contract_scope: Option<???>,
+    name: Option<String>,
+    #[serde(rename = "pathNode")]
+    path_node: Option<IdentifierPath>,
+    #[serde(rename = "referencedDeclaration")]
+    referenced_declaration: usize,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentifierPath {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "referencedDeclaration")]
+    referenced_declaration: usize,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Mapping {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "keyType")]
+    key_type: TypeName,
+    #[serde(rename = "valueType")]
+    value_type: TypeName,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TupleExpression {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    components: Vec<Expression>,
+    #[serde(rename = "isInlineArray")]
+    is_inline_array: bool,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct UnaryOperation {
+    id: usize,
+    src: SourceLocation,
+    #[serde(rename = "argumentTypes")]
+    argument_types: Option<Vec<TypeDescriptions>>,
+    #[serde(rename = "isConstant")]
+    is_constant: bool,
+    #[serde(rename = "isLValue")]
+    is_l_value: bool,
+    #[serde(rename = "isPure")]
+    is_pure: bool,
+    #[serde(rename = "lValueRequested")]
+    l_value_requested: bool,
+    #[serde(rename = "typeDescriptions")]
+    type_descriptions: TypeDescriptions,
+    #[serde(rename = "operator")]
+    operator: UnaryOperator,
+    prefix: bool,
+    #[serde(rename = "subExpression")]
+    sub_expression: Expression,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ErrorDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: String,
+    documentation: Option<StructuredDocumentation>,
+    #[serde(rename = "errorSelector")]
+    error_selector: Option<String>,
+    parameters: Option<ParameterList>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EventDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    anonymous: bool,
+    #[serde(rename = "eventSelector")]
+    event_selector: Option<String>,
+    documentation: Option<StructuredDocumentation>,
+    parameters: Option<ParameterList>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FunctionDefinition {
+    id: usize,
+    src: SourceLocation,
+    name: String,
+    #[serde(rename = "nameLocation")]
+    name_location: Option<String>,
+    #[serde(rename = "baseFunctions")]
+    base_functions: Option<Vec<usize>>,
+    body: Option<Block>,
+    #[serde(rename = "documentation")]
+    documentation: Option<StructuredDocumentation>,
+    #[serde(rename = "functionSelector")]
+    function_selector: Option<String>,
+    implemented: bool,
+    kind: FunctionKind,
+    modifiers: Vec<ModifierInvocation>,
+    overrides: Option<OverrideSpecifier>,
+    parameters: ParameterList,
+    #[serde(rename = "returnParameters")]
+    return_parameters: ParameterList,
+    #[serde(rename = "scope")]
+    scope: usize,
+    #[serde(rename = "stateMutability")]
+    state_mutability: StateMutability,
+    #[serde(rename = "virtual")]
+    id_virtual: bool,
+    visibility: Visibility,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Block {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    statements: Option<Vec<Statement>>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
 }
 
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Break {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Continue {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
 
+pub enum Body {
+    Block(Block),
+    Statement(Statement),
+}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DoWhileStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "condition")]
+    condition: Expression,
+    #[serde(rename = "body")]
+    body: Body,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EmitStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "eventCall")]
+    event_call: FunctionCall,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExpressionStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    expression: Expression,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
+}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum InitializationExpression {
+    ExpressionStatement(ExpressionStatement),
+    VariableDeclarationStatement(VariableDeclarationStatement)
+}
 
-export interface SourceUnit {
-id: number;
-src: SourceLocation;
-absolutePath: string;
-exportedSymbols: {
-[k: string]: number[] | undefined;
-};
-license?: string | null;
-nodes: (
-| ContractDefinition
-| EnumDefinition
-| ErrorDefinition
-| FunctionDefinition
-| ImportDirective
-| PragmaDirective
-| StructDefinition
-| UserDefinedValueTypeDefinition
-| UsingForDirective
-| VariableDeclaration
-)[];
-nodeType: "SourceUnit";
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ForStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    body: Body,
+    condition: Option<Expression>,
+    #[serde(rename = "initializationExpression")]
+    initialization_expression: Option<InitializationExpression>,
+    #[serde(rename = "loopExpression")]
+    loop_expression: Option<ExpressionStatement>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
 }
-export interface ContractDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-abstract: boolean;
-baseContracts: InheritanceSpecifier[];
-canonicalName?: string;
-contractDependencies: number[];
-contractKind: "contract" | "interface" | "library";
-documentation?: StructuredDocumentation | null;
-fullyImplemented: boolean;
-linearizedBaseContracts: number[];
-nodes: (
-| EnumDefinition
-| ErrorDefinition
-| EventDefinition
-| FunctionDefinition
-| ModifierDefinition
-| StructDefinition
-| UserDefinedValueTypeDefinition
-| UsingForDirective
-| VariableDeclaration
-)[];
-scope: number;
-usedErrors?: number[];
-nodeType: "ContractDefinition";
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct VariableDeclarationStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    assignments: Vec<Option<usize>>,
+    #[serde(rename = "declarations")]
+    declarations: Vec<Option<VariableDeclaration>>,
+    #[serde(rename = "initialValue")]
+    initial_value: Option<Expression>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
 }
-export interface InheritanceSpecifier {
-id: number;
-src: SourceLocation;
-arguments?: Expression[] | null;
-baseName: UserDefinedTypeName | IdentifierPath;
-nodeType: "InheritanceSpecifier";
+
+pub enum IfStatementBody {
+    Block(Block),
+    Statement(Statement),
 }
-export interface Assignment {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-leftHandSide: Expression;
-operator: "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "|=" | "&=" | "^=" | ">>=" | "<<=";
-rightHandSide: Expression;
-nodeType: "Assignment";
-}
-export interface BinaryOperation {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-commonType: TypeDescriptions;
-leftExpression: Expression;
-operator:
-| "+"
-| "-"
-| "*"
-| "/"
-| "%"
-| "**"
-| "&&"
-| "||"
-| "!="
-| "=="
-| "<"
-| "<="
-| ">"
-| ">="
-| "^"
-| "&"
-| "|"
-| "<<"
-| ">>";
-rightExpression: Expression;
-nodeType: "BinaryOperation";
-}
-export interface Conditional {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-condition: Expression;
-falseExpression: Expression;
-trueExpression: Expression;
-nodeType: "Conditional";
-}
-export interface ElementaryTypeNameExpression {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-typeName: ElementaryTypeName;
-nodeType: "ElementaryTypeNameExpression";
-}
-export interface ElementaryTypeName {
-id: number;
-src: SourceLocation;
-typeDescriptions: TypeDescriptions;
-name: string;
-stateMutability?: StateMutability;
-nodeType: "ElementaryTypeName";
-}
-export interface FunctionCall {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-arguments: Expression[];
-expression: Expression;
-kind: "functionCall" | "typeConversion" | "structConstructorCall";
-names: string[];
-tryCall: boolean;
-nodeType: "FunctionCall";
-}
-export interface FunctionCallOptions {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue?: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-expression: Expression;
-names: string[];
-options: Expression[];
-nodeType: "FunctionCallOptions";
-}
-export interface Identifier {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-name: string;
-overloadedDeclarations: number[];
-referencedDeclaration?: number | null;
-typeDescriptions: TypeDescriptions;
-nodeType: "Identifier";
-}
-export interface IndexAccess {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-baseExpression: Expression;
-indexExpression?: Expression | null;
-nodeType: "IndexAccess";
-}
-export interface IndexRangeAccess {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-baseExpression: Expression;
-endExpression?: Expression | null;
-startExpression?: Expression | null;
-nodeType: "IndexRangeAccess";
-}
-export interface Literal {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-hexValue: string;
-kind: "bool" | "number" | "string" | "hexString" | "unicodeString";
-subdenomination?: null;
-value?: string | null;
-nodeType: "Literal";
-}
-export interface MemberAccess {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-expression: Expression;
-memberName: string;
-referencedDeclaration?: number | null;
-nodeType: "MemberAccess";
-}
-export interface NewExpression {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue?: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-typeName: TypeName;
-nodeType: "NewExpression";
-}
-export interface ArrayTypeName {
-id: number;
-src: SourceLocation;
-typeDescriptions: TypeDescriptions;
-baseType: TypeName;
-length?: Expression | null;
-nodeType: "ArrayTypeName";
-}
-export interface FunctionTypeName {
-id: number;
-src: SourceLocation;
-typeDescriptions: TypeDescriptions;
-parameterTypes: ParameterList;
-returnParameterTypes: ParameterList;
-stateMutability: StateMutability;
-visibility: Visibility;
-nodeType: "FunctionTypeName";
-}
-export interface ParameterList {
-id: number;
-src: SourceLocation;
-parameters: VariableDeclaration[];
-nodeType: "ParameterList";
-}
-export interface VariableDeclaration {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-baseFunctions?: number[] | null;
-constant: boolean;
-documentation?: StructuredDocumentation | null;
-functionSelector?: string;
-indexed?: boolean;
-mutability: Mutability;
-overrides?: OverrideSpecifier | null;
-scope: number;
-stateVariable: boolean;
-storageLocation: StorageLocation;
-typeDescriptions: TypeDescriptions;
-typeName?: TypeName | null;
-value?: Expression | null;
-visibility: Visibility;
-nodeType: "VariableDeclaration";
-}
-export interface OverrideSpecifier {
-id: number;
-src: SourceLocation;
-overrides: UserDefinedTypeName[] | IdentifierPath[];
-nodeType: "OverrideSpecifier";
-}
-export interface UserDefinedTypeName {
-id: number;
-src: SourceLocation;
-typeDescriptions: TypeDescriptions;
-contractScope?: null;
-name?: string;
-pathNode?: IdentifierPath;
-referencedDeclaration: number;
-nodeType: "UserDefinedTypeName";
-}
-export interface IdentifierPath {
-id: number;
-src: SourceLocation;
-name: string;
-referencedDeclaration: number;
-nodeType: "IdentifierPath";
-}
-export interface Mapping {
-id: number;
-src: SourceLocation;
-typeDescriptions: TypeDescriptions;
-keyType: TypeName;
-valueType: TypeName;
-nodeType: "Mapping";
-}
-export interface TupleExpression {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-components: Expression[];
-isInlineArray: boolean;
-nodeType: "TupleExpression";
-}
-export interface UnaryOperation {
-id: number;
-src: SourceLocation;
-argumentTypes?: TypeDescriptions[] | null;
-isConstant: boolean;
-isLValue: boolean;
-isPure: boolean;
-lValueRequested: boolean;
-typeDescriptions: TypeDescriptions;
-operator: "++" | "--" | "-" | "!" | "delete";
-prefix: boolean;
-subExpression: Expression;
-nodeType: "UnaryOperation";
-}
-export interface ErrorDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation: string;
-documentation?: StructuredDocumentation | null;
-errorSelector?: string;
-parameters: ParameterList;
-nodeType: "ErrorDefinition";
-}
-export interface EventDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-anonymous: boolean;
-eventSelector?: string;
-documentation?: StructuredDocumentation | null;
-parameters: ParameterList;
-nodeType: "EventDefinition";
-}
-export interface FunctionDefinition {
-id: number;
-src: SourceLocation;
-name: string;
-nameLocation?: string;
-baseFunctions?: number[];
-body?: Block | null;
-documentation?: StructuredDocumentation | null;
-functionSelector?: string;
-implemented: boolean;
-kind: "function" | "receive" | "constructor" | "fallback" | "freeFunction";
-modifiers: ModifierInvocation[];
-overrides?: OverrideSpecifier | null;
-parameters: ParameterList;
-returnParameters: ParameterList;
-scope: number;
-stateMutability: StateMutability;
-virtual: boolean;
-visibility: Visibility;
-nodeType: "FunctionDefinition";
-}
-export interface Block {
-id: number;
-src: SourceLocation;
-documentation?: string;
-statements?: Statement[] | null;
-nodeType: "Block";
-}
-export interface Break {
-id: number;
-src: SourceLocation;
-documentation?: string;
-nodeType: "Break";
-}
-export interface Continue {
-id: number;
-src: SourceLocation;
-documentation?: string;
-nodeType: "Continue";
-}
-export interface DoWhileStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-body: Block | Statement;
-condition: Expression;
-nodeType: "DoWhileStatement";
-}
-export interface EmitStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-eventCall: FunctionCall;
-nodeType: "EmitStatement";
-}
-export interface ExpressionStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-expression: Expression;
-nodeType: "ExpressionStatement";
-}
-export interface ForStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-body: Block | Statement;
-condition?: Expression | null;
-initializationExpression?: (ExpressionStatement | VariableDeclarationStatement) | null;
-loopExpression?: ExpressionStatement | null;
-nodeType: "ForStatement";
-}
-export interface VariableDeclarationStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-assignments: (number | null)[];
-declarations: (VariableDeclaration | null)[];
-initialValue?: Expression | null;
-nodeType: "VariableDeclarationStatement";
-}
-export interface IfStatement {
-id: number;
-src: SourceLocation;
-documentation?: string;
-condition: Expression;
-falseBody?: (Statement | Block) | null;
-trueBody: Statement | Block;
-nodeType: "IfStatement";
-}
-export interface InlineAssembly {
-id: number;
-src: SourceLocation;
-documentation?: string;
-AST: YulBlock;
-evmVersion:
-| "homestead"
-| "tangerineWhistle"
-| "spuriousDragon"
-| "byzantium"
-| "constantinople"
-| "petersburg"
-| "istanbul"
-| "berlin"
-| "london";
-externalReferences: {
-declaration: number;
-isOffset: boolean;
-isSlot: boolean;
-src: SourceLocation;
-valueSize: number;
-suffix?: "slot" | "offset";
-}[];
-flags?: "memory-safe"[];
-nodeType: "InlineAssembly";
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IfStatement {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "condition")]
+    condition: Expression,
+    #[serde(rename = "trueBody")]
+    true_body: IfStatementBody,
+    #[serde(rename = "falseBody")]
+    false_body: Option<IfStatementBody>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType,
 }
 
 //export interface PlaceholderStatement {
@@ -1210,3 +1444,4 @@ pub struct PragmaDirective {
     #[serde(rename = "nodeType")]
     node_type: NodeType::PragmaDirective,
 }
+
