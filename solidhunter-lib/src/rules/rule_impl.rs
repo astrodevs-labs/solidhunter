@@ -1,44 +1,5 @@
 use std::collections::HashMap;
-use serde::{Serialize, Deserialize};
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum RuleSeverity {
-    Error,
-    Warn,
-    Info,
-    Hint
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Diagnostic {
-    pub severity: RuleSeverity,
-    pub message: String,
-    pub id: String,
-    pub location: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct RuleEntry
-{
-    pub id: String,
-    pub severity: RuleSeverity,
-    pub data: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Rules {
-    pub name: String,
-    pub includes: Vec<String>,
-    pub plugins: Vec<String>,
-    pub rules: Vec<RuleEntry>
-}
-
-#[derive(Debug)]
-pub enum RulesError {
-    IoError(std::io::Error),
-}
-
-type RulesResult = Result<Rules, RulesError>;
+use crate::rules::types::*;
 
 pub fn create_rules() -> Rules {
     Rules {
@@ -116,7 +77,7 @@ macro_rules! create_rule {
         }
 
         impl $rule_name {
-            pub fn new(severity: RuleSeverity, data: Vec<String>) -> $rule_name {
+            pub fn new(severity: Severity, data: Vec<String>) -> $rule_name {
                 $rule_name {
                     id: $rule_id.to_string(),
                     message: $message.to_string(),

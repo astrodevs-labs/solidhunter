@@ -1,7 +1,6 @@
-mod rules;
-
 use clap::Parser;
-use rules::rules_base::{create_rules_file, parse_rules};
+
+use solidhunter::rules::rules_base::{create_rules_file, parse_rules};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]

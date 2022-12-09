@@ -3,6 +3,7 @@ use crate::types::*;
 
 mod linter;
 mod types;
+mod rules;
 
 #[cfg(test)]
 mod tests {
