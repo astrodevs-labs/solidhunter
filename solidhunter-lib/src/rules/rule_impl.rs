@@ -39,6 +39,7 @@ pub fn create_rules_file(path: &str) {
     let serialized = serde_json::to_string_pretty(&rules).unwrap();
     std::fs::write(path, serialized).unwrap();
 }
+type RulesResult = Result<Rules, RulesError>;
 
 pub fn parse_rules(path: String) -> RulesResult {
     let mut rules = Rules {

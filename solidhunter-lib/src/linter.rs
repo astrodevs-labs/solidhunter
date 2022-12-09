@@ -1,6 +1,9 @@
 use crate::types::*;
 
 use glob::glob;
+use crate::rules::factory::RuleFactory;
+use crate::rules::rule_impl::parse_rules;
+use crate::rules::types::RuleType;
 
 struct Ast;
 
@@ -13,10 +16,26 @@ pub struct SolidFile {
 
 pub struct SolidLinter {
     files: Vec<SolidFile>,
+    rule_factory: RuleFactory,
+    rules : Vec<Box<dyn RuleType>>,
 }
 
 impl SolidLinter {
-    
+    fn new(rulesConfig: String) {
+        let mut linter = SolidLinter {
+            files: Vec::new(),
+            rule_factory: RuleFactory::new(),
+            rules: Vec::new(),
+        };
+        linter.rule_factory.register_rules();
+        let rules_config = parse_rules(rulesConfig);
+        //TODO: treat errors
+        for rule in rules_config.1 {
+            linter.rules.push(linter.rule_factory.create_rule(rule));
+        }
+        //TODO: generate default config if not found
+    }
+
     fn file_exists(&self, path: &str) -> bool {
         for file in &self.files {
             if file.path == path {

@@ -24,7 +24,6 @@ pub enum RulesError {
     IoError(std::io::Error),
 }
 
-type RulesResult = Result<Rules, RulesError>;
 
 
 pub trait RuleType {
