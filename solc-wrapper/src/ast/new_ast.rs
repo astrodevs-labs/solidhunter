@@ -414,6 +414,18 @@ pub enum ContractDefinitionChildNodes {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ContractKind {
+    #[serde(rename = "contract")]
+    Contract,
+
+    #[serde(rename = "interface")]
+    Interface,
+
+    #[serde(rename = "library")]
+    Library
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ContractDefinition {
     id: usize,
     src: SourceLocation,
@@ -441,7 +453,7 @@ pub struct ContractDefinition {
     #[serde(rename = "scope")]
     scope: usize,
     #[serde(rename = "usedErrors")]
-    used_errors: Vec<usize>,
+    used_errors: Option<Vec<usize>>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -954,7 +966,7 @@ pub struct ErrorDefinition {
     documentation: Option<StructuredDocumentation>,
     #[serde(rename = "errorSelector")]
     error_selector: Option<String>,
-    parameters: Option<ParameterList>,
+    parameters: ParameterList,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -970,7 +982,7 @@ pub struct EventDefinition {
     #[serde(rename = "eventSelector")]
     event_selector: Option<String>,
     documentation: Option<StructuredDocumentation>,
-    parameters: Option<ParameterList>,
+    parameters: ParameterList,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1129,6 +1141,9 @@ pub struct IfStatement {
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
+
+pub struct InlineAssembly {}
+
 
 //export interface PlaceholderStatement {
 //id: number;
