@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use semver::Op;
 use serde::{Serialize, Deserialize};
 
@@ -65,34 +65,24 @@ pub enum Visibility {
 pub enum AssignmentOperator {
     #[serde(rename = "=")]
     Equal,
-
     #[serde(rename = "+=")]
     PlusEqual,
-
     #[serde(rename = "-=")]
     MinusEqual,
-
     #[serde(rename = "*=")]
     StarEqual,
-
     #[serde(rename = "/=")]
     SlashEqual,
-
     #[serde(rename = "%=")]
     PercentEqual,
-
     #[serde(rename = "|=")]
     PipeEqual,
-
     #[serde(rename = "&=")]
     AmpersandEqual,
-
     #[serde(rename = "^=")]
     CaretEqual,
-
     #[serde(rename = ">>=")]
     RightShiftEqual,
-
     #[serde(rename = "<<=")]
     LeftShiftEqual,
 }
@@ -238,6 +228,140 @@ pub enum FunctionDefinitionKind {
     FreeFunction
 }
 
+pub struct NodeReference {
+    pub id: usize,
+    #[serde(rename = "nodeType")]
+    pub node_type: NodeType,
+
+    #[serde(flatten)]
+    pub other: BTreeMap<String, serde_json::Value>,
+}
+
+pub struct SymbolAliases {
+    foreign: NodeReference,
+    local: Option<String>,
+    #[serde(rename = "nameLocation")]
+    pub name_location: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Node {
+    pub id: usize,
+    pub src: SourceLocation,
+    #[serde(rename = "nodeType")]
+    pub node_type: NodeType,
+    pub literals: Option<Vec<String>>,
+    pub name: Option<String>,
+    #[serde(rename = "absolutePath")]
+    pub absolute_path: Option<String>,
+    #[serde(rename = "nameLocation")]
+    pub name_location: Option<String>,
+    pub file: Option<String>,
+    #[serde(rename = "canonicalName")]
+    pub canonical_name: Option<String>,
+    pub members: Option<Vec<NodeReference>>,
+    pub scope: Option<usize>,
+    #[serde(rename = "typeIdentifier")]
+    pub type_identifier: Option<String>,
+    #[serde(rename = "typeString")]
+    pub type_string: Option<String>,
+    pub text: Option<String>,
+    #[serde(rename = "exportedSymbols")]
+    pub exported_symbols: Option<HashMap<String, Vec<String>>>,
+    #[serde(rename = "license")]
+    pub license: Option<String>,
+    #[serde(rename = "nodes")]
+    pub nodes: Option<Vec<NodeReference>>,
+    #[serde(rename = "sourceUnit")]
+    pub source_unit: Option<usize>,
+    #[serde(rename = "unitAlias")]
+    pub unit_alias: Option<String>,
+    #[serde(rename = "abstract")]
+    pub is_abstract: Option<bool>,
+    #[serde(rename = "baseContracts")]
+    pub base_contracts: Option<Vec<InheritanceSpecifier>>,
+    #[serde(rename = "functionList")]
+    pub function_list: Option<Vec<NodeReference>>,
+    pub function: Option<NodeReference>,
+    #[serde(rename = "contractDependencies")]
+    pub contract_dependencies: Option<Vec<usize>>,
+    #[serde(rename = "contractKind")]
+    pub contract_kind: Option<ContractKind>,
+    pub global: Option<bool>,
+    #[serde(rename = "documentation")]
+    pub documentation: Option<StructuredDocumentation>,
+    #[serde(rename = "underlyingType")]
+    pub underlying_type: Option<No>,
+    #[serde(rename = "fullyImplemented")]
+    pub is_fully_implemented: Option<bool>,
+    #[serde(rename = "linearizedBaseContracts")]
+    pub linearized_base_contracts: Option<Vec<usize>>,
+    #[serde(rename = "usedErrors")]
+    pub used_errors: Option<Vec<usize>>,
+    #[serde(rename = "arguments")]
+    pub arguments: Option<Vec<Expression>>,
+    pub visibility: Option<Visibility>,
+    #[serde(rename = "baseName")]
+    pub base_name: Option<NodeReference>,
+    #[serde(rename = "baseModifiers")]
+    pub base_modifiers: Option<Vec<usize>>,
+    pub overrides: Option<NodeReference>,
+    pub body : Option<Node>,
+    #[serde(rename = "referencedDeclaration")]
+    pub referenced_declaration: Option<usize>,
+    #[serde(rename = "pathNode")]
+    pub path_node: Option<NodeReference>,
+}
+
+
+
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TypeName {
+    ArrayTypeName(Box<ArrayTypeName>),
+    ElementaryTypeName(ElementaryTypeName),
+    FunctionTypeName(FunctionTypeName),
+    Mapping(Box<Mapping>),
+    UserDefinedTypeName(UserDefinedTypeName),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Expression {
+    Assignment(Box<Assignment>),
+    BinaryOperation(Box<BinaryOperation>),
+    Conditional(Box<Conditional>),
+    ElementaryTypeNameExpression(Box<ElementaryTypeNameExpression>),
+    FunctionCall(Box<FunctionCall>),
+    FunctionCallOptions(Box<FunctionCallOptions>),
+    Identifier(Box<Identifier>),
+    IndexAccess(Box<IndexAccess>),
+    IndexRangeAccess(Box<IndexRangeAccess>),
+    Literal(Box<Literal>),
+    MemberAccess(Box<MemberAccess>),
+    NewExpression(Box<NewExpression>),
+    TupleExpression(Box<TupleExpression>),
+    UnaryOperation(Box<UnaryOperation>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Statement {
+    Block(Block),
+    Break(Break),
+    Continue(Continue),
+    DoWhileStatement(DoWhileStatement),
+    EmitStatement(EmitStatement),
+    ExpressionStatement(ExpressionStatement),
+    ForStatement(ForStatement),
+    IfStatement(IfStatement),
+    PlaceholderStatement(PlaceholderStatement),
+    Return(Return),
+    RevertStatement(RevertStatement),
+    TryStatement(TryStatement),
+    UncheckedBlock(UncheckedBlock),
+    VariableDeclarationStatement(VariableDeclarationStatement),
+    WhileStatement(WhileStatement),
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NodeType {
     // Expressions
@@ -365,7 +489,7 @@ pub struct StructuredDocumentation {
     src: SourceLocation,
     text: String,
     #[serde(rename = "nodeType")]
-    node_type: NodeType
+    node_type: NodeType,
 }
 
 pub struct StructureFunction {
@@ -476,7 +600,8 @@ pub struct InheritanceSpecifier {
     node_type: NodeType,
 }
 
-pub struct Assigment {
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Assignment {
     id: usize,
     src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
@@ -800,9 +925,9 @@ pub struct FunctionTypeName {
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "parameterTypes")]
-    parameter_types: ParametersList,
+    parameter_types: ParameterList,
     #[serde(rename = "returnParameterTypes")]
-    return_parameter_types: ParametersList,
+    return_parameter_types: ParameterList,
     #[serde(rename = "stateMutability")]
     state_mutability: StateMutability,
     visibility: Visibility,
@@ -835,7 +960,7 @@ pub struct VariableDeclaration {
     function_selector: Option<String>,
     indexed: Option<bool>,
     mutability: Mutability,
-    overrides: Option<OverridesSpecifier>,
+    overrides: Option<OverrideSpecifier>,
     scope: usize,
     #[serde(rename = "stateVariable")]
     state_variable: bool,
@@ -852,6 +977,7 @@ pub struct VariableDeclaration {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum OverridesEnum {
     UserDefinedTypeName(Vec<UserDefinedTypeName>),
     Identifier(Vec<IdentifierPath>),
@@ -1002,7 +1128,7 @@ pub struct FunctionDefinition {
     #[serde(rename = "functionSelector")]
     function_selector: Option<String>,
     implemented: bool,
-    kind: FunctionKind,
+    kind: FunctionDefinitionKind,
     modifiers: Vec<ModifierInvocation>,
     overrides: Option<OverrideSpecifier>,
     parameters: ParameterList,
@@ -1049,8 +1175,8 @@ pub struct Continue {
 }
 
 pub enum Body {
-    Block(Block),
-    Statement(Statement),
+    Block(Box<Block>),
+    Statement(Box<Statement>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1152,12 +1278,13 @@ pub struct InlineAssembly {}
 //nodeType: "PlaceholderStatement";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PlaceholderStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::PlaceholderStatement
+    node_type: NodeType,
 }
 
 //export interface Return {
@@ -1169,6 +1296,7 @@ pub struct PlaceholderStatement {
 //nodeType: "Return";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Return {
     id: usize,
     src: SourceLocation,
@@ -1177,7 +1305,7 @@ pub struct Return {
     #[serde(rename = "functionReturnParameters")]
     function_return_parameters: usize,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::Return
+    node_type: NodeType,
 }
 
 //export interface RevertStatement {
@@ -1188,14 +1316,15 @@ pub struct Return {
 //nodeType: "RevertStatement";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RevertStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     #[serde(rename = "errorCall")]
-    error_call: NodeType::FunctionCall,
+    error_call: NodeType,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::RevertStatement
+    node_type: NodeType,
 }
 
 //export interface TryStatement {
@@ -1207,15 +1336,16 @@ pub struct RevertStatement {
 //nodeType: "TryStatement";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TryStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     clauses: Vec<TryCatchClause>,
     #[serde(rename = "externalCall")]
-    external_call: NodeType::FunctionCall,
+    external_call: NodeType,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::TryStatement
+    node_type: NodeType,
 }
 
 //export interface TryCatchClause {
@@ -1227,15 +1357,16 @@ pub struct TryStatement {
 //nodeType: "TryCatchClause";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TryCatchClause {
     id: usize,
     src: SourceLocation,
-    block: NodeType::Block,
+    block: NodeType,
     #[serde(rename = "errorName")]
     error_name: String,
-    parameters: Option<NodeType::ParameterList>,         //TODO: Multiple types
+    parameters: Option<NodeType>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::TryCatchClause
+    node_type: NodeType,
 }
 
 //export interface UncheckedBlock {
@@ -1246,13 +1377,14 @@ pub struct TryCatchClause {
 //nodeType: "UncheckedBlock";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UncheckedBlock {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
     statements: Vec<Statement>,                 //TODO: Faire Statement
     #[serde(rename = "nodeType")]
-    node_type: NodeType::UncheckedBlock
+    node_type: NodeType,
 }
 
 //export interface WhileStatement {
@@ -1264,14 +1396,15 @@ pub struct UncheckedBlock {
 //nodeType: "WhileStatement";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WhileStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
-    body: NodeType::Block,                          //TODO: Multiple types
-    condition: Expresion,                           //TODO: Faire expression
+    body: NodeType,
+    condition: Expression,                           //TODO: Faire expression
     #[serde(rename = "nodeType")]
-    node_type: NodeType::WhileStatement
+    node_type: NodeType,
 }
 
 //export interface ModifierInvocation {
@@ -1283,15 +1416,16 @@ pub struct WhileStatement {
 //nodeType: "ModifierInvocation";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierInvocation {
     id: usize,
     src: SourceLocation,
-    arguments: Option<Expresion>,                   //TODO: Faire expression + multiple types
-    kind: Option<NodeType::ModifierInvocation>,     //TODO: Multiple types
+    arguments: Option<Expression>,                   //TODO: Faire expression + multiple types
+    kind: Option<NodeType>,
     #[serde(rename = "modifierName")]
     modifier_name: Identifier,                       //TODO: Multiple types
     #[serde(rename = "nodeType")]
-    node_type: NodeType::ModifierInvocation
+    node_type: NodeType,
 }
 
 //export interface ModifierDefinition {
@@ -1309,6 +1443,7 @@ pub struct ModifierInvocation {
 //nodeType: "ModifierDefinition";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierDefinition {
     id: usize,
     src: SourceLocation,
@@ -1317,15 +1452,15 @@ pub struct ModifierDefinition {
     name_location: Option<String>,
     #[serde(rename = "baseModifiers")]
     base_modifiers: Option<Vec<usize>>,                 //TODO: Multiple types
-    body: NodeType::Block,
+    body: NodeType,
     documentation: Option<StructuredDocumentation>,     //TODO: Multiple types
     overrides: Option<OverrideSpecifier>,               //TODO: Multiple types
-    parameters: NodeType::ParameterList,
+    parameters: NodeType,
     #[serde(rename = "isVirtual")]
     is_virtual: bool,                                    //TODO: J'ai rename en isVirtual car virtual ne marchait pas
     visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::ModifierDefinition
+    node_type: NodeType,
 }
 
 //export interface StructDefinition {
@@ -1340,6 +1475,7 @@ pub struct ModifierDefinition {
 //nodeType: "StructDefinition";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructDefinition {
     id: usize,
     src: SourceLocation,
@@ -1352,7 +1488,7 @@ pub struct StructDefinition {
     scope: usize,
     visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::StructDefinition
+    node_type: NodeType,
 }
 
 //export interface UserDefinedValueTypeDefinition {
@@ -1365,6 +1501,7 @@ pub struct StructDefinition {
 //nodeType: "UserDefinedValueTypeDefinition";
 //}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UserDefinedValueTypeDefinition {
     id: usize,
     src: SourceLocation,
@@ -1376,87 +1513,8 @@ pub struct UserDefinedValueTypeDefinition {
     #[serde(rename = "underlyingType")]
     underlying_type: TypeName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType::UserDefinedValueTypeDefinition
+    node_type: NodeType,
 }
 
 
-//export interface UsingForDirective {
-//id: number;
-//src: SourceLocation;
-//functionList?: {
-//function: IdentifierPath;
-//}[];
-//global?: boolean;
-//libraryName?: UserDefinedTypeName | IdentifierPath;
-//typeName?: TypeName | null;
-//nodeType: "UsingForDirective";
-//}
-
-pub struct UsingForDirective {
-    id: usize,
-    src: SourceLocation,
-    #[serde(rename = "functionList")]
-    function_list: Option<Vec<StructureFunction>>,
-    function: IdentifierPath,
-    global: Option<bool>,
-    //#[serde(rename = "libraryName")]
-    // library_name: Option<UserDefinedTypeName>  //TODO: Multiple types
-    //#[serde(rename = "typeName")]
-    // type_name: Option<TypeName>  //TODO: Multiple types
-    #[serde(rename = "nodeType")]
-    node_type: NodeType::UsingForDirective
-}
-
-
-//export interface ImportDirective {
-//id: number;
-//src: SourceLocation;
-//absolutePath: string;
-//file: string;
-//nameLocation?: string;
-//scope: number;
-//sourceUnit: number;
-//symbolAliases: {
-//foreign: Identifier;
-//local?: string | null;
-//nameLocation?: string;
-//}[];
-//unitAlias: string;
-//nodeType: "ImportDirective";
-//}
-//
-
-pub struct ImportDirective {
-    id: usize,
-    src: SourceLocation,
-    #[serde(rename = "absolutePath")]
-    absolute_path: String,
-    file: String,
-    #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
-    scope: usize,
-    #[serde(rename = "sourceUnit")]
-    source_unit: usize,
-    #[serde(rename = "symbolAliases")]
-    symbol_aliases: SymbolAliases,
-    #[serde(rename = "unitAlias")]
-    unit_alias: String,
-    #[serde(rename = "nodeType")]
-    node_type: NodeType::ImportDirective,
-}
-
-//export interface PragmaDirective {
-//id: number;
-//src: SourceLocation;
-//literals: string[];
-//nodeType: "PragmaDirective";
-//}
-
-pub struct PragmaDirective {
-    id: usize,
-    src: SourceLocation,
-    literals: Vec<String>,
-    #[serde(rename = "nodeType")]
-    node_type: NodeType::PragmaDirective,
-}
 
