@@ -1,0 +1,12 @@
+{
+    "id": 16,
+    "name": "a",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "referencedDeclaration": 7,
+    "src": "203:1:0",
+    "typeDescriptions": {
+        "typeIdentifier": "t_uint256",
+        "typeString": "uint256"
+    }
+}

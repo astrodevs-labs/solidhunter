@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use semver::Op;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1374,226 +1373,88 @@ pub struct PragmaDirective {
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
     use super::*;
 
     #[test]
     fn test_correct_EnumValue_parsing() -> Result<(), String> {
-        let ast = r#"{
-            "id":2,
-            "name": "item1",
-            "nameLocation": "72:5:0",
-            "nodeType": "EnumValue",
-            "src": "72:5:0"}"#;
-        let res = serde_json::from_str::<EnumValue>(ast).map_err(|e| "Error deserializing EnumValue".to_string())?;
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/EnumValue.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumValue>(&ast).map_err(|_| "Error deserializing EnumValue".to_string())?;
         assert_eq!(res.name, "item1");
         assert_eq!(res.name_location, Some("72:5:0".to_string()));
         Ok(assert_eq!(res.node_type, NodeType::EnumValue))
     }
 
     #[test]
-    fn test_correct_EnumDefinition_parsing() -> Result<(), String> {
-        let ast = r#"{
-            "canonicalName":"Test",
-            "id":4,
-            "members":[
-            {
-                "id":2,
-                "name":"item1",
-                "nameLocation":"72:5:0",
-                "nodeType":"EnumValue",
-                "src":"72:5:0"
-            },
-            {
-                "id":3,
-                "name":"item2",
-                "nameLocation":"79:5:0",
-                "nodeType":"EnumValue",
-                "src":"79:5:0"
-            }
-            ],
-            "name":"Test",
-            "nameLocation":"66:4:0",
-            "nodeType":"EnumDefinition",
-            "src":"61:25:0"}"#;
-        let res = serde_json::from_str::<EnumValue>(ast).map_err(|e| "Error deserializing EnumDefinition".to_string())?;
-        assert_eq!(res.canonicalName, "canonicalName");
+    fn test_correct_enum_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/EnumDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing EnumDefinition".to_string())?;
+        assert_eq!(res.canonical_name, "Test");
         assert_eq!(res.name_location, Some("66:4:0".to_string()));
         Ok(assert_eq!(res.node_type, NodeType::EnumDefinition))
     }
 
     #[test]
-    fn test_correct_IfStatement_parsing() -> Result<(), String> {
-        let ast = r#"{
-            "condition":{
-                "commonType":{
-                   "typeIdentifier":"t_uint8",
-                   "typeString":"uint8"
-                },
-                "id":8,
-                "isConstant":false,
-                "isLValue":false,
-                "isPure":true,
-                "lValueRequested":false,
-                "leftExpression":{
-                   "hexValue":"31",
-                   "id":6,
-                   "isConstant":false,
-                   "isLValue":false,
-                   "isPure":true,
-                   "kind":"number",
-                   "lValueRequested":false,
-                   "nodeType":"Literal",
-                   "src":"149:1:0",
-                   "typeDescriptions":{
-                      "typeIdentifier":"t_rational_1_by_1",
-                      "typeString":"int_const 1"
-                   },
-                   "value":"1"
-                },
-                "nodeType":"BinaryOperation",
-                "operator":"==",
-                "rightExpression":{
-                    "hexValue":"32",
-                    "id":7,
-                    "isConstant":false,
-                    "isLValue":false,
-                    "isPure":true,
-                    "kind":"number",
-                    "lValueRequested":false,
-                    "nodeType":"Literal",
-                    "src":"154:1:0",
-                    "typeDescriptions":{
-                       "typeIdentifier":"t_rational_2_by_1",
-                       "typeString":"int_const 2"
-                    },
-                    "value":"2"
-                },
-                "src":"149:6:0",
-                "typeDescriptions":{
-                   "typeIdentifier":"t_bool",
-                   "typeString":"bool"
-                }
-            },
-            "falseBody":{
-               "id":18,
-               "nodeType":"Block",
-               "src":"205:43:0",
-               "statements":[
-                  {
-                     "expression":{
-                        "id":16,
-                        "isConstant":false,
-                        "isLValue":false,
-                        "isPure":false,
-                        "lValueRequested":false,
-                        "leftHandSide":{
-                           "id":14,
-                           "name":"goStraight",
-                           "nodeType":"Identifier",
-                           "overloadedDeclarations":[
-
-                           ],
-                           "referencedDeclaration":3,
-                           "src":"219:10:0",
-                           "typeDescriptions":{
-                              "typeIdentifier":"t_bool",
-                              "typeString":"bool"
-                           }
-                        },
-                        "nodeType":"Assignment",
-                        "operator":"=",
-                        "rightHandSide":{
-                           "hexValue":"66616c7365",
-                           "id":15,
-                           "isConstant":false,
-                           "isLValue":false,
-                           "isPure":true,
-                           "kind":"bool",
-                           "lValueRequested":false,
-                           "nodeType":"Literal",
-                           "src":"232:5:0",
-                           "typeDescriptions":{
-                              "typeIdentifier":"t_bool",
-                              "typeString":"bool"
-                           },
-                           "value":"false"
-                        },
-                        "src":"219:18:0",
-                        "typeDescriptions":{
-                           "typeIdentifier":"t_bool",
-                           "typeString":"bool"
-                        }
-                     },
-                     "id":17,
-                     "nodeType":"ExpressionStatement",
-                     "src":"219:18:0"
-                  }
-               ]
-            },
-            "id":19,
-            "nodeType":"IfStatement",
-            "src":"145:103:0",
-            "trueBody":{
-               "id":13,
-               "nodeType":"Block",
-               "src":"157:42:0",
-               "statements":[
-                  {
-                     "expression":{
-                        "id":11,
-                        "isConstant":false,
-                        "isLValue":false,
-                        "isPure":false,
-                        "lValueRequested":false,
-                        "leftHandSide":{
-                           "id":9,
-                           "name":"goStraight",
-                           "nodeType":"Identifier",
-                           "overloadedDeclarations":[
-
-                           ],
-                           "referencedDeclaration":3,
-                           "src":"171:10:0",
-                           "typeDescriptions":{
-                              "typeIdentifier":"t_bool",
-                              "typeString":"bool"
-                           }
-                        },
-                        "nodeType":"Assignment",
-                        "operator":"=",
-                        "rightHandSide":{
-                           "hexValue":"74727565",
-                           "id":10,
-                           "isConstant":false,
-                           "isLValue":false,
-                           "isPure":true,
-                           "kind":"bool",
-                           "lValueRequested":false,
-                           "nodeType":"Literal",
-                           "src":"184:4:0",
-                           "typeDescriptions":{
-                              "typeIdentifier":"t_bool",
-                              "typeString":"bool"
-                           },
-                           "value":"true"
-                        },
-                        "src":"171:17:0",
-                        "typeDescriptions":{
-                           "typeIdentifier":"t_bool",
-                           "typeString":"bool"
-                        }
-                     },
-                     "id":12,
-                     "nodeType":"ExpressionStatement",
-                     "src":"171:17:0"
-                  }
-               ]
-            }
-        }"#;
-        let res = serde_json::from_str::<IfStatement>(ast).map_err(|e| "Error deserializing IfStatement".to_string())?;
-        assert_eq!(res.id, "19".to_string());
-        assert_eq!(res.src, Some("145:103:0".to_string()));
+    fn test_correct_if_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/IfStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<IfStatement>(&ast).map_err(|_| "Error deserializing IfStatement".to_string())?;
+        assert_eq!(res.id, 19);
+        assert_eq!(res.src, "145:103:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::IfStatement))
     }
 
+
+    #[test]
+    fn test_correct_binary_operation_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/BinaryOperation.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<BinaryOperation>(&ast).map_err(|_| "Error deserializing TypeDescriptions".to_string())?;
+
+        assert_eq!(res.id, 18);
+        assert_eq!(res.src, "203:5:0".to_string());
+        assert_eq!(res.argument_types, None);
+        assert_eq!(res.is_constant, false);
+        assert_eq!(res.is_l_value, false);
+        assert_eq!(res.is_pure, false);
+        assert_eq!(res.l_value_requested, false);
+        assert_eq!(res.operator, BinaryOperator::Ampersand);
+        Ok(assert_eq!(res.node_type, NodeType::BinaryOperation))
+    }
+
+    #[test]
+    fn test_correct_identifier_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Identifier.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Identifier>(&ast).map_err(|_| "Error deserializing TypeDescriptions".to_string())?;
+
+        assert_eq!(res.id, 16);
+        assert_eq!(res.src, "203:1:0".to_string());
+        assert_eq!(res.name, "a".to_string());
+        assert_eq!(res.overloaded_declarations, vec![] as Vec<usize>);
+        assert_eq!(res.referenced_declaration, Some(7));
+        Ok(assert_eq!(res.node_type, NodeType::Identifier))
+    }
+
+    #[test]
+    fn test_correct_conditional_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Conditional.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Conditional>(&ast).map_err(|_| "Error deserializing Conditional".to_string())?;
+
+        assert_eq!(res.id, 10);
+        assert_eq!(res.src, "158:20:0".to_string());
+        assert_eq!(res.is_constant, false);
+        assert_eq!(res.is_l_value, false);
+        assert_eq!(res.is_pure, true);
+        assert_eq!(res.l_value_requested, false);
+        assert_eq!(res.node_type, NodeType::Conditional);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_type_descriptions_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/TypeDescriptions.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TypeDescriptions>(&ast).map_err(|_| "Error deserializing Conditional".to_string())?;
+
+        assert_eq!(res.type_identifier, Some("t_bool".to_string()));
+        assert_eq!(res.type_string, Some("bool".to_string()));
+        Ok(())
+    }
 }
