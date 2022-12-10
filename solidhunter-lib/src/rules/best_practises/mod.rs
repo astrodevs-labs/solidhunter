@@ -1,5 +1,4 @@
-use std::collections::HashMap;;
-use crate::rules::rules_base::RuleSeverity::Warn;
+use std::collections::HashMap;
 use crate::rules::types::{RuleEntry, RuleType};
 
 #[macro_use]
@@ -11,6 +10,7 @@ pub(crate) mod line_maxlen;
 
 use crate::rules::best_practises::code_complexity::CodeComplexity;
 use crate::rules::best_practises::line_maxlen::LineMaxLen;
+use crate::rules::RuleBuilder;
 
 pub fn create_default_rules() -> Vec<RuleEntry> {
     let mut rules = Vec::new();
@@ -21,11 +21,11 @@ pub fn create_default_rules() -> Vec<RuleEntry> {
     rules
 }
 
-pub fn create_rules() -> HashMap<String, fn() -> Box<dyn RuleType>> {
-    let mut rules = HashMap::new();
+pub fn create_rules() -> HashMap<String, fn(RuleEntry) -> Box<dyn RuleType>> {
+    let mut rules :  HashMap<String, RuleBuilder> = HashMap::new();
     
-    rules.push("line-max-len", LineMaxLen::create());
-    rules.push("code-complexity", CodeComplexity::create());
+    rules["line-max-len"] = LineMaxLen::create;
+    rules["code-complexity"] = CodeComplexity::create;
 
     rules
 }

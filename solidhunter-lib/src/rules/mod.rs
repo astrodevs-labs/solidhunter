@@ -14,8 +14,16 @@ pub fn create_default_rules() -> Vec<RuleEntry> {
     rules
 }
 
-pub fn create_rules() -> HashMap<String, fn() -> Box<dyn RuleType>> {
+type RuleBuilder = fn(RuleEntry) -> Box<dyn RuleType>;
+
+pub fn add_rules(rules : &mut HashMap<String, RuleBuilder>, toAdd: HashMap<String, RuleBuilder>) {
+    for (key, value) in toAdd {
+        rules.insert(key, value);
+    }
+}
+
+pub fn create_rules() -> HashMap<String, fn(RuleEntry) -> Box<dyn RuleType>> {
     let mut rules = HashMap::new();
-    rules.append(&mut best_practises::create_rules());
+    add_rules(&mut rules, best_practises::create_rules());
     rules
 }

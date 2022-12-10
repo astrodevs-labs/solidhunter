@@ -1,6 +1,3 @@
-use crate::linter::*;
-use crate::types::*;
-
 mod linter;
 mod types;
 mod rules;

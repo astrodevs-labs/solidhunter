@@ -29,8 +29,4 @@ pub enum RulesError {
 pub trait RuleType {
 
     fn diagnose(&self, file: &SolidFile, files: &Vec<SolidFile>) -> Vec<LintDiag>;
-    
-    fn create(data: RuleEntry) -> Box<dyn RuleType>;
-    
-    fn create_default() -> RuleEntry;
 }

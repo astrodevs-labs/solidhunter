@@ -1,14 +1,7 @@
 use std::collections::HashMap;
+use crate::rules::create_default_rules;
 use crate::rules::types::*;
 
-pub fn create_rules() -> Rules {
-    Rules {
-        name: String::new(),
-        includes: Vec::new(),
-        plugins: Vec::new(),
-        rules: Vec::new(),
-    }
-}
 
 // Untested
 fn merge_rules(rules: &mut Vec<RuleEntry>, new_rules: &Vec<RuleEntry>) {
@@ -26,22 +19,14 @@ fn merge_rules(rules: &mut Vec<RuleEntry>, new_rules: &Vec<RuleEntry>) {
 }
 
 pub fn create_rules_file(path: &str) {
-    let mut rules = create_rules();
-
-    let dummy_rules = RuleEntry {
-        id: "dummy-rule".to_string(),
-        severity: RuleSeverity::Warn,
-        data: vec!["dummy-data".to_string()],
-    };
-
-    rules.rules.push(dummy_rules);
-
+    let mut rules = create_default_rules();
     let serialized = serde_json::to_string_pretty(&rules).unwrap();
+
     std::fs::write(path, serialized).unwrap();
 }
 type RulesResult = Result<Rules, RulesError>;
 
-pub fn parse_rules(path: String) -> RulesResult {
+pub fn parse_rules(path: &str) -> RulesResult {
     let mut rules = Rules {
         name: String::new(),
         includes: Vec::new(),
@@ -56,7 +41,7 @@ pub fn parse_rules(path: String) -> RulesResult {
     let parsed: Rules = serde_json::from_str(&file).unwrap();
 
     for include in parsed.includes {
-        let include_rules = parse_rules(include);
+        let include_rules = parse_rules(include.as_str());
         merge_rules(&mut rules.rules, &include_rules.unwrap().rules);
     }
 

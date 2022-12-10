@@ -22,18 +22,21 @@ impl RuleType for CodeComplexity {
         todo!()
     }
 
-    fn create(data: RuleEntry) -> Box<dyn RuleType> {
+    
+}
+impl CodeComplexity {
+    pub fn create(data: RuleEntry) -> Box<dyn RuleType> {
         let mut rule  = CodeComplexity {
             max_complexity: data.data[0].parse::<u32>().unwrap(),
             data
         };
         Box::new(rule)
     }
-
-    fn create_default() -> RuleEntry {
+    
+    pub fn create_default() -> RuleEntry {
         RuleEntry {
             id: RULE_ID.to_string(),
-            severity: Severity::Warning,
+            severity: Severity::WARNING,
             data: vec!["7".to_string()]
         }
     }

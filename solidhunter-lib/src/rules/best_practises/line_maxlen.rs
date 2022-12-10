@@ -14,19 +14,23 @@ impl RuleType for LineMaxLen {
         todo!()
     }
 
-    fn create(data: RuleEntry) -> Box<dyn RuleType> {
+    
+} 
+
+impl LineMaxLen {
+    pub(crate) fn create(data: RuleEntry) -> Box<dyn RuleType> {
         let mut rule  = LineMaxLen {
             max_len: data.data[0].parse::<usize>().unwrap(),
             data
         };
         Box::new(rule)
     }
-
-    fn create_default() -> RuleEntry {
+    
+    pub(crate) fn create_default() -> RuleEntry {
         RuleEntry {
             id: "line-max-len".to_string(),
-            severity: Severity::Warning,
+            severity: Severity::WARNING,
             data: vec!["120".to_string()]
         }
     }
-} 
+}

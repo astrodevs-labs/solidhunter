@@ -1,3 +1,5 @@
+use serde::{Serialize, Deserialize};
+
 pub struct LintResult {
     pub errors : Vec<LintDiag>,
     pub warnings : Vec<LintDiag>,
@@ -39,7 +41,10 @@ pub struct Position {
     pub line: u64,
     pub character: u64,
 }
+
+#[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize, Debug)]
 pub struct Severity(i32);
+
 
 impl Severity {
     /// Reports an error.
