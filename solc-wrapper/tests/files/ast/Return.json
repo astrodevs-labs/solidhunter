@@ -1,0 +1,13 @@
+{
+  "expression": {
+    "id": 295,
+    "name": "_contractURI",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "src": "5768:12:0",
+    "typeDescriptions": {}
+  },
+  "id": 296,
+  "nodeType": "Return",
+  "src": "5761:19:0"
+}

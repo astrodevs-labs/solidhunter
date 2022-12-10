@@ -1,0 +1,14 @@
+{
+  "baseName": {
+    "id": 12,
+    "name": "ERC721Enumerable",
+    "nameLocations": [
+      "828:16:0"
+    ],
+    "nodeType": "IdentifierPath",
+    "src": "828:16:0"
+  },
+  "id": 13,
+  "nodeType": "InheritanceSpecifier",
+  "src": "828:16:0"
+}

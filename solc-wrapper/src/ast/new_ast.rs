@@ -1395,6 +1395,123 @@ mod tests {
     }
 
     #[test]
+    fn test_correct_event_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/EventDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing EventDefinition".to_string())?;
+        assert_eq!(res.anonymous, false);
+        assert_eq!(res.id, 67);
+        assert_eq!(res.name, "MintingLocked".to_string());
+        assert_eq!(res.src, "1582:45:0".to_string());
+        assert_eq!(res.name_location, "1588:13:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::EventDefinition))
+    }
+
+    #[test]
+    fn test_correct_return_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Return.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing Return".to_string())?;
+        assert_eq!(res.id, 296);
+        assert_eq!(res.src, "5761:19:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::Return))
+    }
+
+    #[test]
+    fn test_correct_emit_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/EmitStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing EmitStatement".to_string())?;
+        assert_eq!(res.id, 287);
+        assert_eq!(res.src, "5537:33:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::EmitStatement))
+    }
+
+    #[test]
+    fn test_correct_modifier_invocation_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ModifierInvocation.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing ModifierInvocation".to_string())?;
+        assert_eq!(res.id, 274);
+        assert_eq!(res.src, "5445:13:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::ModifierInvocation))
+    }
+
+    #[test]
+    fn test_correct_pragma_directive_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/PragmaDirective.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing PragmaDirective".to_string())?;
+        assert_eq!(res.id, 1);
+        assert_eq!(res.src, "33:23:0".to_string());
+        assert_eq!(res.literals, vec!["solidity",
+                                      "0.8",
+                                      ".16"] as Vec<String>);
+        Ok(assert_eq!(res.node_type, NodeType::PragmaDirective))
+    }
+
+    #[test]
+    fn test_correct_using_for_directive_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UsingForDirective.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing UsingForDirective".to_string())?;
+        assert_eq!(res.id, 31);
+        assert_eq!(res.global, false);
+        assert_eq!(res.src, "1007:36:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::UsingForDirective))
+    }
+
+    #[test]
+    fn test_correct_modifier_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ModifierDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing ModifierDefinition".to_string())?;
+        assert_eq!(res.id, 92);
+        assert_eq!(res.name, "metadataNotLocked".to_string());
+        assert_eq!(res.name_location, "1995:17:0".to_string());
+        assert_eq!(res.src, "1986:104:0".to_string());
+        assert_eq!(res.virtual, false);
+        assert_eq!(res.visibility, "internal".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::ModifierDefinition))
+    }
+
+    #[test]
+    fn test_correct_parameter_list_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ParameterList.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing ParameterList".to_string())?;
+        assert_eq!(res.id, 197);
+        assert_eq!(res.src, "3904:30:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::ParameterList))
+    }
+
+    #[test]
+    fn test_correct_assignment_list_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Assignment.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing Assignment".to_string())?;
+        assert_eq!(res.id, 141);
+        assert_eq!(res.src, "2849:35:0".to_string());
+        assert_eq!(res.operator, "=".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::Assignment))
+    }
+
+    #[test]
+    fn test_correct_inheritance_specifier_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/InheritanceSpecifier.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing InheritanceSpecifier".to_string())?;
+        assert_eq!(res.id, 13);
+        assert_eq!(res.src, "828:16:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::InheritanceSpecifier))
+    }
+
+    #[test]
+    fn test_correct_variable_declaration_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/VariableDeclaration.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing VariableDeclaration".to_string())?;
+        assert_eq!(res.constant, false);
+        assert_eq!(res.id, 293);
+        assert_eq!(res.mutability, "mutable".to_string());
+        assert_eq!(res.src, "5736:13:0".to_string());
+        assert_eq!(res.name_location, "-1:-1:-1".to_string());
+        assert_eq!(res.state_variable, false);
+        assert_eq!(res.storage_location, "memory".to_string());
+        assert_eq!(res.visibility, "internal".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::VariableDeclaration))
+    }
+
+    #[test]
     fn test_correct_if_statement_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/IfStatement.json").expect("Could not find test data file");
         let res = serde_json::from_str::<IfStatement>(&ast).map_err(|_| "Error deserializing IfStatement".to_string())?;
@@ -1402,7 +1519,6 @@ mod tests {
         assert_eq!(res.src, "145:103:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::IfStatement))
     }
-
 
     #[test]
     fn test_correct_binary_operation_parsing() -> Result<(), String> {
