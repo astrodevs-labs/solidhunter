@@ -239,6 +239,7 @@ pub enum FunctionDefinitionKind {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum TypeName {
     ArrayTypeName(Box<ArrayTypeName>),
     ElementaryTypeName(Box<ElementaryTypeName>),
@@ -248,6 +249,7 @@ pub enum TypeName {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum Expression {
     Assignment(Box<Assignment>),
     BinaryOperation(Box<BinaryOperation>),
@@ -266,6 +268,7 @@ pub enum Expression {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum Statement {
     Block(Box<Block>),
     Break(Box<Break>),
