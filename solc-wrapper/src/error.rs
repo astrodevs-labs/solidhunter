@@ -4,19 +4,19 @@ use anyhow;
 
 #[derive(Error, Debug)]
 pub enum SolcError {
-    #[error("Something went wrong with sevm")]
+    #[error("SolcError: Something went wrong with sevm")]
     SevmFailed(#[from] SolcVersionError),
 
-    #[error("Error from solc")]
+    #[error("SolcError: Error from solc")]
     SolcFailed(#[from] CommandError),
 
-    #[error("Can't do the compuation")]
+    #[error("SolcError: Can't do the compuation")]
     ComputationFailed,
 
-    #[error("Error from ast pasing")]
+    #[error("SolcError: Error from ast pasing")]
     AstFailed(#[from] AstError),
 
-    #[error("Output is empty")]
+    #[error("SolcError: Output is empty")]
     OutputIsEmpty,
 
     #[error(transparent)]

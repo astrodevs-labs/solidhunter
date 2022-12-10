@@ -64,12 +64,12 @@ impl Solc {
 
     pub fn extract_ast_file(&self, filepath: String) -> Result<Ast, SolcError> {
         let output = self.execute_on_file(filepath.as_str())?;
-        parse_ast(output.as_str()).map_err(|e| SolcError::AstFailed(e))
+        Ok(parse_ast(output.as_str())?)
     }
 
     pub fn extract_ast_content(&self, content: String) -> Result<Ast, SolcError> {
         let output = self.execute_on_content(&content)?;
-        parse_ast(output.as_str()).map_err(|e| SolcError::AstFailed(e))
+        Ok(parse_ast(output.as_str())?)
     }
 
 }

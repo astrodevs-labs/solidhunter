@@ -24,8 +24,8 @@ impl SolcVersion {
         let version_req = Self::source_version_req(source)?;
 
         if self.global_version_path.is_file() {
-            let versions = Self::list_installed_versions()?;
-            let version = versions.iter().find(|v| version_req.matches(v));
+            let installed_versions = Self::list_installed_versions()?;
+            let version = installed_versions.iter().find(|v| version_req.matches(v));
             if !version.is_none() {
                 return version.cloned().ok_or(SolcVersionError::ComputationFailed);
             }
@@ -36,7 +36,7 @@ impl SolcVersion {
     }
 
     pub fn list_installed_versions() -> Result<Vec<Version>, SolcVersionError> {
-        svm_lib::installed_versions().map_err(|e| SolcVersionError::from(e))
+        Ok(svm_lib::installed_versions()?)
     }
 
     pub fn get_global_version_path() -> PathBuf {
@@ -44,11 +44,11 @@ impl SolcVersion {
     }
 
     pub fn list_remote_versions() -> Result<Vec<Version>, SolcVersionError> {
-        svm_lib::blocking_all_versions().map_err(|e| SolcVersionError::from(e))
+        Ok(svm_lib::blocking_all_versions()?)
     }
 
     pub fn install_version(version: &Version) -> Result<PathBuf, SolcVersionError> {
-        svm_lib::blocking_install(version).map_err(|e| SolcVersionError::from(e))
+        Ok(svm_lib::blocking_install(version)?)
     }
 
     pub fn find_version_and_install(&self, version: &Version) -> Result<PathBuf, SolcVersionError> {
@@ -64,7 +64,7 @@ impl SolcVersion {
 
     pub fn source_version_req(source: &str) -> Result<VersionReq, SolcVersionError> {
         let version =
-            utils::find_version_pragma(source).ok_or(SolcVersionError::ComputationFailed)?;
+            utils::find_version_pragma(source).ok_or(SolcVersionError::WrongVersion)?;
         Self::version_req(version.as_str())
     }
 
@@ -76,7 +76,7 @@ impl SolcVersion {
         // but lack of operator automatically marks the operator as Caret, so we need
         // to manually patch it? :shrug:
         let exact = !matches!(&version[0..1], "*" | "^" | "=" | ">" | "<" | "~");
-        let mut version = VersionReq::parse(&version).map_err(|e| SolcVersionError::ComputationFailed)?;
+        let mut version = VersionReq::parse(&version)?;
         if exact {
             version.comparators[0].op = semver::Op::Exact;
         }
