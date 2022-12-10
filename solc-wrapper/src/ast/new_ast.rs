@@ -321,29 +321,6 @@ pub enum NodeType {
     VariableDeclaration,
     WhileStatement,
 
-    // Yul statements
-    YulAssignment,
-    YulBlock,
-    YulBreak,
-    YulContinue,
-    YulExpressionStatement,
-    YulLeave,
-    YulForLoop,
-    YulFunctionDefinition,
-    YulIf,
-    YulSwitch,
-    YulVariableDeclaration,
-    YulCase,
-
-    // Yul expressions
-    YulFunctionCall,
-    YulIdentifier,
-    YulLiteral,
-
-    // Yul literals
-    YulLiteralValue,
-    YulHexValue,
-
     // Definitions
     ContractDefinition,
     FunctionDefinition,
@@ -352,6 +329,7 @@ pub enum NodeType {
     ModifierDefinition,
     StructDefinition,
     EnumDefinition,
+    EnumValue,
     UserDefinedValueTypeDefinition,
 
     // Directives
@@ -1403,24 +1381,11 @@ mod tests {
             "nameLocation": "72:5:0",
             "nodeType": "EnumValue",
             "src": "72:5:0"}"#;
-        let res = serde_json::from_str::<EnumValue>(ast)?;
-        assert_!(res.name == "item1");
-        assert_!(res.name_location == Some("72:5:0".to_string()));
-        assert_!(res.node_type == NodeType::EnumValue);
+        let res = serde_json::from_str::<EnumValue>(ast).map_err(|e| "Error deserializing EnumValue".to_string())?;
+        assert_eq!(res.name, "item1");
+        assert_eq!(res.name_location, Some("72:5:0".to_string()));
+        Ok(assert_eq!(res.node_type, NodeType::EnumValue))
     }
 
-    #[test]
-    fn test_skip_output_header() {
-        let output = r#"ok ======= test ====== \n awesome {
-            "contracts": {},
-            "sources": {},
-            "errors": []
-        }"#;
-        let expected = r#"{
-            "contracts": {},
-            "sources": {},
-            "errors": []
-        }"#;
-        assert_eq!(Solc::skip_output_header(output), expected);
-    }
+
 }
