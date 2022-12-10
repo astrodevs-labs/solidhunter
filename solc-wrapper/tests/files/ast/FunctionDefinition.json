@@ -1,0 +1,31 @@
+{
+    "body": {
+        "id": 192,
+        "nodeType": "Block",
+        "src": "3511:148:0",
+        "statements": []
+    },
+    "id": 193,
+    "implemented": true,
+    "kind": "function",
+    "modifiers": [],
+    "name": "mint",
+    "nameLocation": "3401:4:0",
+    "nodeType": "FunctionDefinition",
+    "parameters": {
+        "id": 166,
+        "nodeType": "ParameterList",
+        "parameters": [],
+        "src": "3405:31:0"
+    },
+    "returnParameters": {
+        "id": 172,
+        "nodeType": "ParameterList",
+        "parameters": [],
+        "src": "3511:0:0"
+    },
+    "src": "3392:267:0",
+    "stateMutability": "nonpayable",
+    "virtual": false,
+    "visibility": "public"
+}

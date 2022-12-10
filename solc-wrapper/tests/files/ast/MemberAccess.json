@@ -1,0 +1,16 @@
+{
+    "expression": {
+        "id": 175,
+        "name": "_tokenIdCounter",
+        "nodeType": "Identifier",
+        "overloadedDeclarations": [],
+        "src": "3535:15:0",
+        "typeDescriptions": {}
+    },
+    "id": 176,
+    "memberLocation": "3551:7:0",
+    "memberName": "current",
+    "nodeType": "MemberAccess",
+    "src": "3535:23:0",
+    "typeDescriptions": {}
+}

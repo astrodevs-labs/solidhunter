@@ -1,0 +1,8 @@
+{
+    "id": 64,
+    "name": "address",
+    "nodeType": "ElementaryTypeName",
+    "src": "1602:7:0",
+    "stateMutability": "nonpayable",
+    "typeDescriptions": {}
+}

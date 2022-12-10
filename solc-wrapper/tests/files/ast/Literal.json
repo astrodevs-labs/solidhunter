@@ -1,0 +1,9 @@
+{
+    "hexValue": "4d696e74696e67206973206c6f636b6564",
+    "id": 77,
+    "kind": "string",
+    "nodeType": "Literal",
+    "src": "1874:19:0",
+    "typeDescriptions": {},
+    "value": "Minting is locked"
+}

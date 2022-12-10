@@ -257,6 +257,7 @@ pub enum Expression {
     FunctionCall(Box<FunctionCall>),
     FunctionCallOptions(Box<FunctionCallOptions>),
     Identifier(Box<Identifier>),
+    IdentifierPath(Box<IdentifierPath>),
     IndexAccess(Box<IndexAccess>),
     IndexRangeAccess(Box<IndexRangeAccess>),
     Literal(Box<Literal>),
@@ -296,6 +297,7 @@ pub enum NodeType {
     FunctionCall,
     FunctionCallOptions,
     Identifier,
+    IdentifierPath,
     IndexAccess,
     IndexRangeAccess,
     Literal,
@@ -347,6 +349,8 @@ pub enum NodeType {
     ParameterList,
     TryCatchClause,
     ModifierInvocation,
+    StructuredDocumentation,
+    UserDefinedTypeName,
 
     /// An unknown AST node type.
     Other(String),
@@ -512,13 +516,13 @@ pub struct Assignment {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "leftHandSide")]
@@ -625,20 +629,20 @@ pub struct FunctionCall {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "arguments")]
     arguments: Vec<Expression>,
     #[serde(rename = "expression")]
     expression: Expression,
-    kind: FunctionCallKind,
+    kind: Option<FunctionCallKind>,
     names: Vec<String>,
     #[serde(rename = "tryCall")]
     try_call: bool,
@@ -743,13 +747,13 @@ pub struct Literal {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "hexValue")]
@@ -769,17 +773,19 @@ pub struct MemberAccess {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "expression")]
     expression: Expression,
+    #[serde(rename = "memberLocation")]
+    member_location: SourceLocation,
     #[serde(rename = "memberName")]
     member_name: String,
     #[serde(rename = "referencedDeclaration")]
@@ -910,7 +916,7 @@ pub struct UserDefinedTypeName {
     #[serde(rename = "pathNode")]
     path_node: Option<IdentifierPath>,
     #[serde(rename = "referencedDeclaration")]
-    referenced_declaration: usize,
+    referenced_declaration: Option<usize>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -920,8 +926,10 @@ pub struct IdentifierPath {
     id: usize,
     src: SourceLocation,
     name: String,
+    #[serde(rename = "nameLocations")]
+    name_locations: Option<Vec<String>>,
     #[serde(rename = "referencedDeclaration")]
-    referenced_declaration: usize,
+    referenced_declaration: Option<usize>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1041,11 +1049,11 @@ pub struct FunctionDefinition {
     #[serde(rename = "returnParameters")]
     return_parameters: ParameterList,
     #[serde(rename = "scope")]
-    scope: usize,
+    scope: Option<usize>,
     #[serde(rename = "stateMutability")]
     state_mutability: StateMutability,
     #[serde(rename = "virtual")]
-    id_virtual: bool,
+    is_virtual: bool,
     visibility: Visibility,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
@@ -1193,9 +1201,9 @@ pub struct Return {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
-    expression: Option<Expression>,                 //TODO: Faire expression + multiples types
+    expression: Option<Expression>,
     #[serde(rename = "functionReturnParameters")]
-    function_return_parameters: usize,
+    function_return_parameters: Option<usize>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1257,13 +1265,28 @@ pub struct WhileStatement {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ModifierName {
+    Identifier(Identifier),
+    IdentifierPath(IdentifierPath),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ModifierInvocationKind {
+    #[serde(rename = "modifierInvocation")]
+    ModifierInvocation,
+    #[serde(rename = "baseConstructorSpecifier")]
+    BaseConstructorSpecifier,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierInvocation {
     id: usize,
     src: SourceLocation,
-    arguments: Option<Expression>,                   //TODO: Faire expression + multiple types
-    kind: Option<NodeType>,
+    arguments: Option<Expression>,
+    kind: Option<ModifierInvocationKind>,
     #[serde(rename = "modifierName")]
-    modifier_name: Identifier,                       //TODO: Multiple types
+    modifier_name: ModifierName,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1276,13 +1299,13 @@ pub struct ModifierDefinition {
     #[serde(rename = "nameLocation")]
     name_location: Option<String>,
     #[serde(rename = "baseModifiers")]
-    base_modifiers: Option<Vec<usize>>,                 //TODO: Multiple types
-    body: NodeType,
-    documentation: Option<StructuredDocumentation>,     //TODO: Multiple types
-    overrides: Option<OverrideSpecifier>,               //TODO: Multiple types
-    parameters: NodeType,
-    #[serde(rename = "isVirtual")]
-    is_virtual: bool,                                    //TODO: J'ai rename en isVirtual car virtual ne marchait pas
+    base_modifiers: Option<Vec<usize>>,
+    body: Statement,
+    documentation: Option<StructuredDocumentation>,
+    overrides: Option<OverrideSpecifier>,
+    parameters: ParameterList,
+    #[serde(rename = "virtual")]
+    is_virtual: bool,
     visibility: Visibility,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
@@ -1325,18 +1348,18 @@ pub struct UsingForDirective {
     src: SourceLocation,
     #[serde(rename = "functionList")]
     function_list: Option<Vec<StructureFunction>>,
-    function: IdentifierPath,
+    function: Option<IdentifierPath>,
     global: Option<bool>,
-    //#[serde(rename = "libraryName")]
-    // library_name: Option<UserDefinedTypeName>  //TODO: Multiple types
-    //#[serde(rename = "typeName")]
-    // type_name: Option<TypeName>  //TODO: Multiple types
+    #[serde(rename = "libraryName")]
+    library_name: Option<Expression>,
+    #[serde(rename = "typeName")]
+    type_name: Option<TypeName>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SymbolAliases {
+pub struct SymbolAlias {
     foreign: Identifier,
     local: Option<String>,
     name_location: Option<String>,
@@ -1351,11 +1374,11 @@ pub struct ImportDirective {
     file: String,
     #[serde(rename = "nameLocation")]
     name_location: Option<String>,
-    scope: usize,
+    scope: Option<usize>,
     #[serde(rename = "sourceUnit")]
-    source_unit: usize,
+    source_unit: Option<usize>,
     #[serde(rename = "symbolAliases")]
-    symbol_aliases: SymbolAliases,
+    symbol_aliases: Vec<SymbolAlias>,
     #[serde(rename = "unitAlias")]
     unit_alias: String,
     #[serde(rename = "nodeType")]
@@ -1397,19 +1420,19 @@ mod tests {
     #[test]
     fn test_correct_event_definition_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/EventDefinition.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing EventDefinition".to_string())?;
+        let res = serde_json::from_str::<EventDefinition>(&ast).map_err(|_| "Error deserializing EventDefinition".to_string())?;
         assert_eq!(res.anonymous, false);
         assert_eq!(res.id, 67);
         assert_eq!(res.name, "MintingLocked".to_string());
         assert_eq!(res.src, "1582:45:0".to_string());
-        assert_eq!(res.name_location, "1588:13:0".to_string());
+        assert_eq!(res.name_location, Some("1588:13:0".to_string()));
         Ok(assert_eq!(res.node_type, NodeType::EventDefinition))
     }
 
     #[test]
     fn test_correct_return_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Return.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing Return".to_string())?;
+        let res = serde_json::from_str::<Return>(&ast).map_err(|_| "Error deserializing Return".to_string())?;
         assert_eq!(res.id, 296);
         assert_eq!(res.src, "5761:19:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::Return))
@@ -1418,7 +1441,7 @@ mod tests {
     #[test]
     fn test_correct_emit_statement_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/EmitStatement.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing EmitStatement".to_string())?;
+        let res = serde_json::from_str::<EmitStatement>(&ast).map_err(|_| "Error deserializing EmitStatement".to_string())?;
         assert_eq!(res.id, 287);
         assert_eq!(res.src, "5537:33:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::EmitStatement))
@@ -1427,7 +1450,8 @@ mod tests {
     #[test]
     fn test_correct_modifier_invocation_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ModifierInvocation.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing ModifierInvocation".to_string())?;
+        let res = serde_json::from_str::<ModifierInvocation>(&ast).map_err(|_| "Error deserializing ModifierInvocation".to_string())?;
+
         assert_eq!(res.id, 274);
         assert_eq!(res.src, "5445:13:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::ModifierInvocation))
@@ -1436,21 +1460,21 @@ mod tests {
     #[test]
     fn test_correct_pragma_directive_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/PragmaDirective.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing PragmaDirective".to_string())?;
+        let res = serde_json::from_str::<PragmaDirective>(&ast).map_err(|_| "Error deserializing PragmaDirective".to_string())?;
         assert_eq!(res.id, 1);
         assert_eq!(res.src, "33:23:0".to_string());
-        assert_eq!(res.literals, vec!["solidity",
-                                      "0.8",
-                                      ".16"] as Vec<String>);
+        assert_eq!(res.literals, vec!["solidity".to_string(),
+                                      "0.8".to_string(),
+                                      ".16".to_string()] as Vec<String>);
         Ok(assert_eq!(res.node_type, NodeType::PragmaDirective))
     }
 
     #[test]
     fn test_correct_using_for_directive_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UsingForDirective.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing UsingForDirective".to_string())?;
+        let res = serde_json::from_str::<UsingForDirective>(&ast).map_err(|_| "Error deserializing UsingForDirective".to_string())?;
         assert_eq!(res.id, 31);
-        assert_eq!(res.global, false);
+        assert_eq!(res.global, Some(false));
         assert_eq!(res.src, "1007:36:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::UsingForDirective))
     }
@@ -1458,20 +1482,20 @@ mod tests {
     #[test]
     fn test_correct_modifier_definition_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ModifierDefinition.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing ModifierDefinition".to_string())?;
+        let res = serde_json::from_str::<ModifierDefinition>(&ast).map_err(|_| "Error deserializing ModifierDefinition".to_string())?;
         assert_eq!(res.id, 92);
         assert_eq!(res.name, "metadataNotLocked".to_string());
-        assert_eq!(res.name_location, "1995:17:0".to_string());
+        assert_eq!(res.name_location, Some("1995:17:0".to_string()));
         assert_eq!(res.src, "1986:104:0".to_string());
-        assert_eq!(res.virtual, false);
-        assert_eq!(res.visibility, "internal".to_string());
+        assert_eq!(res.is_virtual, false);
+        assert_eq!(res.visibility, Visibility::Internal);
         Ok(assert_eq!(res.node_type, NodeType::ModifierDefinition))
     }
 
     #[test]
     fn test_correct_parameter_list_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ParameterList.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing ParameterList".to_string())?;
+        let res = serde_json::from_str::<ParameterList>(&ast).map_err(|_| "Error deserializing ParameterList".to_string())?;
         assert_eq!(res.id, 197);
         assert_eq!(res.src, "3904:30:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::ParameterList))
@@ -1480,17 +1504,19 @@ mod tests {
     #[test]
     fn test_correct_assignment_list_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Assignment.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing Assignment".to_string())?;
+        let res = serde_json::from_str::<Assignment>(&ast).map_err(|_| "Error deserializing Assignment".to_string())?;
+
         assert_eq!(res.id, 141);
         assert_eq!(res.src, "2849:35:0".to_string());
-        assert_eq!(res.operator, "=".to_string());
+        assert_eq!(res.operator, AssignmentOperator::Equal);
         Ok(assert_eq!(res.node_type, NodeType::Assignment))
     }
 
     #[test]
     fn test_correct_inheritance_specifier_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/InheritanceSpecifier.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing InheritanceSpecifier".to_string())?;
+        let res = serde_json::from_str::<InheritanceSpecifier>(&ast).map_err(|_| "Error deserializing InheritanceSpecifier".to_string())?;
+
         assert_eq!(res.id, 13);
         assert_eq!(res.src, "828:16:0".to_string());
         Ok(assert_eq!(res.node_type, NodeType::InheritanceSpecifier))
@@ -1499,15 +1525,15 @@ mod tests {
     #[test]
     fn test_correct_variable_declaration_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/VariableDeclaration.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<EnumDefinition>(&ast).map_err(|_| "Error deserializing VariableDeclaration".to_string())?;
-        assert_eq!(res.constant, false);
+        let res = serde_json::from_str::<VariableDeclaration>(&ast).map_err(|_| "Error deserializing VariableDeclaration".to_string())?;
+        assert_eq!(res.is_constant, false);
         assert_eq!(res.id, 293);
-        assert_eq!(res.mutability, "mutable".to_string());
+        assert_eq!(res.mutability, Mutability::Mutable);
         assert_eq!(res.src, "5736:13:0".to_string());
-        assert_eq!(res.name_location, "-1:-1:-1".to_string());
+        assert_eq!(res.name_location, Some("-1:-1:-1".to_string()));
         assert_eq!(res.state_variable, false);
-        assert_eq!(res.storage_location, "memory".to_string());
-        assert_eq!(res.visibility, "internal".to_string());
+        assert_eq!(res.storage_location, StorageLocation::Memory);
+        assert_eq!(res.visibility, Visibility::Internal);
         Ok(assert_eq!(res.node_type, NodeType::VariableDeclaration))
     }
 
@@ -1571,6 +1597,166 @@ mod tests {
 
         assert_eq!(res.type_identifier, Some("t_bool".to_string()));
         assert_eq!(res.type_string, Some("bool".to_string()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_elementary_type_name_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ElementaryTypeName.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<ElementaryTypeName>(&ast).map_err(|_| "Error deserializing ElementaryTypeName".to_string())?;
+
+        assert_eq!(res.id, 64);
+        assert_eq!(res.src, "1602:7:0".to_string());
+        assert_eq!(res.name, "address".to_string());
+        assert_eq!(res.state_mutability, Some(StateMutability::NonPayable));
+        assert_eq!(res.node_type, NodeType::ElementaryTypeName);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_function_call_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/FunctionCall.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<FunctionCall>(&ast).map_err(|_| "Error deserializing FunctionCall".to_string())?;
+
+        assert_eq!(res.id, 78);
+        assert_eq!(res.src, "1850:44:0".to_string());
+        assert_eq!(res.try_call, false);
+        assert_eq!(res.node_type, NodeType::FunctionCall);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_literal_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Literal.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Literal>(&ast).map_err(|_| "Error deserializing Literal".to_string())?;
+
+        assert_eq!(res.id, 77);
+        assert_eq!(res.src, "1874:19:0".to_string());
+        assert_eq!(res.value, Some("Minting is locked".to_string()));
+        assert_eq!(res.hex_value, "4d696e74696e67206973206c6f636b6564".to_string());
+        assert_eq!(res.kind, LiteralKind::String);
+        assert_eq!(res.node_type, NodeType::Literal);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_member_access_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/MemberAccess.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<MemberAccess>(&ast).map_err(|_| "Error deserializing Literal".to_string())?;
+
+        assert_eq!(res.id, 176);
+        assert_eq!(res.src, "3535:23:0".to_string());
+        assert_eq!(res.member_name, "current".to_string());
+        assert_eq!(res.member_location, "3551:7:0".to_string());
+        assert_eq!(res.node_type, NodeType::MemberAccess);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_block_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Block.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Block>(&ast).map_err(|_| "Error deserializing Block".to_string())?;
+
+        assert_eq!(res.id, 192);
+        assert_eq!(res.src, "3511:148:0".to_string());
+        assert_eq!(res.statements, Some(vec![] as Vec<Statement>));
+        assert_eq!(res.node_type, NodeType::Block);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_expression_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ExpressionStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Block>(&ast).map_err(|_| "Error deserializing Expression Statement".to_string())?;
+
+        assert_eq!(res.id, 154);
+        assert_eq!(res.src, "2968:35:0".to_string());
+        assert_eq!(res.node_type, NodeType::ExpressionStatement);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_placeholder_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/PlaceholderStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Block>(&ast).map_err(|_| "Error deserializing PlaceholderStatement".to_string())?;
+
+        assert_eq!(res.id, 80);
+        assert_eq!(res.src, "1904:1:0".to_string());
+        assert_eq!(res.node_type, NodeType::PlaceholderStatement);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_contract_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ContractDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<ContractDefinition>(&ast).map_err(|_| "Error deserializing ContractDefinition".to_string())?;
+
+        assert_eq!(res.id, 427);
+        assert_eq!(res.src, "783:7774:0".to_string());
+        assert_eq!(res.name_location, Some("792:28:0".to_string()));
+        assert_eq!(res.name, "StartonERC721MetaTransaction".to_string());
+        assert_eq!(res.contract_kind, ContractKind::Contract);
+        assert_eq!(res.is_abstract, false);
+        assert_eq!(res.node_type, NodeType::ContractDefinition);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_function_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/FunctionDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<FunctionDefinition>(&ast).map_err(|_| "Error deserializing FunctionDefinition".to_string())?;
+
+        assert_eq!(res.id, 193);
+        assert_eq!(res.src, "3392:267:0".to_string());
+        assert_eq!(res.name, "mint".to_string());
+        assert_eq!(res.name_location, Some("3401:4:0".to_string()));
+        assert_eq!(res.implemented, true);
+        assert_eq!(res.kind, FunctionDefinitionKind::Function);
+        assert_eq!(res.visibility, Visibility::Public);
+        assert_eq!(res.is_virtual, false);
+        assert_eq!(res.state_mutability, StateMutability::NonPayable);
+        assert_eq!(res.node_type, NodeType::FunctionDefinition);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_import_directive_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ImportDirective.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<ImportDirective>(&ast).map_err(|_| "Error deserializing ImportDirective".to_string())?;
+
+        assert_eq!(res.id, 2);
+        assert_eq!(res.src, "58:78:0".to_string());
+        assert_eq!(res.name_location, Some("-1:-1:-1".to_string()));
+        assert_eq!(res.file, "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol".to_string());
+        assert_eq!(res.absolute_path, "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol".to_string());
+        assert_eq!(res.unit_alias, "".to_string());
+        assert_eq!(res.symbol_aliases, vec![] as Vec<SymbolAlias>);
+        assert_eq!(res.node_type, NodeType::ImportDirective);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_source_unit_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/SourceUnit.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<SourceUnit>(&ast).map_err(|_| "Error deserializing SourceUnit".to_string())?;
+
+        assert_eq!(res.id, 428);
+        assert_eq!(res.src, "33:8524:0".to_string());
+        assert_eq!(res.absolute_path, "wow.sol".to_string());
+        assert_eq!(res.license, Some("MIT".to_string()));
+        assert_eq!(res.node_type, NodeType::SourceUnit);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_structured_documentation_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/StructuredDocumentation.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<StructuredDocumentation>(&ast).map_err(|_| "Error deserializing StructuredDocumentation".to_string())?;
+
+        assert_eq!(res.id, 63);
+        assert_eq!(res.src, "1522:55:0".to_string());
+        assert_eq!(res.text, "@notice Event emitted when the minting is locked ".to_string());
+        assert_eq!(res.node_type, NodeType::StructuredDocumentation);
         Ok(())
     }
 }

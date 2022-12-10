@@ -13,30 +13,7 @@
   "parameters": {
     "id": 66,
     "nodeType": "ParameterList",
-    "parameters": [
-      {
-        "constant": false,
-        "id": 65,
-        "indexed": true,
-        "mutability": "mutable",
-        "name": "account",
-        "nameLocation": "1618:7:0",
-        "nodeType": "VariableDeclaration",
-        "src": "1602:23:0",
-        "stateVariable": false,
-        "storageLocation": "default",
-        "typeDescriptions": {},
-        "typeName": {
-          "id": 64,
-          "name": "address",
-          "nodeType": "ElementaryTypeName",
-          "src": "1602:7:0",
-          "stateMutability": "nonpayable",
-          "typeDescriptions": {}
-        },
-        "visibility": "internal"
-      }
-    ],
+    "parameters": [],
     "src": "1601:25:0"
   },
   "src": "1582:45:0"
