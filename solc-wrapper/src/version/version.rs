@@ -1,44 +1,46 @@
 use crate::utils;
 
-use svm_lib;
 use semver::{Version, VersionReq};
 use std::{path::PathBuf};
 
 use super::error::SolcVersionError;
 
 pub struct SolcVersion {
+    global_version_path: PathBuf
 }
 
 impl Default for SolcVersion {
     fn default() -> Self {
-        svm_lib::setup_home();
-
-        SolcVersion::new()
+        SolcVersion::new(Self::get_global_version_path())
     }
 }
 
 impl SolcVersion {
-    pub fn new() -> Self {
-        SolcVersion {}
+    pub fn new(path: impl Into<PathBuf>) -> Self {
+        SolcVersion { global_version_path: path.into() }
     }
 
-    pub fn find_matching_version(source: &str) -> Result<Version, SolcVersionError> {
+    pub fn find_matching_version(&self, source: &str) -> Result<Version, SolcVersionError> {
         let version_req = Self::source_version_req(source)?;
 
-        if svm_lib::global_version_path().is_file() {
+        if self.global_version_path.is_file() {
             let versions = Self::list_installed_versions()?;
             let version = versions.iter().find(|v| version_req.matches(v));
             if !version.is_none() {
-                return version.cloned().ok_or(SolcVersionError::Other);
+                return version.cloned().ok_or(SolcVersionError::ComputationFailed);
             }
         }
         let remote_versions = Self::list_remote_versions()?;
         let version = remote_versions.iter().find(|v| version_req.matches(v));
-        version.cloned().ok_or(SolcVersionError::Other)
+        version.cloned().ok_or(SolcVersionError::ComputationFailed)
     }
 
     pub fn list_installed_versions() -> Result<Vec<Version>, SolcVersionError> {
         svm_lib::installed_versions().map_err(|e| SolcVersionError::from(e))
+    }
+
+    pub fn get_global_version_path() -> PathBuf {
+        svm_lib::global_version_path()
     }
 
     pub fn list_remote_versions() -> Result<Vec<Version>, SolcVersionError> {
@@ -49,9 +51,9 @@ impl SolcVersion {
         svm_lib::blocking_install(version).map_err(|e| SolcVersionError::from(e))
     }
 
-    pub fn find_version_and_install(version: &Version) -> Result<PathBuf, SolcVersionError> {
+    pub fn find_version_and_install(&self, version: &Version) -> Result<PathBuf, SolcVersionError> {
         // TODO optimize the code to only have to run it once and outside this function possibly
-        if svm_lib::global_version_path().is_file() {
+        if self.global_version_path.is_file() {
             let versions = svm_lib::installed_versions()?;
             if !versions.is_empty() && versions.contains(&version) {
                 return Ok(svm_lib::version_path(&version.to_string()).join("solc-".to_owned() + version.to_string().as_str()));

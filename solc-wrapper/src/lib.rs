@@ -31,11 +31,11 @@ impl Solc {
         &output[idx..]
     }
 
-    pub fn execute_on_file(path: &str) -> Result<String, SolcError> {
+    pub fn execute_on_file(&self, path: &str) -> Result<String, SolcError> {
         let content = std::fs::read_to_string(path).map_err(|e| SolcError::Other(anyhow::Error::new(e)))?;
-        let version = SolcVersion::find_matching_version( content.as_str())?;
 
-        let version_path = SolcVersion::find_version_and_install(&version)?;
+        let version = self.version.find_matching_version( content.as_str())?;
+        let version_path = self.version.find_version_and_install(&version)?;
 
         let output = SolcCommand::new(version_path)
             .args(["--ast-compact-json", "--stop-after", "parsing", path])
@@ -48,9 +48,9 @@ impl Solc {
         Ok(String::from(Self::skip_output_header(&res)))
     }
 
-    pub fn execute_on_content(content: &str) -> Result<String, SolcError> {
-        let version = SolcVersion::find_matching_version( content)?;
-        let version_path = SolcVersion::find_version_and_install(&version)?;
+    pub fn execute_on_content(&self, content: &str) -> Result<String, SolcError> {
+        let version = self.version.find_matching_version( content)?;
+        let version_path = self.version.find_version_and_install(&version)?;
 
         let output = SolcCommand::new(version_path)
             .args(["--ast-compact-json", "--stop-after", "parsing", "-"])
@@ -62,16 +62,15 @@ impl Solc {
             .map_err(|e| SolcError::Other(anyhow::Error::new(e)))
     }
 
-    pub fn extract_ast_file(filepath: String) -> Result<Ast, SolcError> {
-        let output = Self::execute_on_file(filepath.as_str())?;
+    pub fn extract_ast_file(&self, filepath: String) -> Result<Ast, SolcError> {
+        let output = self.execute_on_file(filepath.as_str())?;
         parse_ast(output.as_str()).map_err(|e| SolcError::AstFailed(e))
     }
 
-    pub fn extract_ast_content(content: String) -> Result<Ast, SolcError> {
-        let output = Self::execute_on_content(&content)?;
+    pub fn extract_ast_content(&self, content: String) -> Result<Ast, SolcError> {
+        let output = self.execute_on_content(&content)?;
         parse_ast(output.as_str()).map_err(|e| SolcError::AstFailed(e))
     }
-
 
 }
 

@@ -11,7 +11,4 @@ pub enum SolcVersionError {
 
     #[error("SolcVersionError: Cannot parse the version")]
     ParseVersionFailed,
-
-    #[error("SolcVersionError: Something went wrong")]
-    Other
 }
