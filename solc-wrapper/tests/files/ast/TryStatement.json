@@ -1,0 +1,244 @@
+{
+    "clauses": [
+        {
+            "block": {
+                "id": 87,
+                "nodeType": "Block",
+                "src": "1026:41:0",
+                "statements": [
+                    {
+                        "eventCall": {
+                            "arguments": [
+                                {
+                                    "id": 84,
+                                    "name": "result",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 81,
+                                    "src": "1049:6:0",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_string_memory_ptr",
+                                        "typeString": "string memory"
+                                    }
+                                }
+                            ],
+                            "expression": {
+                                "argumentTypes": [
+                                    {
+                                        "typeIdentifier": "t_string_memory_ptr",
+                                        "typeString": "string memory"
+                                    }
+                                ],
+                                "id": 83,
+                                "name": "Log",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 51,
+                                "src": "1045:3:0",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_function_event_nonpayable$_t_string_memory_ptr_$returns$__$",
+                                    "typeString": "function (string memory)"
+                                }
+                            },
+                            "id": 85,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "1045:11:0",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_tuple$__$",
+                                "typeString": "tuple()"
+                            }
+                        },
+                        "id": 86,
+                        "nodeType": "EmitStatement",
+                        "src": "1040:16:0"
+                    }
+                ]
+            },
+            "errorName": "",
+            "id": 88,
+            "nodeType": "TryCatchClause",
+            "parameters": {
+                "id": 82,
+                "nodeType": "ParameterList",
+                "parameters": [
+                    {
+                        "constant": false,
+                        "id": 81,
+                        "mutability": "mutable",
+                        "name": "result",
+                        "nameLocation": "1018:6:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 88,
+                        "src": "1004:20:0",
+                        "stateVariable": false,
+                        "storageLocation": "memory",
+                        "typeDescriptions": {
+                            "typeIdentifier": "t_string_memory_ptr",
+                            "typeString": "string"
+                        },
+                        "typeName": {
+                            "id": 80,
+                            "name": "string",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1004:6:0",
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_string_storage_ptr",
+                                "typeString": "string"
+                            }
+                        },
+                        "visibility": "internal"
+                    }
+                ],
+                "src": "1003:22:0"
+            },
+            "src": "995:72:0"
+        },
+        {
+            "block": {
+                "id": 93,
+                "nodeType": "Block",
+                "src": "1074:57:0",
+                "statements": [
+                    {
+                        "eventCall": {
+                            "arguments": [
+                                {
+                                    "hexValue": "65787465726e616c2063616c6c206661696c6564",
+                                    "id": 90,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "string",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "1097:22:0",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_stringliteral_e0e3f7224ce5e493e1d6652b2633dc31e8929d0dd88f4f97ce03f976e5157351",
+                                        "typeString": "literal_string \"external call failed\""
+                                    },
+                                    "value": "external call failed"
+                                }
+                            ],
+                            "expression": {
+                                "argumentTypes": [
+                                    {
+                                        "typeIdentifier": "t_stringliteral_e0e3f7224ce5e493e1d6652b2633dc31e8929d0dd88f4f97ce03f976e5157351",
+                                        "typeString": "literal_string \"external call failed\""
+                                    }
+                                ],
+                                "id": 89,
+                                "name": "Log",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 51,
+                                "src": "1093:3:0",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_function_event_nonpayable$_t_string_memory_ptr_$returns$__$",
+                                    "typeString": "function (string memory)"
+                                }
+                            },
+                            "id": 91,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "kind": "functionCall",
+                            "lValueRequested": false,
+                            "nameLocations": [],
+                            "names": [],
+                            "nodeType": "FunctionCall",
+                            "src": "1093:27:0",
+                            "tryCall": false,
+                            "typeDescriptions": {
+                                "typeIdentifier": "t_tuple$__$",
+                                "typeString": "tuple()"
+                            }
+                        },
+                        "id": 92,
+                        "nodeType": "EmitStatement",
+                        "src": "1088:32:0"
+                    }
+                ]
+            },
+            "errorName": "",
+            "id": 94,
+            "nodeType": "TryCatchClause",
+            "src": "1068:63:0"
+        }
+    ],
+    "externalCall": {
+        "arguments": [
+            {
+                "id": 78,
+                "name": "_i",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": [],
+                "referencedDeclaration": 73,
+                "src": "991:2:0",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                }
+            }
+        ],
+        "expression": {
+            "argumentTypes": [
+                {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                }
+            ],
+            "expression": {
+                "id": 76,
+                "name": "foo",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": [],
+                "referencedDeclaration": 58,
+                "src": "980:3:0",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_Foo_$47",
+                    "typeString": "contract Foo"
+                }
+            },
+            "id": 77,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": false,
+            "lValueRequested": false,
+            "memberLocation": "984:6:0",
+            "memberName": "myFunc",
+            "nodeType": "MemberAccess",
+            "referencedDeclaration": 46,
+            "src": "980:10:0",
+            "typeDescriptions": {
+                "typeIdentifier": "t_function_external_pure$_t_uint256_$returns$_t_string_memory_ptr_$",
+                "typeString": "function (uint256) pure external returns (string memory)"
+            }
+        },
+        "id": 79,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "kind": "functionCall",
+        "lValueRequested": false,
+        "nameLocations": [],
+        "names": [],
+        "nodeType": "FunctionCall",
+        "src": "980:14:0",
+        "tryCall": true,
+        "typeDescriptions": {
+            "typeIdentifier": "t_string_memory_ptr",
+            "typeString": "string memory"
+        }
+    },
+    "id": 95,
+    "nodeType": "TryStatement",
+    "src": "976:155:0"
+}

@@ -1226,7 +1226,7 @@ pub struct TryStatement {
     documentation: Option<String>,
     clauses: Vec<TryCatchClause>,
     #[serde(rename = "externalCall")]
-    external_call: NodeType,
+    external_call: Expression,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1235,10 +1235,10 @@ pub struct TryStatement {
 pub struct TryCatchClause {
     id: usize,
     src: SourceLocation,
-    block: NodeType,
+    block: Block,
     #[serde(rename = "errorName")]
     error_name: String,
-    parameters: Option<NodeType>,
+    parameters: Option<ParameterList>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1248,7 +1248,7 @@ pub struct UncheckedBlock {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
-    statements: Vec<Statement>,                 //TODO: Faire Statement
+    statements: Vec<Statement>,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1258,8 +1258,8 @@ pub struct WhileStatement {
     id: usize,
     src: SourceLocation,
     documentation: Option<String>,
-    body: NodeType,
-    condition: Expression,                           //TODO: Faire expression
+    body: Statement,
+    condition: Expression,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1757,6 +1757,88 @@ mod tests {
         assert_eq!(res.src, "1522:55:0".to_string());
         assert_eq!(res.text, "@notice Event emitted when the minting is locked ".to_string());
         assert_eq!(res.node_type, NodeType::StructuredDocumentation);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_break_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Break.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Break>(&ast).map_err(|_| "Error deserializing Break".to_string())?;
+
+        assert_eq!(res.id, 7);
+        assert_eq!(res.src, "172:5:0".to_string());
+        assert_eq!(res.node_type, NodeType::Break);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_continue_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/Continue.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<Continue>(&ast).map_err(|_| "Error deserializing Continue".to_string())?;
+
+        assert_eq!(res.id, 7);
+        assert_eq!(res.src, "172:8:0".to_string());
+        assert_eq!(res.node_type, NodeType::Continue);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_while_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/WhileStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<WhileStatement>(&ast).map_err(|_| "Error deserializing WhileStatement".to_string())?;
+
+        assert_eq!(res.id, 9);
+        assert_eq!(res.src, "145:46:0".to_string());
+        assert_eq!(res.node_type, NodeType::WhileStatement);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_do_while_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/DoWhileStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<DoWhileStatement>(&ast).map_err(|_| "Error deserializing DoWhileStatement".to_string())?;
+
+        assert_eq!(res.id, 9);
+        assert_eq!(res.src, "145:50:0".to_string());
+        assert_eq!(res.node_type, NodeType::DoWhileStatement);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_for_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ForStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<ForStatement>(&ast).map_err(|_| "Error deserializing ForStatement".to_string())?;
+
+        assert_eq!(res.id, 18);
+        assert_eq!(res.src, "145:60:0".to_string());
+        assert_eq!(res.node_type, NodeType::ForStatement);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_struct_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/StructDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<StructDefinition>(&ast).map_err(|_| "Error deserializing StructDefinition".to_string())?;
+
+        assert_eq!(res.id, 6);
+        assert_eq!(res.src, "62:36:0".to_string());
+        assert_eq!(res.name_location, Some("69:1:0".to_string()));
+        assert_eq!(res.name, "S".to_string());
+        assert_eq!(res.scope, 27);
+        assert_eq!(res.visibility, Visibility::Public);
+        assert_eq!(res.canonical_name, "S".to_string());
+        assert_eq!(res.node_type, NodeType::StructDefinition);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_try_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/TryStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing TryStatement".to_string())?;
+
+        assert_eq!(res.id, 95);
+        assert_eq!(res.src, "976:155:0".to_string());
+        assert_eq!(res.node_type, NodeType::TryStatement);
         Ok(())
     }
 }
