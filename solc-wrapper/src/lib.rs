@@ -1,11 +1,13 @@
 mod solc;
+
 mod ast;
+pub use ast::ast::SourceUnit;
+
 mod utils;
 mod version;
 
 use solc::command::SolcCommand;
 use version::version::SolcVersion;
-use ast::ast::Ast;
 use ast::parse::parse_ast;
 
 mod error;
@@ -62,12 +64,12 @@ impl Solc {
             .map_err(|e| SolcError::Other(anyhow::Error::new(e)))
     }
 
-    pub fn extract_ast_file(&self, filepath: String) -> Result<Ast, SolcError> {
+    pub fn extract_ast_file(&self, filepath: String) -> Result<SourceUnit, SolcError> {
         let output = self.execute_on_file(filepath.as_str())?;
         Ok(parse_ast(output.as_str())?)
     }
 
-    pub fn extract_ast_content(&self, content: String) -> Result<Ast, SolcError> {
+    pub fn extract_ast_content(&self, content: String) -> Result<SourceUnit, SolcError> {
         let output = self.execute_on_content(&content)?;
         Ok(parse_ast(output.as_str())?)
     }

@@ -23,9 +23,9 @@ pub fn create_default_rules() -> Vec<RuleEntry> {
 
 pub fn create_rules() -> HashMap<String, fn(RuleEntry) -> Box<dyn RuleType>> {
     let mut rules :  HashMap<String, RuleBuilder> = HashMap::new();
-    
-    rules["line-max-len"] = LineMaxLen::create;
-    rules["code-complexity"] = CodeComplexity::create;
+
+    rules.insert( "line-max-len".to_string(), LineMaxLen::create);
+    rules.insert("code-complexity".to_string(), CodeComplexity::create);
 
     rules
 }

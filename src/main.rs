@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use solidhunter::rules::rules_base::{create_rules_file, parse_rules};
+use solidhunter_lib::rules::rule_impl::{create_rules_file, parse_rules};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -44,7 +44,7 @@ fn main() {
         return;
     }
 
-    let rules = parse_rules(args.rules_file);
+    let rules = parse_rules(args.rules_file.as_str());
     if rules.is_err() {
         println!("Error: {:?}", rules.unwrap_err());
         return;
