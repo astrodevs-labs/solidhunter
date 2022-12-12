@@ -1,0 +1,27 @@
+{
+  "id": 197,
+  "nodeType": "ParameterList",
+  "parameters": [
+    {
+      "constant": false,
+      "id": 196,
+      "mutability": "mutable",
+      "name": "newContractURI",
+      "nameLocation": "3919:14:0",
+      "nodeType": "VariableDeclaration",
+      "src": "3905:28:0",
+      "stateVariable": false,
+      "storageLocation": "memory",
+      "typeDescriptions": {},
+      "typeName": {
+        "id": 195,
+        "name": "string",
+        "nodeType": "ElementaryTypeName",
+        "src": "3905:6:0",
+        "typeDescriptions": {}
+      },
+      "visibility": "internal"
+    }
+  ],
+  "src": "3904:30:0"
+}

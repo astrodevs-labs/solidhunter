@@ -1,0 +1,31 @@
+{
+  "global": false,
+  "id": 31,
+  "libraryName": {
+    "id": 28,
+    "name": "Counters",
+    "nameLocations": [
+      "1013:8:0"
+    ],
+    "nodeType": "IdentifierPath",
+    "src": "1013:8:0"
+  },
+  "nodeType": "UsingForDirective",
+  "src": "1007:36:0",
+  "typeName": {
+    "id": 30,
+    "nodeType": "UserDefinedTypeName",
+    "pathNode": {
+      "id": 29,
+      "name": "Counters.Counter",
+      "nameLocations": [
+        "1026:8:0",
+        "1035:7:0"
+      ],
+      "nodeType": "IdentifierPath",
+      "src": "1026:16:0"
+    },
+    "src": "1026:16:0",
+    "typeDescriptions": {}
+  }
+}

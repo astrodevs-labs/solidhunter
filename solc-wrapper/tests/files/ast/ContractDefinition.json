@@ -1,0 +1,13 @@
+{
+    "abstract": false,
+    "baseContracts": [],
+    "contractDependencies": [],
+    "contractKind": "contract",
+    "id": 427,
+    "name": "StartonERC721MetaTransaction",
+    "nameLocation": "792:28:0",
+    "nodeType": "ContractDefinition",
+    "nodes": [],
+    "src": "783:7774:0",
+    "usedErrors": []
+}

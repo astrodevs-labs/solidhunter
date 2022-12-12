@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "literals": [
+    "solidity",
+    "0.8",
+    ".16"
+  ],
+  "nodeType": "PragmaDirective",
+  "src": "33:23:0"
+}
