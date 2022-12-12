@@ -173,12 +173,6 @@ pub enum UnaryOperator {
     #[serde(rename = "--")]
     DoubleMinus,
 
-    #[serde(rename = "++")]
-    PlusPlus,
-
-    #[serde(rename = "--")]
-    MinusMinus,
-
     #[serde(rename = "delete")]
     Delete,
 }
@@ -594,13 +588,13 @@ pub struct ElementaryTypeNameExpression {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "typeName")]
@@ -657,13 +651,13 @@ pub struct FunctionCallOptions {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     expression: Expression,
@@ -697,13 +691,13 @@ pub struct IndexAccess {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "baseExpression")]
@@ -721,13 +715,13 @@ pub struct IndexRangeAccess {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "baseExpression")]
@@ -801,13 +795,13 @@ pub struct NewExpression {
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "typeName")]
@@ -955,13 +949,13 @@ pub struct TupleExpression {
     #[serde(rename = "argumentTypes")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     components: Vec<Expression>,
@@ -978,13 +972,13 @@ pub struct UnaryOperation {
     #[serde(rename = "argumentTypes")]
     argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
     type_descriptions: TypeDescriptions,
     #[serde(rename = "operator")]
@@ -1214,7 +1208,7 @@ pub struct RevertStatement {
     src: SourceLocation,
     documentation: Option<String>,
     #[serde(rename = "errorCall")]
-    error_call: NodeType,
+    error_call: Statement,
     #[serde(rename = "nodeType")]
     node_type: NodeType,
 }
@@ -1394,6 +1388,63 @@ pub struct PragmaDirective {
     node_type: NodeType,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EvmVersion {
+    #[serde(rename = "homestead")]
+    Homestead,
+    #[serde(rename = "tangerineWhistle")]
+    TangerineWhistle,
+    #[serde(rename = "spuriousDragon")]
+    SpuriousDragon,
+    #[serde(rename = "byzantium")]
+    Byzantium,
+    #[serde(rename = "constantinople")]
+    Constantinople,
+    #[serde(rename = "petersburg")]
+    Petersburg,
+    #[serde(rename = "istanbul")]
+    Istanbul,
+    #[serde(rename = "berlin")]
+    Berlin,
+    #[serde(rename = "london")]
+    London,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Suffix {
+    #[serde(rename = "slot")]
+    Slot,
+    #[serde(rename = "offset")]
+    Offset
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExternalReference {
+    declaration: usize,
+    #[serde(rename = "isOffset")]
+    is_offset: bool,
+    #[serde(rename = "isSlot")]
+    is_slot: bool,
+    src: SourceLocation,
+    #[serde(rename = "valueSize")]
+    value_size: usize,
+    suffix: Option<Suffix>
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct InlineAssembly {
+    id: usize,
+    src: SourceLocation,
+    documentation: Option<String>,
+    #[serde(rename = "evmVersion")]
+    evm_version: EvmVersion,
+    #[serde(rename = "externalReferences")]
+    external_references: Vec<ExternalReference>,
+    flags: Option<Vec<String>>,
+    #[serde(rename = "nodeType")]
+    node_type: NodeType
+}
+
 #[cfg(test)]
 mod tests {
     use std::fs;
@@ -1472,7 +1523,7 @@ mod tests {
     #[test]
     fn test_correct_tuple_expression_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/TupleExpression.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<PragmaDirective>(&ast).map_err(|_| "Error deserializing TupleExpression".to_string())?;
+        let res = serde_json::from_str::<TupleExpression>(&ast).map_err(|_| "Error deserializing TupleExpression".to_string())?;
         assert_eq!(res.id, 16);
         assert_eq!(res.src, "150:12:0".to_string());
         assert_eq!(res.is_inline_array, false);
@@ -1575,11 +1626,11 @@ mod tests {
     #[test]
     fn test_correct_unary_operation_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UnaryOperation.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<BinaryOperation>(&ast).map_err(|_| "Error deserializing UnaryOperation".to_string())?;
+        let res = serde_json::from_str::<UnaryOperation>(&ast).map_err(|_| "Error deserializing UnaryOperation".to_string())?;
 
         assert_eq!(res.id, 7);
         assert_eq!(res.src, "104:6:0".to_string());
-        assert_eq!(res.operator, "++".to_string());
+        assert_eq!(res.operator, UnaryOperator::DoublePlus);
         assert_eq!(res.prefix, false);
         Ok(assert_eq!(res.node_type, NodeType::UnaryOperation))
     }
@@ -1587,7 +1638,7 @@ mod tests {
     #[test]
     fn test_correct_unchecked_block_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UncheckedBlock.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<BinaryOperation>(&ast).map_err(|_| "Error deserializing UncheckedBlock".to_string())?;
+        let res = serde_json::from_str::<UncheckedBlock>(&ast).map_err(|_| "Error deserializing UncheckedBlock".to_string())?;
 
         assert_eq!(res.id, 9);
         assert_eq!(res.src, "104:21:0".to_string());
@@ -1875,13 +1926,24 @@ mod tests {
     }
 
     #[test]
+    fn test_correct_revert_statement_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/RevertStatement.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<RevertStatement>(&ast).map_err(|_| "Error deserializing RevertStatement".to_string())?;
+
+        assert_eq!(res.id, 8);
+        assert_eq!(res.src, "118:12:0".to_string());
+        assert_eq!(res.node_type, NodeType::RevertStatement);
+        Ok(())
+    }
+
+    #[test]
     fn test_correct_inline_assembly_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/InlineAssembly.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing InlineAssembly".to_string())?;
+        let res = serde_json::from_str::<InlineAssembly>(&ast).map_err(|_| "Error deserializing InlineAssembly".to_string())?;
 
         assert_eq!(res.id, 9);
         assert_eq!(res.src, "176:50:0".to_string());
-        assert_eq!(res.evm_version, "london".to_string());
+        assert_eq!(res.evm_version, EvmVersion::London);
         assert_eq!(res.node_type, NodeType::InlineAssembly);
         Ok(())
     }
@@ -1889,7 +1951,7 @@ mod tests {
     #[test]
     fn test_correct_error_definition_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ErrorDefinition.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing ErrorDefinition".to_string())?;
+        let res = serde_json::from_str::<ErrorDefinition>(&ast).map_err(|_| "Error deserializing ErrorDefinition".to_string())?;
 
         assert_eq!(res.id, 3);
         assert_eq!(res.name, "No".to_string());
@@ -1902,7 +1964,7 @@ mod tests {
     #[test]
     fn test_correct_index_access_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/IndexAccess.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing IndexAccess".to_string())?;
+        let res = serde_json::from_str::<IndexAccess>(&ast).map_err(|_| "Error deserializing IndexAccess".to_string())?;
 
         assert_eq!(res.id, 14);
         assert_eq!(res.src, "203:10:0".to_string());
@@ -1913,7 +1975,7 @@ mod tests {
     #[test]
     fn test_correct_new_expression_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/NewExpression.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing NewExpression".to_string())?;
+        let res = serde_json::from_str::<NewExpression>(&ast).map_err(|_| "Error deserializing NewExpression".to_string())?;
 
         assert_eq!(res.id, 7);
         assert_eq!(res.src, "131:6:0".to_string());
@@ -1924,11 +1986,11 @@ mod tests {
     #[test]
     fn test_correct_function_call_options_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/FunctionCallOptions.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing FunctionCallOptions".to_string())?;
+        let res = serde_json::from_str::<FunctionCallOptions>(&ast).map_err(|_| "Error deserializing FunctionCallOptions".to_string())?;
 
         assert_eq!(res.id, 21);
         assert_eq!(res.src, "236:36:0".to_string());
-        assert_eq!(res.names, vec!["value"] as Vec<String>);
+        assert_eq!(res.names, vec!["value".to_string()] as Vec<String>);
         assert_eq!(res.node_type, NodeType::FunctionCallOptions);
         Ok(())
     }
@@ -1936,12 +1998,12 @@ mod tests {
     #[test]
     fn test_correct_function_type_name_options_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/FunctionTypeName.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing FunctionTypeName".to_string())?;
+        let res = serde_json::from_str::<FunctionTypeName>(&ast).map_err(|_| "Error deserializing FunctionTypeName".to_string())?;
 
         assert_eq!(res.id, 11);
         assert_eq!(res.src, "260:37:0".to_string());
-        assert_eq!(res.state_mutability, "pure".to_string());
-        assert_eq!(res.visibility, "internal".to_string());
+        assert_eq!(res.state_mutability, StateMutability::Pure);
+        assert_eq!(res.visibility, Visibility::Internal);
         assert_eq!(res.node_type, NodeType::FunctionTypeName);
         Ok(())
     }
@@ -1949,11 +2011,11 @@ mod tests {
     #[test]
     fn test_correct_user_defined_value_type_definition_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UserDefinedValueTypeDefinition.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing UserDefinedValueTypeDefinition".to_string())?;
+        let res = serde_json::from_str::<UserDefinedValueTypeDefinition>(&ast).map_err(|_| "Error deserializing UserDefinedValueTypeDefinition".to_string())?;
 
         assert_eq!(res.id, 3);
         assert_eq!(res.name, "UFixed256x18".to_string());
-        assert_eq!(res.name_location, "160:12:0".to_string());
+        assert_eq!(res.name_location, Some("160:12:0".to_string()));
         assert_eq!(res.src, "155:29:0".to_string());
         assert_eq!(res.node_type, NodeType::UserDefinedValueTypeDefinition);
         Ok(())
@@ -1962,7 +2024,7 @@ mod tests {
     #[test]
     fn test_correct_elementary_type_name_expression_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ElementaryTypeNameExpression.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing ElementaryTypeNameExpression".to_string())?;
+        let res = serde_json::from_str::<ElementaryTypeNameExpression>(&ast).map_err(|_| "Error deserializing ElementaryTypeNameExpression".to_string())?;
 
         assert_eq!(res.id, 10);
         assert_eq!(res.src, "156:7:0".to_string());
@@ -1973,7 +2035,7 @@ mod tests {
     #[test]
     fn test_correct_index_range_access_expression_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/IndexRangeAccess.json").expect("Could not find test data file");
-        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing IndexRangeAccess".to_string())?;
+        let res = serde_json::from_str::<IndexRangeAccess>(&ast).map_err(|_| "Error deserializing IndexRangeAccess".to_string())?;
 
         assert_eq!(res.id, 12);
         assert_eq!(res.src, "174:8:0".to_string());
