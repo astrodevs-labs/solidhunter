@@ -18,8 +18,8 @@ pub fn create_default_rules() -> Vec<RuleEntry> {
 
 type RuleBuilder = fn(RuleEntry) -> Box<dyn RuleType>;
 
-pub fn add_rules(rules : &mut HashMap<String, RuleBuilder>, toAdd: HashMap<String, RuleBuilder>) {
-    for (key, value) in toAdd {
+pub fn add_rules(rules : &mut HashMap<String, RuleBuilder>, to_add: HashMap<String, RuleBuilder>) {
+    for (key, value) in to_add {
         rules.insert(key, value);
     }
 }

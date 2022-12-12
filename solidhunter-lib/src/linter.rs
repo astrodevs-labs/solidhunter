@@ -19,9 +19,9 @@ pub struct SolidLinter {
 }
 
 impl SolidLinter {
-    fn _create_rules(&mut self, rulesConfig:& String, _first: bool)
+    fn _create_rules(&mut self, rules_config:& String, _first: bool)
     {
-        let res = parse_rules(rulesConfig.as_str());
+        let res = parse_rules(rules_config.as_str());
         match res {
             Ok(rules) => {
                 for rule in rules.rules {
@@ -29,22 +29,22 @@ impl SolidLinter {
                 }
             }
             Err(_) => {
-                create_rules_file(rulesConfig.as_str());
+                create_rules_file(rules_config.as_str());
                 if _first {
-                    self._create_rules(rulesConfig, false);
+                    self._create_rules(rules_config, false);
                 }
             }
         }
     }
 
-    pub fn new(rulesConfig: String) {
+    pub fn new(rules_config: String) {
         let mut linter = SolidLinter {
             files: Vec::new(),
             rule_factory: RuleFactory::new(),
             rules: Vec::new(),
         };
         linter.rule_factory.register_rules();
-        linter._create_rules(&rulesConfig, true);
+        linter._create_rules(&rules_config, true);
     }
 
     fn file_exists(&self, path: &str) -> bool {
