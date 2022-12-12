@@ -10,7 +10,9 @@ pub mod best_practises;
 
 pub fn create_default_rules() -> Vec<RuleEntry> {
     let mut rules = Vec::new();
+
     rules.append(&mut best_practises::create_default_rules());
+
     rules
 }
 
