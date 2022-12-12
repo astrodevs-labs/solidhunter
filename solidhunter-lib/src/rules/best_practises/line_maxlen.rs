@@ -1,4 +1,5 @@
 use crate::linter::SolidFile;
+use solc_wrapper::SourceUnit;
 use crate::rules::types::*;
 use crate::types::*;
 
@@ -11,7 +12,8 @@ pub struct LineMaxLen {
 impl RuleType for LineMaxLen {
 
     fn diagnose(&self, file: &SolidFile, files: &Vec<SolidFile>) -> Vec<LintDiag> {
-        todo!()
+        println!("LineMaxLen: trying diagnose file: {}", file.path);
+        Vec::new()
     }
 
     
@@ -30,7 +32,7 @@ impl LineMaxLen {
         RuleEntry {
             id: "line-max-len".to_string(),
             severity: Severity::WARNING,
-            data: vec!["120".to_string()]
+            data: vec!["80".to_string()]
         }
     }
 }

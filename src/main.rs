@@ -46,6 +46,9 @@ fn main() {
     }
 
     let mut linter : SolidLinter = SolidLinter::new(args.rules_file);
-    let result = linter.parse_folder(args.project_path);
-    //TODO : make a pretty output
+    for path in args.project_path {
+        let res = linter.parse_folder(path);
+        //TODO : make a pretty output
+        
+    }
 }

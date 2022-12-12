@@ -37,14 +37,15 @@ impl SolidLinter {
         }
     }
 
-    pub fn new(rules_config: String) {
-        let mut linter = SolidLinter {
+    pub fn new(rules_config: String) -> SolidLinter {
+        let mut linter : SolidLinter = SolidLinter {
             files: Vec::new(),
             rule_factory: RuleFactory::new(),
             rules: Vec::new(),
         };
         linter.rule_factory.register_rules();
         linter._create_rules(&rules_config, true);
+        return linter;
     }
 
     fn file_exists(&self, path: &str) -> bool {
@@ -74,12 +75,21 @@ impl SolidLinter {
     }
 
     pub fn parse_file(&mut self, filepath: String) -> LintResult{
-        let res = Solc::default().extract_ast_file(filepath.clone()).unwrap();
-
+        let res = Solc::default().extract_ast_file(filepath.clone());
+        
+        if res.is_err() {
+            println!("{:?}", res);
+            return LintResult{
+                errors: vec![],
+                warnings: vec![],
+                infos: vec![],
+                hints: vec![],
+            };
+        }
         if self.file_exists(filepath.as_str()) {
-            self.update_file_ast(filepath.as_str(), res);
+            self.update_file_ast(filepath.as_str(), res.expect("ast not found"));
         } else {
-            self.add_file(filepath.as_str(), res, "");
+            self.add_file(filepath.as_str(), res.expect("ast not found"), "");
         }
         let mut res : Vec<LintDiag> = Vec::new();
 
@@ -88,20 +98,29 @@ impl SolidLinter {
             res.append(&mut diags);
         }
         LintResult {
-            errors: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::ERROR).collect(),
-            warnings: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::WARNING).collect(),
-            infos: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::INFO).collect(),
-            hints: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::HINT).collect(),
+            errors: res.clone().into_iter().filter(|x| x.severity == Some(Severity::ERROR)).collect(),
+            warnings: res.clone().into_iter().filter(|x| x.severity == Some(Severity::WARNING)).collect(),
+            infos: res.clone().into_iter().filter(|x| x.severity == Some(Severity::INFO)).collect(),
+            hints: res.clone().into_iter().filter(|x| x.severity == Some(Severity::HINT)).collect(),
         }
     }
 
     pub fn parse_content(&mut self, filepath: String, content : &String) -> LintResult{
-        let res = Solc::default().extract_ast_content(content.to_string()).unwrap();
-
+        let res = Solc::default().extract_ast_content(content.to_string());
+        
+        if res.is_err() {
+            println!("{:?}", res);
+            return LintResult{
+                errors: vec![],
+                warnings: vec![],
+                infos: vec![],
+                hints: vec![],
+            };
+        }
         if self.file_exists(filepath.as_str()) {
-            self.update_file_ast(filepath.as_str(), res);
+            self.update_file_ast(filepath.as_str(), res.expect("ast not found"));
         } else {
-            self.add_file(filepath.as_str(), res, content.as_str());
+            self.add_file(filepath.as_str(), res.expect("ast not found"), content.as_str());
         }
         let mut res : Vec<LintDiag> = Vec::new();
 
@@ -110,10 +129,10 @@ impl SolidLinter {
             res.append(&mut diags);
         }
         LintResult {
-            errors: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::ERROR).collect(),
-            warnings: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::WARNING).collect(),
-            infos: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::INFO).collect(),
-            hints: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::HINT).collect(),
+            errors: res.clone().into_iter().filter(|x| x.severity == Some(Severity::ERROR)).collect(),
+            warnings: res.clone().into_iter().filter(|x| x.severity == Some(Severity::WARNING)).collect(),
+            infos: res.clone().into_iter().filter(|x| x.severity == Some(Severity::INFO)).collect(),
+            hints: res.clone().into_iter().filter(|x| x.severity == Some(Severity::HINT)).collect(),
         }
     }
 
