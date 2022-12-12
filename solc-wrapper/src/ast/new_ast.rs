@@ -1873,4 +1873,63 @@ mod tests {
         assert_eq!(res.node_type, NodeType::TryStatement);
         Ok(())
     }
+
+    #[test]
+    fn test_correct_inline_assembly_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/InlineAssembly.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing InlineAssembly".to_string())?;
+
+        assert_eq!(res.id, 9);
+        assert_eq!(res.src, "176:50:0".to_string());
+        assert_eq!(res.evm_version, "london".to_string());
+        assert_eq!(res.node_type, NodeType::InlineAssembly);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_error_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ErrorDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing ErrorDefinition".to_string())?;
+
+        assert_eq!(res.id, 3);
+        assert_eq!(res.name, "No".to_string());
+        assert_eq!(res.name_location, "92:2:0".to_string());
+        assert_eq!(res.src, "86:11:0".to_string());
+        assert_eq!(res.node_type, NodeType::ErrorDefinition);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_index_access_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/IndexAccess.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing IndexAccess".to_string())?;
+
+        assert_eq!(res.id, 14);
+        assert_eq!(res.src, "203:10:0".to_string());
+        assert_eq!(res.node_type, NodeType::IndexAccess);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_new_expression_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/NewExpression.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing NewExpression".to_string())?;
+
+        assert_eq!(res.id, 7);
+        assert_eq!(res.src, "131:6:0".to_string());
+        assert_eq!(res.node_type, NodeType::NewExpression);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_function_call_options_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/FunctionCallOptions.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing FunctionCallOptions".to_string())?;
+
+        assert_eq!(res.id, 21);
+        assert_eq!(res.src, "236:36:0".to_string());
+        assert_eq!(res.names, vec!["value"] as Vec<String>);
+        assert_eq!(res.node_type, NodeType::FunctionCallOptions);
+        Ok(())
+    }
 }

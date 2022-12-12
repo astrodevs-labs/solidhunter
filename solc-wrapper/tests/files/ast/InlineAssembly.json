@@ -1,0 +1,12 @@
+{
+  "AST":{
+
+  },
+  "evmVersion":"london",
+  "externalReferences":[
+
+  ],
+  "id":9,
+  "nodeType":"InlineAssembly",
+  "src":"176:50:0"
+}
