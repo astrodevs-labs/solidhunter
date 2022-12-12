@@ -1470,6 +1470,16 @@ mod tests {
     }
 
     #[test]
+    fn test_correct_tuple_expression_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/TupleExpression.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<PragmaDirective>(&ast).map_err(|_| "Error deserializing TupleExpression".to_string())?;
+        assert_eq!(res.id, 16);
+        assert_eq!(res.src, "150:12:0".to_string());
+        assert_eq!(res.is_inline_array, false);
+        Ok(assert_eq!(res.node_type, NodeType::TupleExpression))
+    }
+
+    #[test]
     fn test_correct_using_for_directive_parsing() -> Result<(), String> {
         let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UsingForDirective.json").expect("Could not find test data file");
         let res = serde_json::from_str::<UsingForDirective>(&ast).map_err(|_| "Error deserializing UsingForDirective".to_string())?;
@@ -1560,6 +1570,28 @@ mod tests {
         assert_eq!(res.l_value_requested, false);
         assert_eq!(res.operator, BinaryOperator::Ampersand);
         Ok(assert_eq!(res.node_type, NodeType::BinaryOperation))
+    }
+
+    #[test]
+    fn test_correct_unary_operation_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UnaryOperation.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<BinaryOperation>(&ast).map_err(|_| "Error deserializing UnaryOperation".to_string())?;
+
+        assert_eq!(res.id, 7);
+        assert_eq!(res.src, "104:6:0".to_string());
+        assert_eq!(res.operator, "++".to_string());
+        assert_eq!(res.prefix, false);
+        Ok(assert_eq!(res.node_type, NodeType::UnaryOperation))
+    }
+
+    #[test]
+    fn test_correct_unchecked_block_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UncheckedBlock.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<BinaryOperation>(&ast).map_err(|_| "Error deserializing UncheckedBlock".to_string())?;
+
+        assert_eq!(res.id, 9);
+        assert_eq!(res.src, "104:21:0".to_string());
+        Ok(assert_eq!(res.node_type, NodeType::UncheckedBlock))
     }
 
     #[test]
