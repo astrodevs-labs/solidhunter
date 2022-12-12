@@ -1,0 +1,39 @@
+{
+    "arguments": [
+        {
+            "hexValue": "4d696e74696e67206973206c6f636b6564",
+            "id": 76,
+            "name": "_isMintAllowed",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "src": "1858:14:0",
+            "typeDescriptions": {},
+            "kind": "string",
+            "value": "Minting is locked"
+        },
+        {
+            "hexValue": "4d696e74696e67206973206c6f636b6564",
+            "id": 77,
+            "kind": "string",
+            "nodeType": "Literal",
+            "src": "1874:19:0",
+            "typeDescriptions": {},
+            "value": "Minting is locked"
+        }
+    ],
+    "expression": {
+        "id": 75,
+        "name": "require",
+        "nodeType": "Identifier",
+        "overloadedDeclarations": [],
+        "src": "1850:7:0",
+        "typeDescriptions": {}
+    },
+    "id": 78,
+    "nameLocations": [],
+    "names": [],
+    "nodeType": "FunctionCall",
+    "src": "1850:44:0",
+    "tryCall": false,
+    "typeDescriptions": {}
+}

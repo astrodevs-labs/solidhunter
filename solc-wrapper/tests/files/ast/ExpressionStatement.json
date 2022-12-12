@@ -1,0 +1,29 @@
+{
+    "expression": {
+        "id": 153,
+        "leftHandSide": {
+            "id": 151,
+            "name": "_isMetatadataChangingAllowed",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "src": "2968:28:0",
+            "typeDescriptions": {}
+        },
+        "nodeType": "Assignment",
+        "operator": "=",
+        "rightHandSide": {
+            "hexValue": "74727565",
+            "id": 152,
+            "kind": "bool",
+            "nodeType": "Literal",
+            "src": "2999:4:0",
+            "typeDescriptions": {},
+            "value": "true"
+        },
+        "src": "2968:35:0",
+        "typeDescriptions": {}
+    },
+    "id": 154,
+    "nodeType": "ExpressionStatement",
+    "src": "2968:35:0"
+}

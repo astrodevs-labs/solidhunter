@@ -1,0 +1,10 @@
+{
+    "absolutePath": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+    "file": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol",
+    "id": 2,
+    "nameLocation": "-1:-1:-1",
+    "nodeType": "ImportDirective",
+    "src": "58:78:0",
+    "symbolAliases": [],
+    "unitAlias": ""
+}

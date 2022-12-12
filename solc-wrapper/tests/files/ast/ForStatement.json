@@ -1,0 +1,148 @@
+{
+    "body": {
+        "id": 17,
+        "nodeType": "Block",
+        "src": "175:30:0",
+        "statements": [
+            {
+                "id": 16,
+                "nodeType": "Break",
+                "src": "189:5:0"
+            }
+        ]
+    },
+    "condition": {
+        "commonType": {
+            "typeIdentifier": "t_uint256",
+            "typeString": "uint256"
+        },
+        "id": 12,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "lValueRequested": false,
+        "leftExpression": {
+            "id": 10,
+            "name": "i",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 7,
+            "src": "162:1:0",
+            "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+            }
+        },
+        "nodeType": "BinaryOperation",
+        "operator": "<",
+        "rightExpression": {
+            "hexValue": "3130",
+            "id": 11,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "166:2:0",
+            "typeDescriptions": {
+                "typeIdentifier": "t_rational_10_by_1",
+                "typeString": "int_const 10"
+            },
+            "value": "10"
+        },
+        "src": "162:6:0",
+        "typeDescriptions": {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+        }
+    },
+    "id": 18,
+    "initializationExpression": {
+        "assignments": [
+            7
+        ],
+        "declarations": [
+            {
+                "constant": false,
+                "id": 7,
+                "mutability": "mutable",
+                "name": "i",
+                "nameLocation": "155:1:0",
+                "nodeType": "VariableDeclaration",
+                "scope": 18,
+                "src": "150:6:0",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                },
+                "typeName": {
+                    "id": 6,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "150:4:0",
+                    "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                    }
+                },
+                "visibility": "internal"
+            }
+        ],
+        "id": 9,
+        "initialValue": {
+            "hexValue": "30",
+            "id": 8,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": true,
+            "kind": "number",
+            "lValueRequested": false,
+            "nodeType": "Literal",
+            "src": "159:1:0",
+            "typeDescriptions": {
+                "typeIdentifier": "t_rational_0_by_1",
+                "typeString": "int_const 0"
+            },
+            "value": "0"
+        },
+        "nodeType": "VariableDeclarationStatement",
+        "src": "150:10:0"
+    },
+    "loopExpression": {
+        "expression": {
+            "id": 14,
+            "isConstant": false,
+            "isLValue": false,
+            "isPure": false,
+            "lValueRequested": false,
+            "nodeType": "UnaryOperation",
+            "operator": "++",
+            "prefix": false,
+            "src": "170:3:0",
+            "subExpression": {
+                "id": 13,
+                "name": "i",
+                "nodeType": "Identifier",
+                "overloadedDeclarations": [],
+                "referencedDeclaration": 7,
+                "src": "170:1:0",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                }
+            },
+            "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+            }
+        },
+        "id": 15,
+        "nodeType": "ExpressionStatement",
+        "src": "170:3:0"
+    },
+    "nodeType": "ForStatement",
+    "src": "145:60:0"
+}

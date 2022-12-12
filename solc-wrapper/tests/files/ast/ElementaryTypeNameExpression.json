@@ -1,0 +1,17 @@
+{
+  "id":10,
+  "nodeType":"ElementaryTypeNameExpression",
+  "src":"156:7:0",
+  "typeDescriptions":{
+
+  },
+  "typeName":{
+    "id":9,
+    "name":"bytes32",
+    "nodeType":"ElementaryTypeName",
+    "src":"156:7:0",
+    "typeDescriptions":{
+
+    }
+  }
+}

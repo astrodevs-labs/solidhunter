@@ -1,0 +1,20 @@
+{
+  "constant": false,
+  "id": 293,
+  "mutability": "mutable",
+  "name": "",
+  "nameLocation": "-1:-1:-1",
+  "nodeType": "VariableDeclaration",
+  "src": "5736:13:0",
+  "stateVariable": false,
+  "storageLocation": "memory",
+  "typeDescriptions": {},
+  "typeName": {
+    "id": 292,
+    "name": "string",
+    "nodeType": "ElementaryTypeName",
+    "src": "5736:6:0",
+    "typeDescriptions": {}
+  },
+  "visibility": "internal"
+}
