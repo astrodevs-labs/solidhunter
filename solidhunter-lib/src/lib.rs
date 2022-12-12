@@ -1,6 +1,6 @@
-mod linter;
-mod types;
-mod rules;
+pub mod linter;
+pub mod types;
+pub mod rules;
 
 #[cfg(test)]
 mod tests {

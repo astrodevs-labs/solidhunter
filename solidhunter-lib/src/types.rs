@@ -7,6 +7,7 @@ pub struct LintResult {
     pub hints : Vec<LintDiag>,
 }
 
+#[derive(Clone)]
 pub struct LintDiag {
 
     /// The range at which the message applies.
@@ -37,6 +38,7 @@ pub struct LintDiag {
 /////////////////// RELATED TYPES: /////////////////////////
 ////////////////////////////////////////////////////////////
 
+#[derive(Clone)]
 pub struct Position {
     pub line: u64,
     pub character: u64,
@@ -57,6 +59,7 @@ impl Severity {
     pub const HINT: Severity = Severity(4);
 }
 
+#[derive(Clone)]
 pub struct Range {
     pub start: Position,
     pub end: Position,
@@ -66,6 +69,7 @@ pub struct Location {
     pub range: Range,
 }
 
+#[derive(Clone)]
 pub enum NumberOrString {
     Number(i32),
     String(String),
