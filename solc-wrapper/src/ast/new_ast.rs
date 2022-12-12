@@ -1932,4 +1932,52 @@ mod tests {
         assert_eq!(res.node_type, NodeType::FunctionCallOptions);
         Ok(())
     }
+
+    #[test]
+    fn test_correct_function_type_name_options_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/FunctionTypeName.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing FunctionTypeName".to_string())?;
+
+        assert_eq!(res.id, 11);
+        assert_eq!(res.src, "260:37:0".to_string());
+        assert_eq!(res.state_mutability, "pure".to_string());
+        assert_eq!(res.visibility, "internal".to_string());
+        assert_eq!(res.node_type, NodeType::FunctionTypeName);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_user_defined_value_type_definition_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/UserDefinedValueTypeDefinition.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing UserDefinedValueTypeDefinition".to_string())?;
+
+        assert_eq!(res.id, 3);
+        assert_eq!(res.name, "UFixed256x18".to_string());
+        assert_eq!(res.name_location, "160:12:0".to_string());
+        assert_eq!(res.src, "155:29:0".to_string());
+        assert_eq!(res.node_type, NodeType::UserDefinedValueTypeDefinition);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_elementary_type_name_expression_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/ElementaryTypeNameExpression.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing ElementaryTypeNameExpression".to_string())?;
+
+        assert_eq!(res.id, 10);
+        assert_eq!(res.src, "156:7:0".to_string());
+        assert_eq!(res.node_type, NodeType::ElementaryTypeNameExpression);
+        Ok(())
+    }
+
+    #[test]
+    fn test_correct_index_range_access_expression_parsing() -> Result<(), String> {
+        let ast = fs::read_to_string("../solc-wrapper/tests/files/ast/IndexRangeAccess.json").expect("Could not find test data file");
+        let res = serde_json::from_str::<TryStatement>(&ast).map_err(|_| "Error deserializing IndexRangeAccess".to_string())?;
+
+        assert_eq!(res.id, 12);
+        assert_eq!(res.src, "174:8:0".to_string());
+        assert_eq!(res.node_type, NodeType::IndexRangeAccess);
+        Ok(())
+    }
 }

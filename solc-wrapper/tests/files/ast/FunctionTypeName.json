@@ -1,0 +1,72 @@
+{
+  "id":11,
+  "nodeType":"FunctionTypeName",
+  "parameterTypes":{
+    "id":7,
+    "nodeType":"ParameterList",
+    "parameters":[
+      {
+        "constant":false,
+        "id":6,
+        "mutability":"mutable",
+        "name":"",
+        "nameLocation":"-1:-1:-1",
+        "nodeType":"VariableDeclaration",
+        "src":"270:4:0",
+        "stateVariable":false,
+        "storageLocation":"default",
+        "typeDescriptions":{
+
+        },
+        "typeName":{
+          "id":5,
+          "name":"uint",
+          "nodeType":"ElementaryTypeName",
+          "src":"270:4:0",
+          "typeDescriptions":{
+
+          }
+        },
+        "visibility":"internal"
+      }
+    ],
+    "src":"269:6:0"
+  },
+  "returnParameterTypes":{
+    "id":10,
+    "nodeType":"ParameterList",
+    "parameters":[
+      {
+        "constant":false,
+        "id":9,
+        "mutability":"mutable",
+        "name":"",
+        "nameLocation":"-1:-1:-1",
+        "nodeType":"VariableDeclaration",
+        "src":"290:4:0",
+        "stateVariable":false,
+        "storageLocation":"default",
+        "typeDescriptions":{
+
+        },
+        "typeName":{
+          "id":8,
+          "name":"uint",
+          "nodeType":"ElementaryTypeName",
+          "src":"290:4:0",
+          "typeDescriptions":{
+
+          }
+        },
+        "visibility":"internal"
+      }
+    ],
+    "src":"289:6:0"
+  },
+  "src":"260:37:0",
+  "stateMutability":"pure",
+  "typeDescriptions":{
+
+  },
+  "visibility":"internal"
+}
