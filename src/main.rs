@@ -1,4 +1,5 @@
 use clap::Parser;
+use solidhunter_lib::linter::SolidLinter;
 
 use solidhunter_lib::rules::rule_impl::{create_rules_file, parse_rules};
 
@@ -44,10 +45,7 @@ fn main() {
         return;
     }
 
-    let rules = parse_rules(args.rules_file.as_str());
-    if rules.is_err() {
-        println!("Error: {:?}", rules.unwrap_err());
-        return;
-    }
-    println!("{:?}", rules.unwrap());
+    let mut linter : SolidLinter = SolidLinter::new(args.rules_file);
+    let result = linter.parse_folder(args.project_path);
+    //TODO : make a pretty output
 }
