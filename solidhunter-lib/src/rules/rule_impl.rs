@@ -19,11 +19,17 @@ fn merge_rules(rules: &mut Vec<RuleEntry>, new_rules: &Vec<RuleEntry>) {
 }
 
 pub fn create_rules_file(path: &str) {
-    let mut rules = create_default_rules();
+    let mut rules = Rules {
+        name: "solidhunter".to_string(),
+        includes: vec![],
+        plugins: vec![],
+        rules: create_default_rules(),
+    };
     let serialized = serde_json::to_string_pretty(&rules).unwrap();
 
     std::fs::write(path, serialized).unwrap();
 }
+
 type RulesResult = Result<Rules, RulesError>;
 
 pub fn parse_rules(path: &str) -> RulesResult {
@@ -40,14 +46,18 @@ pub fn parse_rules(path: &str) -> RulesResult {
     let file = std::fs::read_to_string(path).unwrap();
     let parsed: Rules = serde_json::from_str(&file).unwrap();
 
+    /*
+    // Danger zone
     for include in parsed.includes {
         let include_rules = parse_rules(include.as_str());
         merge_rules(&mut rules.rules, &include_rules.unwrap().rules);
     }
 
     merge_rules(&mut rules.rules, &parsed.rules);
+    // End of danger zone
+     */
 
-    Ok(rules)
+    Ok(parsed)
 }
 
 
