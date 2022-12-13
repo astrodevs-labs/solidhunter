@@ -52,18 +52,15 @@ pub struct Position {
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Serialize, Deserialize, Debug)]
-pub struct Severity(i32);
-
-
-impl Severity {
+pub enum Severity {
     /// Reports an error.
-    pub const ERROR: Severity = Severity(1);
+    ERROR = 1,
     /// Reports a warning.
-    pub const WARNING: Severity = Severity(2);
+    WARNING = 2,
     /// Reports an information.
-    pub const INFO: Severity = Severity(3);
+    INFO = 3,
     /// Reports a hint.
-    pub const HINT: Severity = Severity(4);
+    HINT = 4
 }
 
 #[derive(Clone)]
