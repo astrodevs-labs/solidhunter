@@ -87,7 +87,8 @@ fn main() {
         return;
     }
 
-    let mut linter: SolidLinter = SolidLinter::new(args.rules_file);
+    let mut linter: SolidLinter = SolidLinter::new();
+    linter.initalize(&args.rules_file);
     let mut result = Vec::new();
     for path in args.project_path {
         result.append(&mut linter.parse_folder(path));
