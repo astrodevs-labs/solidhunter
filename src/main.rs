@@ -1,7 +1,9 @@
 use clap::Parser;
+use colored::Colorize;
 use solidhunter_lib::linter::SolidLinter;
 
 use solidhunter_lib::rules::rule_impl::{create_rules_file, parse_rules};
+use solidhunter_lib::types::Severity;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -20,6 +22,42 @@ struct Args {
 
     #[arg(short = 'i', long = "init", default_value = "false", help = "Initialize rules file")]
     init: bool,
+}
+
+pub fn severity_to_string(severity: Option<Severity>) -> String {
+    match severity {
+        Some(Severity::ERROR) => format!("error").red(),
+        Some(Severity::WARNING) => format!("warning").yellow(),
+        Some(Severity::INFO) => format!("info").blue(),
+        Some(Severity::HINT) => format!("hint").green(),
+        _ => format!("error").red(),
+    }
+    .to_string()
+}
+
+fn print_diag(diag: &solidhunter_lib::types::LintDiag) {
+    let mut padding : String = String::new();
+    if diag.range.start.line > 99 {
+        padding = " ".repeat(0).to_string();
+    } else if diag.range.start.line > 9 {
+        padding = " ".repeat(1).to_string();
+    } else {
+        padding = " ".repeat(2).to_string();
+    }
+    println!("\n{}: {}", severity_to_string(diag.severity), diag.message);
+    println!(
+        "  --> {}:{}:{}",
+        diag.uri,
+        diag.range.start.line,
+        diag.range.start.character,
+    );
+    println!(
+        "   |");
+    //TODO: add code to print
+    println!(
+        "{}{}|{}", diag.range.start.line,padding, "'Add error code here'");
+    println!(
+        "   |{}{}", " ".repeat(diag.range.start.character as usize), "^".repeat(diag.range.end.character as usize - diag.range.start.character as usize));
 }
 
 fn main() {
@@ -45,15 +83,20 @@ fn main() {
         return;
     }
 
-    let mut linter : SolidLinter = SolidLinter::new(args.rules_file);
+    let mut linter: SolidLinter = SolidLinter::new(args.rules_file);
     let mut result = Vec::new();
     for path in args.project_path {
         result.append(&mut linter.parse_folder(path));
     }
     for res in result {
-        if res.warnings.len() > 0 {
-            for warning in res.warnings {
-                println!("{}:{}:{}: warning: {}", warning.range.start.line, warning.range.start.character, warning.range.end.character, warning.message);
+        match res {
+            Ok(diags) => {
+                for diag in diags {
+                    print_diag(&diag);
+                }
+            }
+            Err(e) => {
+                println!("{}", e);
             }
         }
     }

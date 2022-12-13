@@ -1312,6 +1312,7 @@ dependencies = [
  "serde",
  "serde_json",
  "solidhunter-lib",
+ "thiserror",
 ]
 
 [[package]]
@@ -1325,6 +1326,7 @@ dependencies = [
  "serde",
  "serde_json",
  "solc-wrapper",
+ "thiserror",
 ]
 
 [[package]]

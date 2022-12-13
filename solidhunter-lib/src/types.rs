@@ -1,11 +1,18 @@
 use serde::{Serialize, Deserialize};
+use thiserror::Error;
 
-pub struct LintResult {
-    pub errors : Vec<LintDiag>,
-    pub warnings : Vec<LintDiag>,
-    pub infos : Vec<LintDiag>,
-    pub hints : Vec<LintDiag>,
+#[derive(Error, Debug)]
+pub enum LintError {
+    #[error("LintError: Solc error occured")]
+    SolcError(#[from] solc_wrapper::SolcError),
+    #[error("LintError: Something went wrong with the file")]
+    IoError(#[from] std::io::Error),
+    #[error("LintError: Something went wrong")]
+    LinterError(String),
 }
+
+
+pub type LintResult = Result<Vec<LintDiag>, LintError>;
 
 #[derive(Clone)]
 pub struct LintDiag {
