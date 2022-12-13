@@ -15,3 +15,4 @@ solc-wrapper = { path = "../solc-wrapper" }
 serde_json = "1.0.89"
 anyhow = "1.0"
 glob = "0.3.0"
+thiserror = "1.0"

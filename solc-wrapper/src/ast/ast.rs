@@ -352,49 +352,49 @@ pub enum NodeType {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EnumDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation", skip_serializing_if = "Option::is_none")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "canonicalName")]
-    canonical_name: String,
-    members: Vec<EnumValue>,
+    pub canonical_name: String,
+    pub members: Vec<EnumValue>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EnumValue {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation", skip_serializing_if = "Option::is_none")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TypeDescriptions {
     #[serde(rename = "typeIdentifier", skip_serializing_if = "Option::is_none")]
-    type_identifier: Option<String>,
+    pub type_identifier: Option<String>,
     #[serde(rename = "typeString", skip_serializing_if = "Option::is_none")]
-    type_string: Option<String>
+    pub type_string: Option<String>
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructuredDocumentation {
-    id: usize,
-    src: SourceLocation,
-    text: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub text: String,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructureFunction {
-    function: IdentifierPath
+    pub function: IdentifierPath
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -412,18 +412,18 @@ pub enum SourceUnitChildNodes {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SourceUnit {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "absolutePath")]
-    absolute_path: String,
+    pub absolute_path: String,
     #[serde(rename = "exportedSymbols")]
-    exported_symbols: Option<HashMap<String, Vec<String>>>,
+    pub exported_symbols: Option<HashMap<String, Vec<String>>>,
     #[serde(rename = "license", skip_serializing_if = "Option::is_none")]
-    license: Option<String>,
+    pub license: Option<String>,
     #[serde(rename = "nodes")]
-    nodes: Vec<SourceUnitChildNodes>,
+    pub nodes: Vec<SourceUnitChildNodes>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -453,35 +453,35 @@ pub enum ContractKind {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ContractDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation", skip_serializing_if = "Option::is_none")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "abstract")]
-    is_abstract: bool,
+    pub is_abstract: bool,
     #[serde(rename = "baseContracts")]
-    base_contracts: Vec<InheritanceSpecifier>,
+    pub base_contracts: Vec<InheritanceSpecifier>,
     #[serde(rename = "canonicalName", skip_serializing_if = "Option::is_none")]
-    canonical_name: Option<String>,
+    pub canonical_name: Option<String>,
     #[serde(rename = "contractDependencies")]
-    contract_dependencies: Vec<usize>,
+    pub contract_dependencies: Vec<usize>,
     #[serde(rename = "contractKind")]
-    contract_kind: ContractKind,
+    pub contract_kind: ContractKind,
     #[serde(rename = "documentation", skip_serializing_if = "Option::is_none")]
-    documentation: Option<StructuredDocumentation>,
+    pub documentation: Option<StructuredDocumentation>,
     #[serde(rename = "fullyImplemented")]
-    is_fully_implemented: Option<bool>,
+    pub is_fully_implemented: Option<bool>,
     #[serde(rename = "linearizedBaseContracts")]
-    linearized_base_contracts: Option<Vec<usize>>,
+    pub linearized_base_contracts: Option<Vec<usize>>,
     #[serde(rename = "nodes")]
-    nodes: Vec<ContractDefinitionChildNodes>,
+    pub nodes: Vec<ContractDefinitionChildNodes>,
     #[serde(rename = "scope")]
-    scope: Option<usize>,
+    pub scope: Option<usize>,
     #[serde(rename = "usedErrors")]
-    used_errors: Vec<usize>,
+    pub used_errors: Vec<usize>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -493,393 +493,393 @@ pub enum BaseName {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InheritanceSpecifier {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "arguments")]
-    arguments: Option<Vec<Expression>>,
+    pub arguments: Option<Vec<Expression>>,
     #[serde(rename = "baseName")]
-    base_name: BaseName,
+    pub base_name: BaseName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Assignment {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "leftHandSide")]
-    left_hand_side: Expression,
-    operator: AssignmentOperator,
+    pub left_hand_side: Expression,
+    pub operator: AssignmentOperator,
     #[serde(rename = "rightHandSide")]
-    right_hand_side: Expression,
+    pub right_hand_side: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BinaryOperation {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    pub is_constant: bool,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    pub is_l_value: bool,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    pub is_pure: bool,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    pub l_value_requested: bool,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "commonType")]
-    common_type: TypeDescriptions,
+    pub common_type: TypeDescriptions,
     #[serde(rename = "leftExpression")]
-    left_expression: Expression,
-    operator: BinaryOperator,
+    pub left_expression: Expression,
+    pub operator: BinaryOperator,
     #[serde(rename = "rightExpression")]
-    right_expression: Expression,
+    pub right_expression: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Conditional {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: bool,
+    pub is_constant: bool,
     #[serde(rename = "isLValue")]
-    is_l_value: bool,
+    pub is_l_value: bool,
     #[serde(rename = "isPure")]
-    is_pure: bool,
+    pub is_pure: bool,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: bool,
+    pub l_value_requested: bool,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "condition")]
-    condition: Expression,
+    pub condition: Expression,
     #[serde(rename = "falseExpression")]
-    false_expression: Expression,
+    pub false_expression: Expression,
     #[serde(rename = "trueExpression")]
-    true_expression: Expression,
+    pub true_expression: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ElementaryTypeNameExpression {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "typeName")]
-    type_name: ElementaryTypeName,
+    pub type_name: ElementaryTypeName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ElementaryTypeName {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
-    name: String,
+    pub type_descriptions: TypeDescriptions,
+    pub name: String,
     #[serde(rename = "stateMutability")]
-    state_mutability: Option<StateMutability>,
+    pub state_mutability: Option<StateMutability>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FunctionCall {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "arguments")]
-    arguments: Vec<Expression>,
+    pub arguments: Vec<Expression>,
     #[serde(rename = "expression")]
-    expression: Expression,
-    kind: Option<FunctionCallKind>,
-    names: Vec<String>,
+    pub expression: Expression,
+    pub kind: Option<FunctionCallKind>,
+    pub names: Vec<String>,
     #[serde(rename = "tryCall")]
-    try_call: bool,
+    pub try_call: bool,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FunctionCallOptions {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
-    expression: Expression,
-    names: Vec<String>,
-    options: Vec<Expression>,
+    pub type_descriptions: TypeDescriptions,
+    pub expression: Expression,
+    pub names: Vec<String>,
+    pub options: Vec<Expression>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Identifier {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
-    name: String,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
+    pub name: String,
     #[serde(rename = "overloadedDeclarations")]
-    overloaded_declarations: Vec<usize>,
+    pub overloaded_declarations: Vec<usize>,
     #[serde(rename = "referencedDeclaration")]
-    referenced_declaration: Option<usize>,
+    pub referenced_declaration: Option<usize>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IndexAccess {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "baseExpression")]
-    base_expression: Expression,
+    pub base_expression: Expression,
     #[serde(rename = "indexExpression", skip_serializing_if = "Option::is_none")]
-    index_expression: Option<Expression>,
+    pub index_expression: Option<Expression>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IndexRangeAccess {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "baseExpression")]
-    base_expression: Expression,
+    pub base_expression: Expression,
     #[serde(rename = "endExpression", skip_serializing_if = "Option::is_none")]
-    end_expression: Option<Expression>,
+    pub end_expression: Option<Expression>,
     #[serde(rename = "startExpression", skip_serializing_if = "Option::is_none")]
-    start_expression: Option<Expression>,
+    pub start_expression: Option<Expression>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Literal {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "hexValue")]
-    hex_value: String,
-    kind: LiteralKind,
+    pub hex_value: String,
+    pub kind: LiteralKind,
     //#[serde(rename = "subdenomination", skip_serializing_if = "Option::is_none")]
-    //subdenomination: Option<Subdenomination>,
-    value: Option<String>,
+     //subdenomination: Option<Subdenomination>,
+    pub value: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MemberAccess {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "expression")]
-    expression: Expression,
+    pub expression: Expression,
     #[serde(rename = "memberLocation")]
-    member_location: SourceLocation,
+    pub member_location: SourceLocation,
     #[serde(rename = "memberName")]
-    member_name: String,
+    pub member_name: String,
     #[serde(rename = "referencedDeclaration")]
-    referenced_declaration: Option<usize>,
+    pub referenced_declaration: Option<usize>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NewExpression {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes", skip_serializing_if = "Option::is_none")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "typeName")]
-    type_name: TypeName,
+    pub type_name: TypeName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ArrayTypeName {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "baseType")]
-    base_type: TypeName,
-    length: Option<Expression>,
+    pub base_type: TypeName,
+    pub length: Option<Expression>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FunctionTypeName {
     id : usize,
-    src: SourceLocation,
+    pub src: SourceLocation,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "parameterTypes")]
-    parameter_types: ParameterList,
+    pub parameter_types: ParameterList,
     #[serde(rename = "returnParameterTypes")]
-    return_parameter_types: ParameterList,
+    pub return_parameter_types: ParameterList,
     #[serde(rename = "stateMutability")]
-    state_mutability: StateMutability,
-    visibility: Visibility,
+    pub state_mutability: StateMutability,
+    pub visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ParameterList {
-    id: usize,
-    src: SourceLocation,
-    parameters: Vec<VariableDeclaration>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub parameters: Vec<VariableDeclaration>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VariableDeclaration {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "baseFunctions", skip_serializing_if = "Option::is_none")]
-    base_functions: Option<Vec<usize>>,
+    pub base_functions: Option<Vec<usize>>,
     #[serde(rename = "constant")]
-    is_constant: bool,
-    documentation: Option<StructuredDocumentation>,
+    pub is_constant: bool,
+    pub documentation: Option<StructuredDocumentation>,
     #[serde(rename = "functionSelector")]
-    function_selector: Option<String>,
-    indexed: Option<bool>,
-    mutability: Mutability,
-    overrides: Option<OverrideSpecifier>,
-    scope: Option<usize>,
+    pub function_selector: Option<String>,
+    pub indexed: Option<bool>,
+    pub mutability: Mutability,
+    pub overrides: Option<OverrideSpecifier>,
+    pub scope: Option<usize>,
     #[serde(rename = "stateVariable")]
-    state_variable: bool,
+    pub state_variable: bool,
     #[serde(rename = "storageLocation")]
-    storage_location: StorageLocation,
+    pub storage_location: StorageLocation,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "typeName", skip_serializing_if = "Option::is_none")]
-    type_name: Option<TypeName>,
+    pub type_name: Option<TypeName>,
     #[serde(rename = "value", skip_serializing_if = "Option::is_none")]
-    value: Option<Expression>,
-    visibility: Visibility,
+    pub value: Option<Expression>,
+    pub visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -891,195 +891,195 @@ pub enum OverridesEnum {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OverrideSpecifier {
-    id: usize,
-    src: SourceLocation,
-    overrides: OverridesEnum,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub overrides: OverridesEnum,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UserDefinedTypeName {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     //#[serde(rename = "contractScope")]
-    //contract_scope: Option<???>,
-    name: Option<String>,
+     //contract_scope: Option<???>,
+    pub name: Option<String>,
     #[serde(rename = "pathNode")]
-    path_node: Option<IdentifierPath>,
+    pub path_node: Option<IdentifierPath>,
     #[serde(rename = "referencedDeclaration")]
-    referenced_declaration: Option<usize>,
+    pub referenced_declaration: Option<usize>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IdentifierPath {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocations")]
-    name_locations: Option<Vec<String>>,
+    pub name_locations: Option<Vec<String>>,
     #[serde(rename = "referencedDeclaration")]
-    referenced_declaration: Option<usize>,
+    pub referenced_declaration: Option<usize>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Mapping {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "keyType")]
-    key_type: TypeName,
+    pub key_type: TypeName,
     #[serde(rename = "valueType")]
-    value_type: TypeName,
+    pub value_type: TypeName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TupleExpression {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
-    components: Vec<Expression>,
+    pub type_descriptions: TypeDescriptions,
+    pub components: Vec<Expression>,
     #[serde(rename = "isInlineArray")]
-    is_inline_array: bool,
+    pub is_inline_array: bool,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UnaryOperation {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "argumentTypes")]
-    argument_types: Option<Vec<TypeDescriptions>>,
+    pub argument_types: Option<Vec<TypeDescriptions>>,
     #[serde(rename = "isConstant")]
-    is_constant: Option<bool>,
+    pub is_constant: Option<bool>,
     #[serde(rename = "isLValue")]
-    is_l_value: Option<bool>,
+    pub is_l_value: Option<bool>,
     #[serde(rename = "isPure")]
-    is_pure: Option<bool>,
+    pub is_pure: Option<bool>,
     #[serde(rename = "lValueRequested")]
-    l_value_requested: Option<bool>,
+    pub l_value_requested: Option<bool>,
     #[serde(rename = "typeDescriptions")]
-    type_descriptions: TypeDescriptions,
+    pub type_descriptions: TypeDescriptions,
     #[serde(rename = "operator")]
-    operator: UnaryOperator,
-    prefix: bool,
+    pub operator: UnaryOperator,
+    pub prefix: bool,
     #[serde(rename = "subExpression")]
-    sub_expression: Expression,
+    pub sub_expression: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ErrorDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: String,
-    documentation: Option<StructuredDocumentation>,
+    pub name_location: String,
+    pub documentation: Option<StructuredDocumentation>,
     #[serde(rename = "errorSelector")]
-    error_selector: Option<String>,
-    parameters: Option<ParameterList>,
+    pub error_selector: Option<String>,
+    pub parameters: Option<ParameterList>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EventDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
-    anonymous: bool,
+    pub name_location: Option<String>,
+    pub anonymous: bool,
     #[serde(rename = "eventSelector")]
-    event_selector: Option<String>,
-    documentation: Option<StructuredDocumentation>,
-    parameters: Option<ParameterList>,
+    pub event_selector: Option<String>,
+    pub documentation: Option<StructuredDocumentation>,
+    pub parameters: Option<ParameterList>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FunctionDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "baseFunctions")]
-    base_functions: Option<Vec<usize>>,
-    body: Option<Block>,
+    pub base_functions: Option<Vec<usize>>,
+    pub body: Option<Block>,
     #[serde(rename = "documentation")]
-    documentation: Option<StructuredDocumentation>,
+    pub documentation: Option<StructuredDocumentation>,
     #[serde(rename = "functionSelector")]
-    function_selector: Option<String>,
-    implemented: bool,
-    kind: FunctionDefinitionKind,
-    modifiers: Vec<ModifierInvocation>,
-    overrides: Option<OverrideSpecifier>,
-    parameters: ParameterList,
+    pub function_selector: Option<String>,
+    pub implemented: bool,
+    pub kind: FunctionDefinitionKind,
+    pub modifiers: Vec<ModifierInvocation>,
+    pub overrides: Option<OverrideSpecifier>,
+    pub parameters: ParameterList,
     #[serde(rename = "returnParameters")]
-    return_parameters: ParameterList,
+    pub return_parameters: ParameterList,
     #[serde(rename = "scope")]
-    scope: Option<usize>,
+    pub scope: Option<usize>,
     #[serde(rename = "stateMutability")]
-    state_mutability: StateMutability,
+    pub state_mutability: StateMutability,
     #[serde(rename = "virtual")]
-    is_virtual: bool,
-    visibility: Visibility,
+    pub is_virtual: bool,
+    pub visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Block {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    statements: Option<Vec<Statement>>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub statements: Option<Vec<Statement>>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Break {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Continue {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1091,36 +1091,36 @@ pub enum Body {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DoWhileStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "condition")]
-    condition: Expression,
+    pub condition: Expression,
     #[serde(rename = "body")]
-    body: Body,
+    pub body: Body,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EmitStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "eventCall")]
-    event_call: FunctionCall,
+    pub event_call: FunctionCall,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ExpressionStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    expression: Expression,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub expression: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1132,31 +1132,31 @@ pub enum InitializationExpression {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ForStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    body: Body,
-    condition: Option<Expression>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub body: Body,
+    pub condition: Option<Expression>,
     #[serde(rename = "initializationExpression")]
-    initialization_expression: Option<InitializationExpression>,
+    pub initialization_expression: Option<InitializationExpression>,
     #[serde(rename = "loopExpression")]
-    loop_expression: Option<ExpressionStatement>,
+    pub loop_expression: Option<ExpressionStatement>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VariableDeclarationStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    assignments: Vec<Option<usize>>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub assignments: Vec<Option<usize>>,
     #[serde(rename = "declarations")]
-    declarations: Vec<Option<VariableDeclaration>>,
+    pub declarations: Vec<Option<VariableDeclaration>>,
     #[serde(rename = "initialValue")]
-    initial_value: Option<Expression>,
+    pub initial_value: Option<Expression>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1168,94 +1168,94 @@ pub enum IfStatementBody {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IfStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "condition")]
-    condition: Expression,
+    pub condition: Expression,
     #[serde(rename = "trueBody")]
-    true_body: IfStatementBody,
+    pub true_body: IfStatementBody,
     #[serde(rename = "falseBody")]
-    false_body: Option<IfStatementBody>,
+    pub false_body: Option<IfStatementBody>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PlaceholderStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Return {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    expression: Option<Expression>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub expression: Option<Expression>,
     #[serde(rename = "functionReturnParameters")]
-    function_return_parameters: Option<usize>,
+    pub function_return_parameters: Option<usize>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RevertStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "errorCall")]
-    error_call: Statement,
+    pub error_call: Statement,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TryStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    clauses: Vec<TryCatchClause>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub clauses: Vec<TryCatchClause>,
     #[serde(rename = "externalCall")]
-    external_call: Expression,
+    pub external_call: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TryCatchClause {
-    id: usize,
-    src: SourceLocation,
-    block: Block,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub block: Block,
     #[serde(rename = "errorName")]
-    error_name: String,
-    parameters: Option<ParameterList>,
+    pub error_name: String,
+    pub parameters: Option<ParameterList>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UncheckedBlock {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    statements: Vec<Statement>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub statements: Vec<Statement>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WhileStatement {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
-    body: Statement,
-    condition: Expression,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
+    pub body: Statement,
+    pub condition: Expression,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1275,117 +1275,117 @@ pub enum ModifierInvocationKind {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierInvocation {
-    id: usize,
-    src: SourceLocation,
-    arguments: Option<Expression>,
-    kind: Option<ModifierInvocationKind>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub arguments: Option<Expression>,
+    pub kind: Option<ModifierInvocationKind>,
     #[serde(rename = "modifierName")]
-    modifier_name: ModifierName,
+    pub modifier_name: ModifierName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModifierDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "baseModifiers")]
-    base_modifiers: Option<Vec<usize>>,
-    body: Statement,
-    documentation: Option<StructuredDocumentation>,
-    overrides: Option<OverrideSpecifier>,
-    parameters: ParameterList,
+    pub base_modifiers: Option<Vec<usize>>,
+    pub body: Statement,
+    pub documentation: Option<StructuredDocumentation>,
+    pub overrides: Option<OverrideSpecifier>,
+    pub parameters: ParameterList,
     #[serde(rename = "virtual")]
-    is_virtual: bool,
-    visibility: Visibility,
+    pub is_virtual: bool,
+    pub visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StructDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "canonicalName")]
-    canonical_name: String,
-    members: Vec<VariableDeclaration>,
-    scope: usize,
-    visibility: Visibility,
+    pub canonical_name: String,
+    pub members: Vec<VariableDeclaration>,
+    pub scope: usize,
+    pub visibility: Visibility,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UserDefinedValueTypeDefinition {
-    id: usize,
-    src: SourceLocation,
-    name: String,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub name: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
+    pub name_location: Option<String>,
     #[serde(rename = "canonicalName")]
-    canonical_name: Option<String>,
+    pub canonical_name: Option<String>,
     #[serde(rename = "underlyingType")]
-    underlying_type: TypeName,
+    pub underlying_type: TypeName,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UsingForDirective {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "functionList")]
-    function_list: Option<Vec<StructureFunction>>,
-    function: Option<IdentifierPath>,
-    global: Option<bool>,
+    pub function_list: Option<Vec<StructureFunction>>,
+    pub function: Option<IdentifierPath>,
+    pub global: Option<bool>,
     #[serde(rename = "libraryName")]
-    library_name: Option<Expression>,
+    pub library_name: Option<Expression>,
     #[serde(rename = "typeName")]
-    type_name: Option<TypeName>,
+    pub type_name: Option<TypeName>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SymbolAlias {
-    foreign: Identifier,
-    local: Option<String>,
-    name_location: Option<String>,
+    pub foreign: Identifier,
+    pub local: Option<String>,
+    pub name_location: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImportDirective {
-    id: usize,
-    src: SourceLocation,
+    pub id: usize,
+    pub src: SourceLocation,
     #[serde(rename = "absolutePath")]
-    absolute_path: String,
-    file: String,
+    pub absolute_path: String,
+    pub file: String,
     #[serde(rename = "nameLocation")]
-    name_location: Option<String>,
-    scope: Option<usize>,
+    pub name_location: Option<String>,
+    pub scope: Option<usize>,
     #[serde(rename = "sourceUnit")]
-    source_unit: Option<usize>,
+    pub source_unit: Option<usize>,
     #[serde(rename = "symbolAliases")]
-    symbol_aliases: Vec<SymbolAlias>,
+    pub symbol_aliases: Vec<SymbolAlias>,
     #[serde(rename = "unitAlias")]
-    unit_alias: String,
+    pub unit_alias: String,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PragmaDirective {
-    id: usize,
-    src: SourceLocation,
-    literals: Vec<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub literals: Vec<String>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType,
+    pub node_type: NodeType,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1420,29 +1420,29 @@ pub enum Suffix {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ExternalReference {
-    declaration: usize,
+    pub declaration: usize,
     #[serde(rename = "isOffset")]
-    is_offset: bool,
+    pub is_offset: bool,
     #[serde(rename = "isSlot")]
-    is_slot: bool,
-    src: SourceLocation,
+    pub is_slot: bool,
+    pub src: SourceLocation,
     #[serde(rename = "valueSize")]
-    value_size: usize,
-    suffix: Option<Suffix>
+    pub value_size: usize,
+    pub suffix: Option<Suffix>
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InlineAssembly {
-    id: usize,
-    src: SourceLocation,
-    documentation: Option<String>,
+    pub id: usize,
+    pub src: SourceLocation,
+    pub documentation: Option<String>,
     #[serde(rename = "evmVersion")]
-    evm_version: EvmVersion,
+    pub evm_version: EvmVersion,
     #[serde(rename = "externalReferences")]
-    external_references: Vec<ExternalReference>,
-    flags: Option<Vec<String>>,
+    pub external_references: Vec<ExternalReference>,
+    pub flags: Option<Vec<String>>,
     #[serde(rename = "nodeType")]
-    node_type: NodeType
+    pub node_type: NodeType
 }
 
 #[cfg(test)]

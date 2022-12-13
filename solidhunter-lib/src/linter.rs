@@ -1,3 +1,4 @@
+use std::fs;
 use crate::types::*;
 use crate::rules::types::*;
 use crate::rules::factory::RuleFactory;
@@ -37,14 +38,15 @@ impl SolidLinter {
         }
     }
 
-    pub fn new(rules_config: String) {
-        let mut linter = SolidLinter {
+    pub fn new(rules_config: String) -> SolidLinter {
+        let mut linter : SolidLinter = SolidLinter {
             files: Vec::new(),
             rule_factory: RuleFactory::new(),
             rules: Vec::new(),
         };
         linter.rule_factory.register_rules();
         linter._create_rules(&rules_config, true);
+        return linter;
     }
 
     fn file_exists(&self, path: &str) -> bool {
@@ -74,12 +76,17 @@ impl SolidLinter {
     }
 
     pub fn parse_file(&mut self, filepath: String) -> LintResult{
-        let res = Solc::default().extract_ast_file(filepath.clone()).unwrap();
-
+        let res = Solc::default().extract_ast_file(filepath.clone());
+        
+        if res.is_err() {
+            println!("{:?}", res);
+            return Err(LintError::SolcError(res.err().unwrap()));
+        }
         if self.file_exists(filepath.as_str()) {
-            self.update_file_ast(filepath.as_str(), res);
+            self.update_file_ast(filepath.as_str(), res.expect("ast not found"));
         } else {
-            self.add_file(filepath.as_str(), res, "");
+            let content = fs::read_to_string(filepath.clone()).map_err(|e| LintError::IoError(e))?;
+            self.add_file(filepath.as_str(), res.expect("ast not found"), content.as_str());
         }
         let mut res : Vec<LintDiag> = Vec::new();
 
@@ -87,34 +94,30 @@ impl SolidLinter {
             let mut diags = rule.diagnose(&self.files[0], &self.files);
             res.append(&mut diags);
         }
-        LintResult {
-            errors: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::ERROR).collect(),
-            warnings: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::WARNING).collect(),
-            infos: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::INFO).collect(),
-            hints: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::HINT).collect(),
-        }
+        Ok(res)
     }
 
-    pub fn parse_content(&mut self, filepath: String, content : &String) -> LintResult{
-        let res = Solc::default().extract_ast_content(content.to_string()).unwrap();
+    pub fn parse_content(&mut self, filepath: String, content : &String) -> LintResult {
+        let res = Solc::default().extract_ast_content(content.to_string());
+
+        if res.is_err() {
+            println!("{:?}", res);
+            return Err(LintError::SolcError(res.err().unwrap()));
+        }
 
         if self.file_exists(filepath.as_str()) {
-            self.update_file_ast(filepath.as_str(), res);
+            self.update_file_ast(filepath.as_str(), res.expect("ast not found"));
         } else {
-            self.add_file(filepath.as_str(), res, content.as_str());
+            self.add_file(filepath.as_str(), res.expect("ast not found"), content.as_str());
         }
+
         let mut res : Vec<LintDiag> = Vec::new();
 
         for rule in &self.rules {
             let mut diags = rule.diagnose(&self.files[0], &self.files);
             res.append(&mut diags);
         }
-        LintResult {
-            errors: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::ERROR).collect(),
-            warnings: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::WARNING).collect(),
-            infos: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::INFO).collect(),
-            hints: res.clone().into_iter().filter(|x| x.severity.unwrap() == Severity::HINT).collect(),
-        }
+        Ok(res)
     }
 
     pub fn parse_folder(&mut self, folder: String) -> Vec<LintResult> {
