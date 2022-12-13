@@ -8,12 +8,14 @@ pub mod factory;
 // List all rules
 pub mod best_practises;
 pub mod naming;
+pub mod miscellaneous;
 
 pub fn create_default_rules() -> Vec<RuleEntry> {
     let mut rules = Vec::new();
 
     rules.append(&mut best_practises::create_default_rules());
     rules.append(&mut naming::create_default_rules());
+    rules.append(&mut miscellaneous::create_default_rules());
 
     rules
 }
@@ -30,6 +32,7 @@ pub fn create_rules() -> HashMap<String, fn(RuleEntry) -> Box<dyn RuleType>> {
     let mut rules = HashMap::new();
 
     add_rules(&mut rules, best_practises::create_rules());
+    add_rules(&mut rules, miscellaneous::create_rules());
     add_rules(&mut rules, naming::create_rules());
 
     rules

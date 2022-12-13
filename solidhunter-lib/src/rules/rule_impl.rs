@@ -62,6 +62,7 @@ pub fn parse_rules(path: &str) -> RulesResult {
 
 
 // create rules
+/*
 #[macro_export]
 macro_rules! create_rule {
     ($rule_name:ident, $rule_id:expr, $default_severity:expr, $custom_data:expr, $message:expr) => {
@@ -83,4 +84,4 @@ macro_rules! create_rule {
             }
         }
     };
-}
+}*/
