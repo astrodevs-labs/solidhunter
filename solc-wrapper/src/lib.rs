@@ -1,7 +1,7 @@
 mod solc;
 
 mod ast;
-pub use ast::ast::SourceUnit;
+pub use ast::ast::*;
 
 mod utils;
 mod version;
