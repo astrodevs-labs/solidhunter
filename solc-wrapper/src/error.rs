@@ -1,6 +1,7 @@
 use thiserror::Error;
 use crate::{solc::error::CommandError, version::error::SolcVersionError, ast::error::AstError};
 use anyhow;
+use crate::solc::parsing_error::ParsingError;
 
 #[derive(Error, Debug)]
 pub enum SolcError {
@@ -18,6 +19,9 @@ pub enum SolcError {
 
     #[error("SolcError: Output is empty")]
     OutputIsEmpty,
+
+    #[error("SolcError: compiler returned an error without outputing AST")]
+    ParsingFailed(#[from] ParsingError),
 
     #[error(transparent)]
     Other(#[from] anyhow::Error),

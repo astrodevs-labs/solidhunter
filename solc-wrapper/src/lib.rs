@@ -12,6 +12,14 @@ use ast::parse::parse_ast;
 
 mod error;
 pub use error::SolcError;
+use crate::solc::parsing_error::ParsingError;
+use crate::utils::{get_error_location, get_error_message};
+
+
+pub enum ExecuteResult {
+    Ast(String),
+    ParsingError(ParsingError),
+}
 
 pub struct Solc {
     version: SolcVersion
@@ -33,6 +41,29 @@ impl Solc {
         &output[idx..]
     }
 
+    fn check_stderr(stderr: &str) -> Result<(), ParsingError> {
+        if !stderr.contains("Error") {
+            return Ok(());
+        }
+        let location = get_error_location(stderr);
+        let location = match location {
+            Ok(e) => e,
+            Err(_) => return Ok(())
+        };
+        let error = get_error_message(stderr);
+        let error = match error {
+            Ok(e) => e,
+            Err(_) => return Ok(())
+        };
+
+        Err(
+            ParsingError {
+                error,
+                location
+            }
+        )
+    }
+
     pub fn execute_on_file(&self, path: &str) -> Result<String, SolcError> {
         let content = std::fs::read_to_string(path).map_err(|e| SolcError::Other(anyhow::Error::new(e)))?;
 
@@ -42,9 +73,12 @@ impl Solc {
         let output = SolcCommand::new(version_path)
             .args(["--ast-compact-json", "--stop-after", "parsing", path])
             .execute()?;
-        if output.stderr.len() > 0 {
-            return Err(SolcError::OutputIsEmpty);
-        }
+        let stderr = String::from_utf8(output.clone().stderr)
+            .map_err(|e| SolcError::Other(anyhow::Error::new(e)))?;
+        let output = match Solc::check_stderr(stderr.as_str()).map_err(|e| SolcError::ParsingFailed(e)) {
+            Ok(_) => output,
+            Err(e) => return Err(e)
+        };
         let res = String::from_utf8(output.stdout)
             .map_err(|e| SolcError::Other(anyhow::Error::new(e)))?;
         Ok(String::from(Self::skip_output_header(&res)))
@@ -57,9 +91,12 @@ impl Solc {
         let output = SolcCommand::new(version_path)
             .args(["--ast-compact-json", "--stop-after", "parsing", "-"])
             .execute_with_input(content)?;
-        if output.stderr.len() > 0 {
-            return Err(SolcError::OutputIsEmpty);
-        }
+        let stderr = String::from_utf8(output.clone().stderr)
+            .map_err(|e| SolcError::Other(anyhow::Error::new(e)))?;
+        let output = match Solc::check_stderr(stderr.as_str()).map_err(|e| SolcError::ParsingFailed(e)) {
+            Ok(_) => output,
+            Err(e) => return Err(e)
+        };
         String::from_utf8(output.stdout)
             .map_err(|e| SolcError::Other(anyhow::Error::new(e)))
     }
