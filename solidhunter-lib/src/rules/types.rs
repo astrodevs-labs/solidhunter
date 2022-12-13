@@ -24,9 +24,7 @@ pub enum RulesError {
     IoError(std::io::Error),
 }
 
-
-
-pub trait RuleType: Send + Sync + 'static {
+pub trait RuleType {
 
     fn diagnose(&self, file: &SolidFile, files: &Vec<SolidFile>) -> Vec<LintDiag>;
 }
