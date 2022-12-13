@@ -15,8 +15,7 @@ Please complete this section if any breaking changes have been made, otherwise d
 
 # Checklist:
 
-- [ ] I have assigned this PR to myself
-- [ ] I have followed the [conventionnal commit](https://www.conventionalcommits.org/en/v1.0.0/) specification
+- [ ] I have followed the contributing guidelines
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have updated the official documentation
 
