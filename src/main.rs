@@ -46,9 +46,15 @@ fn main() {
     }
 
     let mut linter : SolidLinter = SolidLinter::new(args.rules_file);
+    let mut result = Vec::new();
     for path in args.project_path {
-        let res = linter.parse_folder(path);
-        //TODO : make a pretty output
-        
+        result.append(&mut linter.parse_folder(path));
+    }
+    for res in result {
+        if res.warnings.len() > 0 {
+            for warning in res.warnings {
+                println!("{}:{}:{}: warning: {}", warning.range.start.line, warning.range.start.character, warning.range.end.character, warning.message);
+            }
+        }
     }
 }
