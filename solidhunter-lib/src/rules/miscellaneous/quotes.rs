@@ -13,25 +13,27 @@ impl RuleType for Quotes {
 
     fn diagnose(&self, file: &SolidFile, files: &Vec<SolidFile>) -> Vec<LintDiag> {
         let mut res = Vec::new();
-        
+        let mut line_idx = 1;
+
         for line in file.content.lines() {
-            let mut line_idx = 1;
             line.chars().enumerate().for_each(|(idx, c)| {
                 if c == '\"' && line.chars().nth(idx - 1).unwrap_or(' ') != '\\' {
                     res.push(LintDiag {
                         range: Range {
-                            start: Position { line: line_idx, character: 0 as u64},
-                            end: Position { line: line_idx, character: (idx) as u64 }
+                            start: Position { line: line_idx, character: idx as u64},
+                            end: Position { line: line_idx, character: idx as u64 },
+                            length: 1 as u64,
                         },
                         message: format!("Use single quotes instead of double quotes"),
                         severity: Some(self.data.severity),
                         code: None,
                         source: None,
-                        uri: file.path.clone()
+                        uri: file.path.clone(),
+                        source_file_content: file.content.clone()
                     });
                 }
-                line_idx += 1;
             });
+            line_idx += 1;
         }
         res
     }
