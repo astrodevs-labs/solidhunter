@@ -4,7 +4,7 @@ use crate::solc::parsing_error::{ErrorLocation};
 
 pub static RE_SOL_ERROR_PRINT: Lazy<Regex> = Lazy::new(|| Regex::new(r"Error: (.*)\n").unwrap());
 pub static RE_SOL_ERROR_FILE: Lazy<Regex> = Lazy::new(|| Regex::new(r"--> (?P<file>.*):(?P<line>\d+):(?P<column>\d+):").unwrap());
-pub static RE_SOL_PRAGMA_VERSION: Lazy<Regex> = Lazy::new(|| Regex::new(r"pragma\s+solidity\s+(?P<version>.+?);").unwrap());
+pub static RE_SOL_PRAGMA_VERSION: Lazy<Regex> = Lazy::new(|| Regex::new(r"pragma\s+solidity\s+(?P<version>\^?\d+\.\d+(?:\.\d+)?);").unwrap());
 
 pub fn find_version_pragma(contract: &str) -> Option<Match> {
     RE_SOL_PRAGMA_VERSION.captures(contract)?.name("version")

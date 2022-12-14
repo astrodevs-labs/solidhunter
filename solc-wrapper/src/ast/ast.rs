@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fs::File;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1491,7 +1492,8 @@ pub fn decode_end_location(src: &str, content: &str) -> CodeLocation {
 
 pub fn offset_from_location(content: &str, location: &CodeLocation) -> usize {
     let mut offset = 0;
-    for (i, line) in content.lines().enumerate() {
+
+    for (i, line) in content.split('\n').enumerate() {
         if i == location.line - 1 {
             return offset + location.column;
         }

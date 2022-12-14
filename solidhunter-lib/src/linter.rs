@@ -20,7 +20,7 @@ pub struct SolidLinter {
 }
 
 impl SolidLinter {
-    fn _create_rules(&mut self, rules_config: &String, _first: bool)
+    fn _create_rules(&mut self, rules_config:& String, _first: bool)
     {
         let res = parse_rules(rules_config.as_str());
         match res {
