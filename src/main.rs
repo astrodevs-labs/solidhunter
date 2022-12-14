@@ -1,6 +1,7 @@
 use clap::Parser;
 use colored::Colorize;
 use solidhunter_lib::linter::SolidLinter;
+use solidhunter_lib::offset_from_range;
 
 use solidhunter_lib::rules::rule_impl::{create_rules_file, parse_rules};
 use solidhunter_lib::types::Severity;
@@ -44,6 +45,9 @@ fn print_diag(diag: &solidhunter_lib::types::LintDiag) {
     } else {
         padding = " ".repeat(2).to_string();
     }
+    let offset = offset_from_range(diag.source_file_content.as_str(), &diag.range);
+    let code_extract = &diag.source_file_content[offset..((offset as usize) + *&diag.range.length as usize)];
+
     println!("\n{}: {}", severity_to_string(diag.severity), diag.message);
     println!(
         "  --> {}:{}:{}",
@@ -55,9 +59,9 @@ fn print_diag(diag: &solidhunter_lib::types::LintDiag) {
         "   |");
     //TODO: add code to print
     println!(
-        "{}{}|{}", diag.range.start.line,padding, "'Add error code here'");
+        "{}{}|{}", diag.range.start.line,padding, code_extract);
     println!(
-        "   |{}{}", " ".repeat(diag.range.start.character as usize), "^".repeat(diag.range.end.character as usize - diag.range.start.character as usize));
+        "   |{}{}", " ".repeat(diag.range.start.character as usize), "^".repeat(diag.range.length as usize));
 }
 
 fn main() {
