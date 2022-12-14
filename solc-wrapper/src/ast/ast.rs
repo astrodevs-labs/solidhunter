@@ -404,9 +404,9 @@ pub enum SourceUnitChildNodes {
     StructDefinition(Box<StructDefinition>),
     EnumDefinition(Box<EnumDefinition>),
     ErrorDefinition(Box<ErrorDefinition>),
-    UsingForDirective(Box<UsingForDirective>),
     PragmaDirective(Box<PragmaDirective>),
     ImportDirective(Box<ImportDirective>),
+    UsingForDirective(Box<UsingForDirective>),
     Other(String)
 }
 
@@ -433,11 +433,11 @@ pub enum ContractDefinitionChildNodes {
     ModifierDefinition(Box<ModifierDefinition>),
     StructDefinition(Box<StructDefinition>),
     UserDefinedValueTypeDefinition(Box<UserDefinedValueTypeDefinition>),
-    UsingForDirective(Box<UsingForDirective>),
     VariableDeclaration(Box<VariableDeclaration>),
     EnumDefinition(Box<EnumDefinition>),
     ErrorDefinition(Box<ErrorDefinition>),
     EventDefinition(Box<EventDefinition>),
+    UsingForDirective(Box<UsingForDirective>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1048,7 +1048,7 @@ pub struct FunctionDefinition {
     pub state_mutability: StateMutability,
     #[serde(rename = "virtual")]
     pub is_virtual: bool,
-    pub visibility: Visibility,
+    pub visibility: Option<Visibility>,
     #[serde(rename = "nodeType")]
     pub node_type: NodeType,
 }
