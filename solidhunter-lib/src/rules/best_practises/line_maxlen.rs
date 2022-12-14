@@ -4,7 +4,6 @@ use solc_wrapper::*;
 use crate::rules::types::*;
 use crate::types::*;
 
-
 pub struct LineMaxLen {
     max_len: usize,
     data: RuleEntry
