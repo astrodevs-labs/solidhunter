@@ -1445,6 +1445,65 @@ pub struct InlineAssembly {
     pub node_type: NodeType
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CodeLocation {
+    pub line: usize,
+    pub column: usize,
+    pub length: usize,
+}
+
+pub fn get_line_from_offset(content: &str, offset: usize) -> (usize, usize) {
+    let mut nb_line = 1;
+    let mut tmp = offset;
+
+    for line in content.lines() {
+        if line.len() < tmp {
+            tmp -= (line.len() + 1);
+            nb_line += 1;
+            continue;
+        }
+        return (nb_line, tmp);
+    }
+    return (0, 0);
+}
+
+pub fn decode_begin_location(src: &str, content: &str) -> CodeLocation {
+    let mut split = src.split(':');
+    let offset = split.next().unwrap().parse().unwrap();
+    let (line, column) = get_line_from_offset(&content, offset);
+    let length = split.next().unwrap().parse().unwrap();
+    CodeLocation { line, column, length }
+}
+
+pub fn decode_end_location(src: &str, content: &str) -> CodeLocation {
+    let mut split = src.split(':');
+    let offset = split.next().unwrap().parse().unwrap();
+    let (line, _column) = get_line_from_offset(&content, offset);
+    let length = split.next().unwrap().parse().unwrap();
+    let extract = content[offset..offset + length].to_string();
+    let (diff_line, new_column) = get_line_from_offset(&extract, length);
+    CodeLocation {
+        line: line + diff_line,
+        column: new_column,
+        length
+    }
+}
+
+pub fn offset_from_location(content: &str, location: &CodeLocation) -> usize {
+    let mut offset = 0;
+    for (i, line) in content.lines().enumerate() {
+        if i == location.line - 1 {
+            return offset + location.column;
+        }
+        offset += line.len() + 1;
+    }
+    offset
+}
+
+pub fn decode_location(src: &str, content: &str) -> (CodeLocation, CodeLocation) {
+    (decode_begin_location(src, content), decode_end_location(src, content))
+}
+
 #[cfg(test)]
 mod tests {
     use std::fs;
@@ -1795,7 +1854,7 @@ mod tests {
         assert_eq!(res.name_location, Some("3401:4:0".to_string()));
         assert_eq!(res.implemented, true);
         assert_eq!(res.kind, FunctionDefinitionKind::Function);
-        assert_eq!(res.visibility, Visibility::Public);
+        assert_eq!(res.visibility, Some(Visibility::Public));
         assert_eq!(res.is_virtual, false);
         assert_eq!(res.state_mutability, StateMutability::NonPayable);
         assert_eq!(res.node_type, NodeType::FunctionDefinition);

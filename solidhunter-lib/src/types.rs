@@ -38,6 +38,8 @@ pub struct LintDiag {
     pub message: String,
 
     pub uri: Uri,
+
+    pub source_file_content: String
 }
 
 
@@ -67,6 +69,7 @@ pub enum Severity {
 pub struct Range {
     pub start: Position,
     pub end: Position,
+    pub length: u64,
 }
 pub struct Location {
     pub uri: Uri,
