@@ -1,6 +1,6 @@
 mod solc;
 
-mod ast;
+pub mod ast;
 pub use ast::ast::*;
 
 mod utils;
