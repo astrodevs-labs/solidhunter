@@ -4,9 +4,8 @@ Please provide a detailed description of what was done in this PR
 
 # Changes include
 
-- [ ] Bugfix (non-breaking change that solves an issue)
-- [ ] Hotfix (change that solves an urgent issue, and requires immediate attention)
-- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Bugfix (change that solves an issue)
+- [ ] New feature (change that adds functionality)
 - [ ] Breaking change (change that is not backwards-compatible and/or changes current functionality)
 
 # Breaking changes
