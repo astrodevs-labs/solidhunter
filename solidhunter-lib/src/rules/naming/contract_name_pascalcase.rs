@@ -5,7 +5,6 @@ use crate::types::*;
 use solc_wrapper::{ContractDefinitionChildNodes, decode_location, SourceUnit, SourceUnitChildNodes};
 
 pub struct ContractNamePascalCase {
-    enabled: bool,
     data: RuleEntry
 }
 
@@ -48,7 +47,6 @@ impl RuleType for ContractNamePascalCase {
 impl ContractNamePascalCase {
     pub(crate) fn create(data: RuleEntry) -> Box<dyn RuleType> {
         let mut rule  = ContractNamePascalCase {
-            enabled: data.data[0].parse::<bool>().unwrap(),
             data
         };
         Box::new(rule)
@@ -58,7 +56,7 @@ impl ContractNamePascalCase {
         RuleEntry {
             id: "contract-name-pascalcase".to_string(),
             severity: Severity::WARNING,
-            data: vec![true.to_string()]
+            data: vec![]
         }
     }
 }
