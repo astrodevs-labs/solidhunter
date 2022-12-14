@@ -9,7 +9,6 @@ pub mod factory;
 pub mod best_practises;
 pub mod miscellaneous;
 pub mod naming;
-pub mod miscellaneous;
 
 pub fn create_default_rules() -> Vec<RuleEntry> {
     let mut rules = Vec::new();
