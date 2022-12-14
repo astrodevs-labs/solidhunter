@@ -32,6 +32,7 @@ impl RuleType for LineMaxLen {
                     source_file_content: file.content.clone()
                 });
             }
+            line_idx += 1;
         }
         res
     }

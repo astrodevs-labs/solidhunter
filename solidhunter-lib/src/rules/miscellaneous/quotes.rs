@@ -19,7 +19,7 @@ impl RuleType for Quotes {
             let mut line_idx = 1;
             println!("line: {}", line);
             line.chars().enumerate().for_each(|(idx, c)| {
-                if c == '\"' {
+                if c == '\"' && line.chars().nth(idx - 1).unwrap_or(' ') != '\\' {
                     println!("Found quote at line {} char {}", line_idx, idx);
                     res.push(LintDiag {
                         range: Range {
