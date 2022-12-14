@@ -2,7 +2,7 @@ use clap::builder::Str;
 use crate::linter::SolidFile;
 use crate::rules::types::*;
 use crate::types::*;
-use solc_wrapper::{ContractDefinitionChildNodes, decode_location, SourceUnit, SourceUnitChildNodes};
+use solc_wrapper::{ContractDefinitionChildNodes, decode_location, FunctionDefinitionKind, SourceUnit, SourceUnitChildNodes};
 
 pub struct FuncNameCamelCase {
     enabled: bool,
@@ -21,7 +21,10 @@ impl RuleType for FuncNameCamelCase {
                     for node in &contract.nodes {
                         match node {
                             ContractDefinitionChildNodes::FunctionDefinition(function) => {
-                                if !(function.name.chars().nth(0).unwrap() >= 'a' && function.name.chars().nth(0).unwrap() <= 'z') {
+                                if function.kind != FunctionDefinitionKind::Constructor
+                                    && (!(function.name.chars().nth(0).unwrap_or(' ') >= 'a' && function.name.chars().nth(0).unwrap_or(' ') <= 'z')
+                                        || function.name.contains('_')
+                                        || function.name.contains('-')) {
                                     //Untested
                                     let location = decode_location(function.name_location.as_ref().unwrap(), &file.content);
                                     res.push(LintDiag {
