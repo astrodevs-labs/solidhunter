@@ -1452,6 +1452,9 @@ pub struct CodeLocation {
     pub length: usize,
 }
 
+/// Line ending warning!
+/// Rust don't seems to handle MacOS line ending well.
+/// FIXME: Find a way to handle MacOS line ending.
 pub fn get_line_from_offset(content: &str, offset: usize) -> (usize, usize) {
     let mut nb_line = 1;
     let mut tmp = offset;
