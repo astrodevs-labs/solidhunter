@@ -30,7 +30,3 @@ Please post additional comments in this section if you have them, otherwise dele
 # Issue
 
 fixes #ISSUE (if applicable)
-
-# Alert Reviewers
-
-@0xtekgrinder @0xMemoryGrinder
