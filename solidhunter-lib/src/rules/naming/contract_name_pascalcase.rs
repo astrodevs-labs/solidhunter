@@ -2,41 +2,12 @@ use clap::builder::Str;
 use crate::linter::SolidFile;
 use crate::rules::types::*;
 use crate::types::*;
-use solc_wrapper::{ContractDefinitionChildNodes, SourceUnit, SourceUnitChildNodes};
+use solc_wrapper::{ContractDefinitionChildNodes, decode_location, SourceUnit, SourceUnitChildNodes};
 
 pub struct ContractNamePascalCase {
     enabled: bool,
     data: RuleEntry
 }
-
-pub fn get_line_from_offset(file: &SolidFile, offset: usize) -> Position {
-    let mut nb_line = 0;
-    let mut tmp = offset;
-
-    for line in file.content.lines() {
-        if line.len() < tmp {
-            tmp -= line.len();
-            nb_line += 1;
-            continue;
-        }
-        return Position {
-            line: nb_line,
-            character: tmp as u64,
-        }
-    }
-    return Position {
-        line: 0,
-        character: 0,
-    }
-}
-
-pub fn get_offset(name_location: String) -> usize {
-
-    let v: Vec<&str> = name_location.split(':').collect();
-
-    v[0].parse().unwrap()
-}
-
 
 impl RuleType for ContractNamePascalCase {
 
@@ -51,17 +22,19 @@ impl RuleType for ContractNamePascalCase {
                         contract.name.contains("_") ||
                         contract.name.contains("-") {
                         //Untested
-                        let offset = get_offset(contract.name_location.clone().unwrap());
-                        let pos = get_line_from_offset(file, offset);
+                        let location = decode_location(contract.name_location.as_ref().unwrap(), &file.content);
                         res.push(LintDiag {
                             range: Range {
-                                start: Position { line: pos.line, character: pos.character }, end: Position { line: pos.line, character: pos.character + contract.name.len() as u64 }
+                                start: Position { line: location.0.line as u64, character: location.0.column as u64 },
+                                end: Position { line: location.1.line as u64, character: location.1.column as u64 },
+                                length: location.0.length as u64,
                             },
                             message: format!("Contract name need to be in pascal case"),
                             severity: Some(self.data.severity),
                             code: None,
                             source: None,
-                            uri: file.path.clone()
+                            uri: file.path.clone(),
+                            source_file_content: file.content.clone(),
                         });
                     }
                 }
