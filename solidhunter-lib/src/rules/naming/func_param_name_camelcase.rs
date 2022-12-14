@@ -52,8 +52,8 @@ impl RuleType for FuncParamNameCamelcase {
                             ContractDefinitionChildNodes::FunctionDefinition(function) => {
                                 for parameter in &function.parameters.parameters {
                                     if !(parameter.name.chars().nth(0).unwrap() >= 'a' && parameter.name.chars().nth(0).unwrap() <= 'z') ||
-                                        contract.name.contains("_") ||
-                                        contract.name.contains("-") {
+                                        parameter.name.contains("_") ||
+                                        parameter.name.contains("-") {
                                         //Untested
                                         let offset = get_offset(parameter.name_location.clone().unwrap());
                                         let pos = get_line_from_offset(file, offset);
