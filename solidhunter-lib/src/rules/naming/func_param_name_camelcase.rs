@@ -5,7 +5,6 @@ use crate::types::*;
 use solc_wrapper::{ContractDefinitionChildNodes, decode_location, SourceUnit, SourceUnitChildNodes};
 
 pub struct FuncParamNameCamelcase {
-    enabled: bool,
     data: RuleEntry
 }
 
@@ -58,7 +57,6 @@ impl RuleType for FuncParamNameCamelcase {
 impl FuncParamNameCamelcase {
     pub(crate) fn create(data: RuleEntry) -> Box<dyn RuleType> {
         let mut rule  = FuncParamNameCamelcase {
-            enabled: data.data[0].parse::<bool>().unwrap(),
             data
         };
         Box::new(rule)
@@ -68,7 +66,7 @@ impl FuncParamNameCamelcase {
         RuleEntry {
             id: "func-param-name-camelcase".to_string(),
             severity: Severity::WARNING,
-            data: vec![true.to_string()]
+            data: vec![]
         }
     }
 }
