@@ -35,7 +35,7 @@ pub fn create_rules() -> HashMap<String, fn(RuleEntry) -> Box<dyn RuleType>> {
     add_rules(&mut rules, best_practises::create_rules());
     add_rules(&mut rules, miscellaneous::create_rules());
     add_rules(&mut rules, naming::create_rules());
-
     add_rules(&mut rules, miscellaneous::create_rules());
+    
     rules
 }
