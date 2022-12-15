@@ -346,6 +346,8 @@ pub enum NodeType {
     ModifierInvocation,
     StructuredDocumentation,
     UserDefinedTypeName,
+    OverrideSpecifier,
+    Mapping,
 
     /// An unknown AST node type.
     Other(String),
@@ -1161,13 +1163,6 @@ pub struct VariableDeclarationStatement {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum IfStatementBody {
-    Block(Block),
-    Statement(Statement),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IfStatement {
     pub id: usize,
     pub src: SourceLocation,
@@ -1175,9 +1170,9 @@ pub struct IfStatement {
     #[serde(rename = "condition")]
     pub condition: Expression,
     #[serde(rename = "trueBody")]
-    pub true_body: IfStatementBody,
+    pub true_body: Body,
     #[serde(rename = "falseBody")]
-    pub false_body: Option<IfStatementBody>,
+    pub false_body: Option<Body>,
     #[serde(rename = "nodeType")]
     pub node_type: NodeType,
 }
