@@ -1457,9 +1457,9 @@ pub fn get_line_from_offset(content: &str, offset: usize) -> (usize, usize) {
     let mut nb_line = 1;
     let mut tmp = offset;
 
-    for line in content.lines() {
+    for line in content.split('\n') {
         if line.len() < tmp {
-            tmp -= (line.len() + 1);
+            tmp -= line.len() + 1;
             nb_line += 1;
             continue;
         }
