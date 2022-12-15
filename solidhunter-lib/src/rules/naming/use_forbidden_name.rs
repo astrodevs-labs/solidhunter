@@ -1,6 +1,7 @@
 use std::ops::Index;
 use crate::linter::SolidFile;
 use solc_wrapper::*;
+use solc_wrapper::ast::utils::{get_all_nodes_by_type, Nodes};
 use crate::rules::best_practises::code_complexity::RULE_ID;
 use crate::rules::types::*;
 use crate::types::*;
@@ -15,33 +16,30 @@ impl RuleType for UseForbiddenName {
         let mut res = Vec::new();
         let blacklist = vec!['I', 'l', 'O'];
 
-        // var def => contract def
-        for node in file.data.nodes.iter() {
-            let contract = match node {
-                SourceUnitChildNodes::ContractDefinition(contract) => contract,
+        let nodes = get_all_nodes_by_type(file.data.clone(), NodeType::VariableDeclaration);
+
+        println!("{:?}", file.data);
+
+        for node in nodes {
+            let var = match node {
+                Nodes::VariableDeclaration(var) => var,
                 _ => continue
             };
-            for node_var in contract.nodes.iter() {
-                let var = match node_var {
-                    ContractDefinitionChildNodes::VariableDeclaration(var) => var,
-                    _ => continue
-                };
-                if var.name.len() == 1 && blacklist.contains(&var.name.chars().next().unwrap()) {
-                    let location = decode_location(&var.src, &file.content);
-                    res.push(LintDiag {
-                        range: Range {
-                            start: Position { line: location.0.line as u64, character: location.0.column as u64},
-                            end: Position { line: location.1.line as u64, character: location.1.column as u64 },
-                            length: location.0.length as u64
-                        },
-                        message: format!("Forbidden variable name: {}", var.name),
-                        severity: Some(self.data.severity),
-                        code: None,
-                        source: None,
-                        uri: file.path.clone(),
-                        source_file_content: file.content.clone()
-                    });
-                }
+            if var.name.len() == 1 && blacklist.contains(&var.name.chars().next().unwrap()) {
+                let location = decode_location(&var.src, &file.content);
+                res.push(LintDiag {
+                    range: Range {
+                        start: Position { line: location.0.line as u64, character: location.0.column as u64},
+                        end: Position { line: location.1.line as u64, character: location.1.column as u64 },
+                        length: location.0.length as u64
+                    },
+                    message: format!("Forbidden variable name: {}", var.name),
+                    severity: Some(self.data.severity),
+                    code: None,
+                    source: None,
+                    uri: file.path.clone(),
+                    source_file_content: file.content.clone()
+                });
             }
         }
         res
