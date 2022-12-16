@@ -51,7 +51,7 @@ fn print_diag(diag: &solidhunter_lib::types::LintDiag) {
     } else {
         padding = " ".repeat(2).to_string();
     }
-    let line = diag.source_file_content.lines().nth(diag.range.start.line as usize).unwrap();
+    let line = diag.source_file_content.lines().nth((diag.range.start.line - 1) as usize).unwrap();
 
     println!("\n{}: {}", severity_to_string(diag.severity), diag.message);
     println!(

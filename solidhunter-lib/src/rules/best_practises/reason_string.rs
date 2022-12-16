@@ -50,7 +50,7 @@ impl RuleType for ReasonString {
                                         match nj {
                                             Expression::Literal(z) => {
                                                 if z.value.clone().unwrap().len() > self.max_length as usize {
-                                                    let location = decode_location(&j.src, &file.content);
+                                                    let location = decode_location(&z.src, &file.content);
                                                     let diag = LintDiag {
                                                         range: Range {
                                                             start: Position { line: location.0.line as u64, character: location.0.column as u64 },
@@ -92,7 +92,7 @@ impl RuleType for ReasonString {
                                     match &j.arguments[0] {
                                         Expression::Literal(z) => {
                                             if z.value.clone().unwrap().len() > self.max_length as usize {
-                                                let location = decode_location(&j.src, &file.content);
+                                                let location = decode_location(&z.src, &file.content);
                                                 let diag = LintDiag {
                                                     range: Range {
                                                         start: Position { line: location.0.line as u64, character: location.0.column as u64 },
