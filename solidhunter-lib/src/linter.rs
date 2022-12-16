@@ -37,15 +37,17 @@ impl SolidLinter {
             }
         }
     }
-
-    pub fn new(rules_config: String) -> SolidLinter {
+    pub fn initalize(&mut self, rules_config: &String)
+    {
+        self.rule_factory.register_rules();
+        self._create_rules(&rules_config, true);
+    }
+    pub fn new() -> SolidLinter {
         let mut linter : SolidLinter = SolidLinter {
             files: Vec::new(),
             rule_factory: RuleFactory::new(),
             rules: Vec::new(),
         };
-        linter.rule_factory.register_rules();
-        linter._create_rules(&rules_config, true);
         return linter;
     }
 
