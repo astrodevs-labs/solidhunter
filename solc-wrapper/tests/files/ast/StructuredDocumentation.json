@@ -1,0 +1,6 @@
+{
+    "id": 63,
+    "nodeType": "StructuredDocumentation",
+    "src": "1522:55:0",
+    "text": "@notice Event emitted when the minting is locked "
+}

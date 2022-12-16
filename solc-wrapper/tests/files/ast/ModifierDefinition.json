@@ -1,0 +1,74 @@
+{
+  "body": {
+    "id": 91,
+    "nodeType": "Block",
+    "src": "2015:75:0",
+    "statements": [
+      {
+        "expression": {
+          "arguments": [
+            {
+              "id": 86,
+              "name": "_isMintAllowed",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "2033:14:0",
+              "typeDescriptions": {}
+            },
+            {
+              "hexValue": "4d657461646174617320617265206c6f636b6564",
+              "id": 87,
+              "kind": "string",
+              "nodeType": "Literal",
+              "src": "2049:22:0",
+              "typeDescriptions": {},
+              "value": "Metadatas are locked"
+            }
+          ],
+          "expression": {
+            "id": 85,
+            "name": "require",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "src": "2025:7:0",
+            "typeDescriptions": {}
+          },
+          "id": 88,
+          "nameLocations": [],
+          "names": [],
+          "nodeType": "FunctionCall",
+          "src": "2025:47:0",
+          "tryCall": false,
+          "typeDescriptions": {}
+        },
+        "id": 89,
+        "nodeType": "ExpressionStatement",
+        "src": "2025:47:0"
+      },
+      {
+        "id": 90,
+        "nodeType": "PlaceholderStatement",
+        "src": "2082:1:0"
+      }
+    ]
+  },
+  "documentation": {
+    "id": 83,
+    "nodeType": "StructuredDocumentation",
+    "src": "1918:63:0",
+    "text": "@dev Modifier that reverts when the metadatas are locked "
+  },
+  "id": 92,
+  "name": "metadataNotLocked",
+  "nameLocation": "1995:17:0",
+  "nodeType": "ModifierDefinition",
+  "parameters": {
+    "id": 84,
+    "nodeType": "ParameterList",
+    "parameters": [],
+    "src": "2012:2:0"
+  },
+  "src": "1986:104:0",
+  "virtual": false,
+  "visibility": "internal"
+}

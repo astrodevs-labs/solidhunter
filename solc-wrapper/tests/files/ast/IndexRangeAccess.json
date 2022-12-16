@@ -1,0 +1,31 @@
+{
+  "baseExpression":{
+    "id":10,
+    "name":"cheh",
+    "nodeType":"Identifier",
+    "overloadedDeclarations":[
+
+    ],
+    "src":"174:4:0",
+    "typeDescriptions":{
+
+    }
+  },
+  "endExpression":{
+    "hexValue":"33",
+    "id":11,
+    "kind":"number",
+    "nodeType":"Literal",
+    "src":"180:1:0",
+    "typeDescriptions":{
+
+    },
+    "value":"3"
+  },
+  "id":12,
+  "nodeType":"IndexRangeAccess",
+  "src":"174:8:0",
+  "typeDescriptions":{
+
+  }
+}

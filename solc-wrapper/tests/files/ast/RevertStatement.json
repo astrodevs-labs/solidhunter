@@ -1,0 +1,36 @@
+{
+    "errorCall": {
+        "arguments": [],
+        "expression": {
+            "argumentTypes": [],
+            "id": 6,
+            "name": "Pls",
+            "nodeType": "Identifier",
+            "overloadedDeclarations": [],
+            "referencedDeclaration": 3,
+            "src": "125:3:0",
+            "typeDescriptions": {
+                "typeIdentifier": "t_function_error_pure$__$returns$__$",
+                "typeString": "function () pure"
+            }
+        },
+        "id": 7,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": false,
+        "kind": "functionCall",
+        "lValueRequested": false,
+        "nameLocations": [],
+        "names": [],
+        "nodeType": "FunctionCall",
+        "src": "125:5:0",
+        "tryCall": false,
+        "typeDescriptions": {
+            "typeIdentifier": "t_tuple$__$",
+            "typeString": "tuple()"
+        }
+    },
+    "id": 8,
+    "nodeType": "RevertStatement",
+    "src": "118:12:0"
+}

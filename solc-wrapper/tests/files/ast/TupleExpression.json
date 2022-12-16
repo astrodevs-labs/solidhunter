@@ -1,0 +1,44 @@
+{
+  "components":[
+    {
+      "hexValue":"37",
+      "id":13,
+      "kind":"number",
+      "nodeType":"Literal",
+      "src":"151:1:0",
+      "typeDescriptions":{
+
+      },
+      "value":"7"
+    },
+    {
+      "hexValue":"74727565",
+      "id":14,
+      "kind":"bool",
+      "nodeType":"Literal",
+      "src":"154:4:0",
+      "typeDescriptions":{
+
+      },
+      "value":"true"
+    },
+    {
+      "hexValue":"32",
+      "id":15,
+      "kind":"number",
+      "nodeType":"Literal",
+      "src":"160:1:0",
+      "typeDescriptions":{
+
+      },
+      "value":"2"
+    }
+  ],
+  "id":16,
+  "isInlineArray":false,
+  "nodeType":"TupleExpression",
+  "src":"150:12:0",
+  "typeDescriptions":{
+
+  }
+}

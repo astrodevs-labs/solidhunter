@@ -1,0 +1,22 @@
+{
+  "id":7,
+  "nodeType":"UnaryOperation",
+  "operator":"++",
+  "prefix":false,
+  "src":"104:6:0",
+  "subExpression":{
+    "id":6,
+    "name":"test",
+    "nodeType":"Identifier",
+    "overloadedDeclarations":[
+
+    ],
+    "src":"104:4:0",
+    "typeDescriptions":{
+
+    }
+  },
+  "typeDescriptions":{
+
+  }
+}

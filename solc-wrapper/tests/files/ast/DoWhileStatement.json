@@ -1,0 +1,33 @@
+{
+    "body": {
+        "id": 7,
+        "nodeType": "Block",
+        "src": "148:33:0",
+        "statements": [
+            {
+                "id": 6,
+                "nodeType": "Continue",
+                "src": "162:8:0"
+            }
+        ]
+    },
+    "condition": {
+        "hexValue": "74727565",
+        "id": 8,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": true,
+        "kind": "bool",
+        "lValueRequested": false,
+        "nodeType": "Literal",
+        "src": "189:4:0",
+        "typeDescriptions": {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+        },
+        "value": "true"
+    },
+    "id": 9,
+    "nodeType": "DoWhileStatement",
+    "src": "145:50:0"
+}

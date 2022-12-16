@@ -1,0 +1,57 @@
+{
+  "expression":{
+    "expression":{
+      "id":16,
+      "name":"otherContract",
+      "nodeType":"Identifier",
+      "overloadedDeclarations":[
+
+      ],
+      "src":"236:13:0",
+      "typeDescriptions":{
+
+      }
+    },
+    "id":18,
+    "memberLocation":"250:4:0",
+    "memberName":"call",
+    "nodeType":"MemberAccess",
+    "src":"236:18:0",
+    "typeDescriptions":{
+
+    }
+  },
+  "id":21,
+  "names":[
+    "value"
+  ],
+  "nodeType":"FunctionCallOptions",
+  "options":[
+    {
+      "expression":{
+        "id":19,
+        "name":"msg",
+        "nodeType":"Identifier",
+        "overloadedDeclarations":[
+
+        ],
+        "src":"262:3:0",
+        "typeDescriptions":{
+
+        }
+      },
+      "id":20,
+      "memberLocation":"266:5:0",
+      "memberName":"value",
+      "nodeType":"MemberAccess",
+      "src":"262:9:0",
+      "typeDescriptions":{
+
+      }
+    }
+  ],
+  "src":"236:36:0",
+  "typeDescriptions":{
+
+  }
+}

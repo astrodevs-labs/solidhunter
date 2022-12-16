@@ -1,0 +1,24 @@
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+  push:
+    branches:
+      - dev
+
+name: Build
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run unit tests
+        run: cargo build --release
+        continue-on-error: true

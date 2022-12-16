@@ -1,0 +1,20 @@
+{
+  "anonymous": false,
+  "documentation": {
+    "id": 63,
+    "nodeType": "StructuredDocumentation",
+    "src": "1522:55:0",
+    "text": "@notice Event emitted when the minting is locked "
+  },
+  "id": 67,
+  "name": "MintingLocked",
+  "nameLocation": "1588:13:0",
+  "nodeType": "EventDefinition",
+  "parameters": {
+    "id": 66,
+    "nodeType": "ParameterList",
+    "parameters": [],
+    "src": "1601:25:0"
+  },
+  "src": "1582:45:0"
+}

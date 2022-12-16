@@ -1,0 +1,32 @@
+{
+  "baseExpression":{
+    "id":12,
+    "name":"pls",
+    "nodeType":"Identifier",
+    "overloadedDeclarations":[
+
+    ],
+    "src":"203:3:0",
+    "typeDescriptions":{
+
+    }
+  },
+  "id":14,
+  "indexExpression":{
+    "id":13,
+    "name":"index",
+    "nodeType":"Identifier",
+    "overloadedDeclarations":[
+
+    ],
+    "src":"207:5:0",
+    "typeDescriptions":{
+
+    }
+  },
+  "nodeType":"IndexAccess",
+  "src":"203:10:0",
+  "typeDescriptions":{
+
+  }
+}

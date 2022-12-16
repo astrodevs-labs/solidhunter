@@ -1,0 +1,23 @@
+{
+  "id": 141,
+  "leftHandSide": {
+    "id": 139,
+    "name": "_baseTokenURI",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "src": "2849:13:0",
+    "typeDescriptions": {}
+  },
+  "nodeType": "Assignment",
+  "operator": "=",
+  "rightHandSide": {
+    "id": 140,
+    "name": "initialBaseTokenURI",
+    "nodeType": "Identifier",
+    "overloadedDeclarations": [],
+    "src": "2865:19:0",
+    "typeDescriptions": {}
+  },
+  "src": "2849:35:0",
+  "typeDescriptions": {}
+}

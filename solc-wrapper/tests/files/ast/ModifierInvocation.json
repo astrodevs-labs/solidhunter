@@ -1,0 +1,14 @@
+{
+  "id": 274,
+  "modifierName": {
+    "id": 273,
+    "name": "whenNotPaused",
+    "nameLocations": [
+      "5445:13:0"
+    ],
+    "nodeType": "IdentifierPath",
+    "src": "5445:13:0"
+  },
+  "nodeType": "ModifierInvocation",
+  "src": "5445:13:0"
+}

@@ -1,0 +1,25 @@
+{
+  "id":7,
+  "nodeType":"NewExpression",
+  "src":"131:6:0",
+  "typeDescriptions":{
+
+  },
+  "typeName":{
+    "id":6,
+    "nodeType":"UserDefinedTypeName",
+    "pathNode":{
+      "id":5,
+      "name":"Ok",
+      "nameLocations":[
+        "135:2:0"
+      ],
+      "nodeType":"IdentifierPath",
+      "src":"135:2:0"
+    },
+    "src":"135:2:0",
+    "typeDescriptions":{
+
+    }
+  }
+}

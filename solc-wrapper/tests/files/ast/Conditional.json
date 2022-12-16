@@ -1,0 +1,61 @@
+{
+    "condition": {
+        "hexValue": "74727565",
+        "id": 7,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": true,
+        "kind": "bool",
+        "lValueRequested": false,
+        "nodeType": "Literal",
+        "src": "158:4:0",
+        "typeDescriptions": {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+        },
+        "value": "true"
+    },
+    "falseExpression": {
+        "hexValue": "66616c7365",
+        "id": 9,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": true,
+        "kind": "bool",
+        "lValueRequested": false,
+        "nodeType": "Literal",
+        "src": "173:5:0",
+        "typeDescriptions": {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+        },
+        "value": "false"
+    },
+    "id": 10,
+    "isConstant": false,
+    "isLValue": false,
+    "isPure": true,
+    "lValueRequested": false,
+    "nodeType": "Conditional",
+    "src": "158:20:0",
+    "trueExpression": {
+        "hexValue": "74727565",
+        "id": 8,
+        "isConstant": false,
+        "isLValue": false,
+        "isPure": true,
+        "kind": "bool",
+        "lValueRequested": false,
+        "nodeType": "Literal",
+        "src": "166:4:0",
+        "typeDescriptions": {
+            "typeIdentifier": "t_bool",
+            "typeString": "bool"
+        },
+        "value": "true"
+    },
+    "typeDescriptions": {
+        "typeIdentifier": "t_bool",
+        "typeString": "bool"
+    }
+}

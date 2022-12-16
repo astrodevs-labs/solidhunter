@@ -1,0 +1,66 @@
+{
+    "canonicalName": "S",
+    "id": 6,
+    "members": [
+        {
+            "constant": false,
+            "id": 3,
+            "mutability": "mutable",
+            "name": "x",
+            "nameLocation": "82:1:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 6,
+            "src": "77:6:0",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+            },
+            "typeName": {
+                "id": 2,
+                "name": "uint",
+                "nodeType": "ElementaryTypeName",
+                "src": "77:4:0",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                }
+            },
+            "visibility": "internal"
+        },
+        {
+            "constant": false,
+            "id": 5,
+            "mutability": "mutable",
+            "name": "y",
+            "nameLocation": "94:1:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 6,
+            "src": "89:6:0",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+            },
+            "typeName": {
+                "id": 4,
+                "name": "uint",
+                "nodeType": "ElementaryTypeName",
+                "src": "89:4:0",
+                "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                }
+            },
+            "visibility": "internal"
+        }
+    ],
+    "name": "S",
+    "nameLocation": "69:1:0",
+    "nodeType": "StructDefinition",
+    "scope": 27,
+    "src": "62:36:0",
+    "visibility": "public"
+}
