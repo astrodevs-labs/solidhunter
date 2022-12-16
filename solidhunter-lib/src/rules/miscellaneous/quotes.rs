@@ -17,14 +17,14 @@ impl RuleType for Quotes {
 
         for line in file.content.lines() {
             line.chars().enumerate().for_each(|(idx, c)| {
-                if c == '\"' && line.chars().nth(idx - 1).unwrap_or(' ') != '\\' {
+                if c == '\'' && line.chars().nth(idx - 1).unwrap_or(' ') != '\\' {
                     res.push(LintDiag {
                         range: Range {
                             start: Position { line: line_idx, character: idx as u64},
                             end: Position { line: line_idx, character: idx as u64 },
                             length: 1 as u64,
                         },
-                        message: format!("Use single quotes instead of double quotes"),
+                        message: format!("Use double quotes instead of single quote"),
                         severity: Some(self.data.severity),
                         code: None,
                         source: None,
@@ -38,7 +38,6 @@ impl RuleType for Quotes {
         res
     }
 
-    
 } 
 
 impl Quotes {
@@ -48,7 +47,7 @@ impl Quotes {
         };
         Box::new(rule)
     }
-    
+
     pub(crate) fn create_default() -> RuleEntry {
         RuleEntry {
             id: "quotes".to_string(),
