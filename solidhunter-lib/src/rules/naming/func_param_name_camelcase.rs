@@ -21,6 +21,9 @@ impl RuleType for FuncParamNameCamelcase {
                         match node {
                             ContractDefinitionChildNodes::FunctionDefinition(function) => {
                                 for parameter in &function.parameters.parameters {
+                                    if parameter.name.is_empty() {
+                                        continue;
+                                    }
                                     if !(parameter.name.chars().nth(0).unwrap() >= 'a' && parameter.name.chars().nth(0).unwrap() <= 'z') ||
                                         parameter.name.contains("_") ||
                                         parameter.name.contains("-") {
