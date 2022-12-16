@@ -7,7 +7,6 @@ use crate::types::{LintDiag, Range, Position, Severity};
 
 pub const RULE_ID: &str = "reason-string";
 const DEFAULT_SEVERITY: Severity = Severity::WARNING;
-const DEFAULT_MESSAGE: &str = "Require or revert statement must have a reason string and check that each reason string is at most N characters long.";
 
 // Specific
 const DEFAULT_LENGTH: u32 = 32;
@@ -46,6 +45,31 @@ impl RuleType for ReasonString {
                                         source_file_content: file.content.clone(),
                                     };
                                     res.push(diag);
+                                } else {
+                                    for nj in &j.arguments {
+                                        match nj {
+                                            Expression::Literal(z) => {
+                                                if z.value.clone().unwrap().len() > self.max_length as usize {
+                                                    let location = decode_location(&j.src, &file.content);
+                                                    let diag = LintDiag {
+                                                        range: Range {
+                                                            start: Position { line: location.0.line as u64, character: location.0.column as u64 },
+                                                            end: Position { line: location.1.line as u64, character: location.1.column as u64 },
+                                                            length: location.0.length as u64
+                                                        },
+                                                        message: format!("reason-string: A revert statement must have a reason string of length less than {}", self.max_length),
+                                                        severity: Some(self.data.severity),
+                                                        code: None,
+                                                        source: None,
+                                                        uri: file.path.clone(),
+                                                        source_file_content: file.content.clone(),
+                                                    };
+                                                    res.push(diag);
+                                                }
+                                            }
+                                            _ => {}
+                                        }
+                                    }
                                 }
                             } else if v.name == "revert" {
                                 if j.arguments.len() == 0 {
@@ -64,6 +88,29 @@ impl RuleType for ReasonString {
                                         source_file_content: file.content.clone(),
                                     };
                                     res.push(diag);
+                                } else {
+                                    match &j.arguments[0] {
+                                        Expression::Literal(z) => {
+                                            if z.value.clone().unwrap().len() > self.max_length as usize {
+                                                let location = decode_location(&j.src, &file.content);
+                                                let diag = LintDiag {
+                                                    range: Range {
+                                                        start: Position { line: location.0.line as u64, character: location.0.column as u64 },
+                                                        end: Position { line: location.1.line as u64, character: location.1.column as u64 },
+                                                        length: location.0.length as u64
+                                                    },
+                                                    message: format!("reason-string: A revert statement must have a reason string of length less than {}", self.max_length),
+                                                    severity: Some(self.data.severity),
+                                                    code: None,
+                                                    source: None,
+                                                    uri: file.path.clone(),
+                                                    source_file_content: file.content.clone(),
+                                                };
+                                                res.push(diag);
+                                            }
+                                        }
+                                        _ => {}
+                                    }
                                 }
                             }
                         }
@@ -77,10 +124,6 @@ impl RuleType for ReasonString {
     }
 
 }
-
-// require = Identifier + name = require
-// revert = Identifier + name = revert
-
 
 impl ReasonString {
     pub fn create(data: RuleEntry) -> Box<dyn RuleType> {
