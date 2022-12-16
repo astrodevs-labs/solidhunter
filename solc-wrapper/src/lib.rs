@@ -97,8 +97,9 @@ impl Solc {
             Ok(_) => output,
             Err(e) => return Err(e)
         };
-        String::from_utf8(output.stdout)
-            .map_err(|e| SolcError::Other(anyhow::Error::new(e)))
+        let res = String::from_utf8(output.stdout)
+            .map_err(|e| SolcError::Other(anyhow::Error::new(e)))?;
+        Ok(String::from(Self::skip_output_header(&res)))
     }
 
     pub fn extract_ast_file(&self, filepath: String) -> Result<SourceUnit, SolcError> {
