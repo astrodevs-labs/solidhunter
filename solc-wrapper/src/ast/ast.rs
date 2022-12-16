@@ -265,21 +265,21 @@ pub enum Expression {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Statement {
-    Block(Box<Block>),
-    Break(Box<Break>),
-    Continue(Box<Continue>),
-    DoWhileStatement(Box<DoWhileStatement>),
-    EmitStatement(Box<EmitStatement>),
-    ExpressionStatement(Box<ExpressionStatement>),
+    VariableDeclarationStatement(Box<VariableDeclarationStatement>),
     ForStatement(Box<ForStatement>),
     IfStatement(Box<IfStatement>),
-    PlaceholderStatement(Box<PlaceholderStatement>),
+    DoWhileStatement(Box<DoWhileStatement>),
     Return(Box<Return>),
-    RevertStatement(Box<RevertStatement>),
     TryStatement(Box<TryStatement>),
-    UncheckedBlock(Box<UncheckedBlock>),
-    VariableDeclarationStatement(Box<VariableDeclarationStatement>),
     WhileStatement(Box<WhileStatement>),
+    UncheckedBlock(Box<UncheckedBlock>),
+    EmitStatement(Box<EmitStatement>),
+    RevertStatement(Box<RevertStatement>),
+    ExpressionStatement(Box<ExpressionStatement>),
+    Block(Box<Block>),
+    Continue(Box<Continue>),
+    Break(Box<Break>),
+    PlaceholderStatement(Box<PlaceholderStatement>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
