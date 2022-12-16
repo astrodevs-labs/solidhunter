@@ -19,7 +19,7 @@ pub struct CodeComplexity {
 impl RuleType for CodeComplexity {
 
     fn diagnose(&self, file: &SolidFile, files: &Vec<SolidFile>) -> Vec<LintDiag> {
-        println!("CodeComplexity: trying diagnose file: {}", file.path);
+        //println!("CodeComplexity: trying diagnose file: {}", file.path);
         Vec::new()
     }
 

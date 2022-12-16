@@ -12,11 +12,17 @@ struct Args {
     #[arg(short = 'p', long = "path", default_value = ".", help = "Specify project path")]
     project_path: Vec<String>,
 
+    #[arg(short = 'f', long = "file", default_value = "", help = "Specify a single file to lint")]
+    file_to_lint: String,
+
     #[arg(short = 'e', long = "exclude", help = "Exclude part of the project path")]
     ignore_path: Vec<String>,
 
     #[arg(short = 'r', long = "rules", default_value = ".solidhunter.json", help = "Specify rules file")]
     rules_file: String,
+
+    #[arg(short = 'j', long = "json_output", default_value = "false", help = "Outputs a json format instead")]
+    to_json: bool,
 
     #[arg(short = 'v', long = "verbose", default_value = "false", help = "Verbose output")]
     verbose: bool,
@@ -45,8 +51,7 @@ fn print_diag(diag: &solidhunter_lib::types::LintDiag) {
     } else {
         padding = " ".repeat(2).to_string();
     }
-    let offset = offset_from_range(diag.source_file_content.as_str(), &diag.range);
-    let code_extract = &diag.source_file_content[offset..((offset as usize) + *&diag.range.length as usize)];
+    let line = diag.source_file_content.lines().nth(diag.range.start.line as usize).unwrap();
 
     println!("\n{}: {}", severity_to_string(diag.severity), diag.message);
     println!(
@@ -59,18 +64,41 @@ fn print_diag(diag: &solidhunter_lib::types::LintDiag) {
         "   |");
     //TODO: add code to print
     println!(
-        "{}{}|{}", diag.range.start.line,padding, code_extract);
+        "{}{}|{}", diag.range.start.line,padding, line);
     println!(
         "   |{}{}", " ".repeat(diag.range.start.character as usize), "^".repeat(diag.range.length as usize));
+}
+
+fn lint_folder(args: Args) {
+    let mut linter: SolidLinter = SolidLinter::new();
+    linter.initalize(&args.rules_file);
+    let mut result = Vec::new();
+    for path in args.project_path {
+        result.append(&mut linter.parse_folder(path));
+    }
+    for res in result {
+        match res {
+            Ok(diags) => {
+                for diag in diags {
+                    print_diag(&diag);
+                }
+            }
+            Err(e) => {
+                println!("{}", e);
+            }
+        }
+    }
 }
 
 fn main() {
     let args = Args::parse();
 
-    println!();
-    println!("SolidHunter: Fast and efficient Solidity linter");
-    println!("By {} - v{} - GNU GPL v3", env!("CARGO_PKG_AUTHORS"), env!("CARGO_PKG_VERSION"));
-    println!();
+    if !args.to_json {
+        println!();
+        println!("SolidHunter: Fast and efficient Solidity linter");
+        println!("By {} - v{} - GNU GPL v3", env!("CARGO_PKG_AUTHORS"), env!("CARGO_PKG_VERSION"));
+        println!();
+    }
 
     if args.verbose {
         println!("Verbose output enabled");
@@ -87,21 +115,41 @@ fn main() {
         return;
     }
 
-    let mut linter: SolidLinter = SolidLinter::new();
-    linter.initalize(&args.rules_file);
-    let mut result = Vec::new();
-    for path in args.project_path {
-        result.append(&mut linter.parse_folder(path));
+    if !args.to_json && args.file_to_lint == "" {
+        lint_folder(args);
     }
-    for res in result {
-        match res {
-            Ok(diags) => {
-                for diag in diags {
-                    print_diag(&diag);
+    else if args.file_to_lint != "" {
+        let mut linter: SolidLinter = SolidLinter::new();
+        linter.initalize(&args.rules_file);
+        
+        let result = linter.parse_file(args.file_to_lint);
+        if !args.to_json {
+            match result {
+                Ok(diags) => {
+                    for diag in diags {
+                        print_diag(&diag);
+                    }
+                }
+                Err(e) => {
+                    println!("{}", e);
                 }
             }
-            Err(e) => {
-                println!("{}", e);
+        } else {
+            match result {
+                Ok(diags) => {
+                    let json = serde_json::to_string_pretty(&diags);
+                    match json {
+                        Ok(j) => {
+                            println!("{}", j);
+                        }
+                        Err(e) => {
+                            println!("{}", e);
+                        }
+                    }
+                }
+                Err(e) => {
+                    println!("{}", e);
+                }
             }
         }
     }
