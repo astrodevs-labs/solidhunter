@@ -18,8 +18,6 @@ impl RuleType for UseForbiddenName {
 
         let nodes = get_all_nodes_by_type(file.data.clone(), NodeType::VariableDeclaration);
 
-        println!("{:?}", file.data);
-
         for node in nodes {
             let var = match node {
                 Nodes::VariableDeclaration(var) => var,
