@@ -2,7 +2,6 @@ use std::ops::Index;
 use crate::linter::SolidFile;
 use solc_wrapper::*;
 use solc_wrapper::ast::utils::{get_all_nodes_by_type, Nodes};
-use crate::rules::best_practises::code_complexity::RULE_ID;
 use crate::rules::types::*;
 use crate::types::*;
 
